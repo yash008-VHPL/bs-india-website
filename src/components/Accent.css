@@ -1,0 +1,22 @@
+.bs-accent {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  background: var(--accent-red);
+  /* Γ shape: top arm goes right, drops down on the right side — matches global site */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 78% 100%, 78% 22%, 0 22%);
+  margin-right: 10px;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+  flex-shrink: 0;
+}
+
+/* When used in a heading row, keep it aligned */
+.accent-heading {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: nowrap;
+}

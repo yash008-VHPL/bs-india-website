@@ -1,0 +1,84 @@
+/* Headings that use the Accent inline */
+h2 { display: flex; align-items: center; flex-wrap: wrap; }
+
+/* HERO */
+.hero { position: relative; overflow: hidden; }
+.hero-panels { display: flex; height: 380px; }
+.hero-panel { flex: 1; position: relative; overflow: hidden; cursor: pointer; }
+.hero-panel img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.hero-panel:hover img { transform: scale(1.05); }
+.hero-panel-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent,rgba(0,76,62,.75)); color: #fff; font-size: .65rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 24px 12px 10px; opacity: 0; transition: opacity .3s; }
+.hero-panel:hover .hero-panel-label { opacity: 1; }
+.hero-caption { position: absolute; bottom: 28px; left: 24px; background: #fff; padding: 18px 24px 18px 18px; border-radius: 0 16px 0 0; max-width: 420px; display: flex; align-items: flex-start; gap: 0; }
+.hero-caption h1 { font-size: clamp(1.15rem,2.2vw,1.7rem); font-weight: 800; line-height: 1.3; color: var(--text-dark); }
+
+/* SPECIES BAR */
+.species-bar { background: var(--green-dark); display: flex; }
+.species-bar-item { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; color: rgba(255,255,255,.82); font-size: .78rem; font-weight: 600; letter-spacing: .04em; padding: 15px 10px; border-right: 1px solid rgba(255,255,255,.1); transition: background .2s, color .2s; }
+.species-bar-item:last-child { border-right: none; }
+.species-bar-item:hover { background: rgba(76,180,150,.22); color: #fff; }
+
+/* ABOUT */
+.home-about { padding: 72px 24px; background: var(--off-white); }
+.home-about-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 360px; gap: 56px; align-items: center; }
+.home-about-text h2 { font-size: 1.9rem; font-weight: 800; margin-bottom: 18px; }
+.home-about-text p { color: var(--text-mid); line-height: 1.8; margin-bottom: 14px; font-size: .92rem; }
+.btn-outline { display: inline-block; margin-top: 10px; padding: 11px 26px; border: 2px solid var(--green); color: var(--green); border-radius: 4px; font-weight: 600; font-size: .88rem; transition: all .2s; }
+.btn-outline:hover { background: var(--green); color: #fff; }
+.home-about-visual { display: flex; flex-direction: column; gap: 16px; }
+.about-badge { background: #fff; border-left: 4px solid var(--green); padding: 18px 20px; border-radius: 0 8px 8px 0; box-shadow: 0 2px 10px rgba(0,0,0,.05); display: flex; align-items: center; gap: 14px; }
+.about-badge-num { font-size: 1.8rem; font-weight: 800; color: var(--green); }
+.about-badge-text { font-size: .82rem; font-weight: 500; color: var(--text-mid); line-height: 1.3; }
+
+/* PRODUCTS SPLIT */
+.home-products { padding: 72px 0 0; }
+.home-products-header { max-width: 1200px; margin: 0 auto; padding: 0 24px 40px; }
+.home-products-header h2 { font-size: 1.9rem; font-weight: 800; margin-bottom: 8px; }
+.home-products-header p { color: var(--text-mid); font-size: .95rem; }
+.solutions-split { display: flex; min-height: 560px; }
+.solutions-half { flex: 1; position: relative; overflow: hidden; }
+.solutions-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .1; transition: opacity .4s; }
+.solutions-half:hover .solutions-bg-img { opacity: .18; }
+.solutions-half--poultry { background: var(--mint-bg); border-right: 1px solid rgba(76,180,150,.2); }
+.solutions-half--dairy { background: #ccdfd7; }
+.solutions-half-content { position: relative; z-index: 1; padding: 36px 32px 44px; height: 100%; display: flex; flex-direction: column; gap: 20px; }
+.solutions-half-label { display: flex; align-items: center; gap: 10px; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green-dark); border-bottom: 2px solid var(--green); padding-bottom: 10px; }
+.solutions-cards { display: flex; flex-direction: column; }
+.sol-card { display: flex; flex-direction: column; gap: 3px; padding: 14px 0; border-bottom: 1px solid rgba(0,76,62,.1); transition: padding-left .18s; }
+.sol-card:last-child { border-bottom: none; }
+.sol-card:hover { padding-left: 8px; }
+.sol-card-type { font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #4a7068; }
+.sol-plus { color: var(--green); font-weight: 800; }
+.sol-card h3 { font-size: 1rem; font-weight: 700; color: #002d22; line-height: 1.2; }
+.sol-card-sub { font-size: .75rem; font-weight: 500; color: #3d5a52; }
+.home-products-cta { text-align: center; padding: 40px 24px; }
+.btn-primary { display: inline-block; padding: 13px 30px; background: var(--green); color: #fff; border-radius: 4px; font-weight: 700; font-size: .9rem; transition: background .2s; }
+.btn-primary:hover { background: var(--green-dark); }
+
+/* CTA BANNER */
+.home-cta { background: var(--mint-bg); padding: 64px 24px; }
+.home-cta-inner { max-width: 640px; margin: 0 auto; text-align: center; }
+.home-cta-inner h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; justify-content: center; }
+.home-cta-inner p { color: var(--text-mid); margin-bottom: 24px; font-size: .95rem; }
+.btn-white { display: inline-block; padding: 13px 30px; background: #fff; color: var(--green-dark); border-radius: 4px; font-weight: 700; font-size: .9rem; border: 2px solid var(--green); transition: all .2s; }
+.btn-white:hover { background: var(--green); color: #fff; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .hero-panels { height: 300px; }
+  .hero-caption { padding: 14px 16px; bottom: 16px; left: 16px; }
+  .home-about-inner { grid-template-columns: 1fr; gap: 32px; }
+  .home-about-visual { flex-direction: row; flex-wrap: wrap; }
+  .about-badge { flex: 1; min-width: 130px; }
+  .solutions-split { flex-direction: column; }
+  .solutions-half--poultry { border-right: none; border-bottom: 1px solid rgba(76,180,150,.2); }
+  .solutions-half-content { padding: 24px 20px; }
+}
+@media (max-width: 600px) {
+  .hero-panels { height: 220px; }
+  .hero-caption { display: none; }
+  .species-bar { flex-wrap: wrap; }
+  .species-bar-item { flex-basis: 33.33%; }
+  .home-about, .home-cta { padding: 48px 16px; }
+  .home-products-header { padding: 0 16px 28px; }
+}
