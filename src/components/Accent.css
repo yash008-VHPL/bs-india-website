@@ -1,19 +1,8 @@
-/*
-  Berg+Schmidt accent mark — mirror-L shape, equal arm lengths.
-  border-right (vertical) + border-bottom (horizontal arm)
-  with gentle curve at the fold (bottom-right corner).
-  Width = Height so both arms are identical length.
-*/
-.bs-accent {
+/* Accent wrapper — zero-width inline span so it doesn't push text */
+.bs-accent-wrap {
   display: inline-block;
-  width: 13px;
-  height: 13px;
-  border-right: 4.5px solid var(--accent-red);
-  border-bottom: 4.5px solid var(--accent-red);
-  border-radius: 0 0 3.5px 0;
-  margin-right: 9px;
-  flex-shrink: 0;
-  align-self: flex-start;
-  margin-top: -2px;
-  box-sizing: border-box;
+  width: 0;
+  height: 0;
+  position: relative;
+  vertical-align: baseline;
 }

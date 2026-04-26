@@ -1,10 +1,21 @@
-.pg-hero{background:var(--mint-bg);padding:56px 24px 48px}.pg-hero-inner{max-width:1200px;margin:0 auto}.pg-hero h1{font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:800;color:var(--green-dark);margin-bottom:8px;display:flex;align-items:center}.pg-hero p{font-size:1rem;color:var(--text-mid)}
+
+/* All headings with accent — position relative for absolute accent */
+h1, h2, h3 {
+  position: relative;
+}
+h2 {
+  padding-top: 30px;
+}
+h1 {
+  padding-top: 30px;
+}
+.pg-hero{background:var(--mint-bg);padding:56px 24px 48px}.pg-hero-inner{max-width:1200px;margin:0 auto}.pg-hero h1{font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:800;color:var(--green-dark);margin-bottom:8px;align-items:center}.pg-hero p{font-size:1rem;color:var(--text-mid)}
 .ws-body{padding:56px 24px;background:var(--off-white);min-height:60vh}.ws-inner{max-width:720px;margin:0 auto}
 .ws-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:44px 40px;text-align:center;box-shadow:0 4px 24px rgba(0,76,62,.06)}
 .ws-badge{display:inline-block;background:var(--mint-light);color:var(--green-dark);font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 16px;border-radius:20px;margin-bottom:18px;border:1.5px solid var(--green)}
 .ws-chips{display:flex;gap:10px;justify-content:center;margin-bottom:22px}
 .ws-chip{background:var(--mint-light);color:var(--green-dark);font-size:.8rem;font-weight:600;padding:7px 16px;border-radius:6px}
-.ws-card h2{font-size:1.6rem;font-weight:800;margin-bottom:14px;justify-content:center;display:flex;align-items:center}
+.ws-card h2{font-size:1.6rem;font-weight:800;margin-bottom:14px;align-items:center}
 .ws-card>p{font-size:.92rem;color:var(--text-mid);line-height:1.8;max-width:540px;margin:0 auto 28px}
 .ws-prod-preview{background:var(--off-white);border-radius:8px;padding:22px 26px;margin-bottom:28px;text-align:left}
 .ws-prod-preview h3{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:14px;text-align:center}

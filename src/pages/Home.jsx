@@ -22,7 +22,7 @@ export default function Home() {
           ))}
         </div>
         <div className="hero-caption">
-          <Accent/>
+          <Accent size={12} />
           <h1>Improving Livestock Performance<br/>Across India</h1>
         </div>
       </section>

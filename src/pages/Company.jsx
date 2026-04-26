@@ -89,7 +89,7 @@ export default function Company() {
 
       <section className="co-sec co-sec--dark">
         <div className="co-sec-inner">
-          <h2 style={{justifyContent:'center',marginBottom:'8px',color:'#fff'}}><span className="acc-green" aria-hidden="true"/>Our Team</h2>
+          <h2 style={{justifyContent:'center',marginBottom:'8px',color:'#fff'}}><Accent size={14} color="var(--green)" />Our Team</h2>
           <p style={{textAlign:'center',color:'rgba(255,255,255,.7)',marginBottom:'32px',fontSize:'.95rem'}}>A leadership team combining international exposure with deep, practical knowledge of Indian livestock production.</p>
           <div className="pillars-grid">
             {CAPS.map(c=><div className="pillar-card" key={c.title}>

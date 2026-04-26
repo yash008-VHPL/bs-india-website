@@ -1,5 +1,9 @@
-/* Headings that use the Accent inline */
-h2 { display: flex; align-items: center; flex-wrap: wrap; }
+/* Headings with accent mark — position:relative so absolute accent has context */
+h2 {
+  position: relative;
+  padding-top: 32px;
+  display: block;
+}
 
 /* HERO */
 .hero { position: relative; overflow: hidden; }

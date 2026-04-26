@@ -1,2 +1,4 @@
-.app-layout{display:flex;flex-direction:column;min-height:100vh}
-.app-content{flex:1}
+.app-layout { display: flex; flex-direction: column; min-height: 100vh; }
+.app-content { flex: 1; }
+/* Homepage hero section needs to be a positioning context for the floating logo */
+.app-content > main.home { position: relative; }

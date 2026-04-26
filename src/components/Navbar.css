@@ -1,7 +1,7 @@
-/* ── Topbar: light teal, NOT sticky — disappears on scroll ── */
+/* Top utility bar — light green, scrolls with page */
 .topbar {
-  background: var(--green);        /* teal #4cb496 — matches B+S logo colour */
-  color: rgba(255,255,255,.92);
+  background: var(--green);
+  color: rgba(255,255,255,.95);
   font-size: .72rem;
   height: 32px;
   display: flex;
@@ -16,20 +16,17 @@
   justify-content: space-between;
   align-items: center;
 }
-.topbar-entity { font-weight: 600; letter-spacing: .03em; }
+.topbar-entity { font-weight: 500; letter-spacing: .03em; }
 .topbar-links { display: flex; gap: 12px; align-items: center; }
-.topbar-links a { color: rgba(255,255,255,.95); font-size: .72rem; transition: color .2s; }
+.topbar-links a { color: rgba(255,255,255,.82); font-size: .72rem; transition: color .2s; }
 .topbar-links a:hover { color: #fff; }
-.topbar-sep { opacity: .5; }
+.topbar-sep { opacity: .4; }
 
-/* ── Navbar: white bar, sticky on its own ── */
-.navbar-wrap {
+/* Main navbar — sticky, floats in */
+.navbar {
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 12px rgba(0,76,62,.08);
-}
-.navbar {
   background: var(--white);
   height: 60px;
   display: flex;
@@ -37,9 +34,34 @@
   justify-content: space-between;
   padding: 0 24px;
   border-bottom: 1px solid var(--border);
+  transition: box-shadow .3s;
 }
-.navbar-logo { display: flex; align-items: center; }
-.navbar-links { display: flex; height: 60px; align-items: stretch; }
+.navbar--scrolled {
+  box-shadow: 0 2px 16px rgba(0,76,62,.1);
+}
+
+/* Logo — hidden at top of page, fades in on scroll (matches global site) */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .3s ease, transform .3s ease;
+  pointer-events: none;
+}
+.navbar-logo--visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Nav links */
+.navbar-links {
+  display: flex;
+  height: 60px;
+  align-items: stretch;
+  margin-left: auto;
+}
 .navbar-links li { height: 100%; display: flex; align-items: center; }
 .navbar-links a {
   height: 100%;
@@ -72,8 +94,21 @@
 }
 
 /* Burger */
-.burger { display: none; flex-direction: column; gap: 5px; background: none; padding: 8px; }
-.burger span { display: block; width: 22px; height: 2px; background: var(--text-dark); transition: all .25s; border-radius: 2px; }
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  padding: 8px;
+}
+.burger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-dark);
+  transition: all .25s;
+  border-radius: 2px;
+}
 .burger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
 .burger.open span:nth-child(2) { opacity: 0; }
 .burger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
@@ -90,10 +125,18 @@
     box-shadow: 0 8px 24px rgba(0,0,0,.12);
     height: auto;
     z-index: 200;
+    margin-left: 0;
   }
   .navbar-links.open { display: flex; }
   .navbar-links li { width: 100%; height: auto; }
-  .navbar-links a { height: auto; padding: 13px 24px; border-bottom: none; border-left: 3px solid transparent; }
+  .navbar-links a {
+    height: auto;
+    padding: 13px 24px;
+    border-bottom: none;
+    border-left: 3px solid transparent;
+  }
   .navbar-links a.active { border-left-color: var(--green); }
   .topbar-entity { display: none; }
+  /* Always show logo on mobile */
+  .navbar-logo { opacity: 1; transform: none; pointer-events: auto; }
 }
