@@ -26,23 +26,23 @@ button { font-family: var(--font); cursor: pointer; border: none; }
 ul { list-style: none; }
 
 /*
-  Berg+Schmidt accent mark — EXACT replica of global site implementation.
-  
-  Source CSS from an.berg-schmidt.com:
+  Berg+Schmidt accent mark — EXACT replica of global site.
+  Source: an.berg-schmidt.com
     .bs-mark { position: relative; }
     .bs-mark::before {
       content: url("bs-mark-red.svg");
-      height: 0.5em;
-      width: 0.5em;
+      height: 0.5em; width: 0.5em;
       position: absolute;
-      top: -0.75em;
-      left: -0.5em;
+      top: -0.75em; left: -0.5em;
     }
   
-  We self-host the SVG and apply the same rules.
+  The heading needs padding-left: 0.6em so the mark (at left:-0.5em) 
+  sits just to the left of the text, not colliding with the container edge.
+  This matches how the global site's container layout works.
 */
 .bs-mark {
   position: relative;
+  padding-left: 0.6em;
 }
 .bs-mark::before {
   content: url("/bs-mark.svg");
@@ -50,12 +50,13 @@ ul { list-style: none; }
   width: 0.5em;
   position: absolute;
   top: -0.75em;
-  left: -0.5em;
+  left: 0.05em;
 }
 
-/* Green variant for dark backgrounds */
+/* Green variant for dark section headings */
 .bs-mark-green {
   position: relative;
+  padding-left: 0.6em;
 }
 .bs-mark-green::before {
   content: url("/bs-mark-green.svg");
@@ -63,5 +64,5 @@ ul { list-style: none; }
   width: 0.5em;
   position: absolute;
   top: -0.75em;
-  left: -0.5em;
+  left: 0.05em;
 }
