@@ -7,12 +7,13 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-inner">
 
-        {/* Brand + India address */}
+        {/* Brand col */}
         <div className="footer-brand">
           <Logo size="sm" white />
-          <div className="footer-addr">
+          <div className="footer-entity">
             <p>Berg + Schmidt India Pvt. Ltd.</p>
-            <p>A subsidiary of Berg + Schmidt<br/>International GmbH</p>
+            <p>A subsidiary of Berg + Schmidt</p>
+            <p>International GmbH</p>
             <p>Pune, Maharashtra, India</p>
           </div>
         </div>
@@ -25,7 +26,7 @@ export default function Footer() {
             <li><Link to="/products/bergafat-fg">Bergafat FG</Link></li>
             <li><Link to="/products/bergaapur">Bergaapur</Link></li>
             <li><Link to="/products/bergaboost">Bergaboost</Link></li>
-            <li><Link to="/products">More →</Link></li>
+            <li><Link to="/products" className="footer-more">More →</Link></li>
           </ul>
         </div>
 
@@ -37,7 +38,7 @@ export default function Footer() {
             <li><Link to="/products/fat-o-lip">Fat-O-Lip</Link></li>
             <li><Link to="/products/l-met-60">L-Met-60</Link></li>
             <li><Link to="/products/l-lys-40">L-Lys-40</Link></li>
-            <li><Link to="/products">More →</Link></li>
+            <li><Link to="/products" className="footer-more">More →</Link></li>
           </ul>
         </div>
 

@@ -18,7 +18,7 @@
 }
 .topbar-entity { font-weight: 600; letter-spacing: .03em; }
 .topbar-links { display: flex; gap: 12px; align-items: center; }
-.topbar-links a { color: rgba(255,255,255,.85); font-size: .72rem; transition: color .2s; }
+.topbar-links a { color: rgba(255,255,255,.95); font-size: .72rem; transition: color .2s; }
 .topbar-links a:hover { color: #fff; }
 .topbar-sep { opacity: .5; }
 

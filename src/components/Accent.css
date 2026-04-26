@@ -1,31 +1,24 @@
 /*
-  Berg+Schmidt accent mark — mirror-image L shape with ribbon fold.
-  Sits slightly ABOVE the text, aligned to the top of the heading.
+  Berg+Schmidt accent mark.
+  Mirror-L shape (vertical right + bottom arm left) with ribbon curve.
+  Positioned ABOVE the heading text, to the left — like a superscript ribbon tag.
   
-  Shape:  ┃   (right vertical stroke)
-          ┃
-          ┗━━ (bottom arm going left)
-          
-  Positioned at top of heading, slightly elevated.
+  Implementation: wrap heading in a div with position:relative,
+  accent sits at top-left, heading text flows below/beside it.
+  
+  For inline use inside h2 with flex, we use align-items: flex-start
+  and a negative top margin on the accent so it rides above the text cap-height.
 */
 .bs-accent {
   display: inline-block;
   width: 11px;
   height: 15px;
-  border-right: 4px solid var(--accent-red);
-  border-bottom: 4px solid var(--accent-red);
-  border-radius: 0 0 3px 0;   /* gentle curve at the fold */
+  border-right: 4.5px solid var(--accent-red);
+  border-bottom: 4.5px solid var(--accent-red);
+  border-radius: 0 0 3.5px 0;
   margin-right: 8px;
   flex-shrink: 0;
-  box-sizing: border-box;
-  /* Align to TOP of heading, shifted slightly up */
+  /* sit above the text — align to top of line box, then nudge up */
   align-self: flex-start;
-  margin-top: -2px;
-}
-
-/* Headings containing Accent must be flex */
-h1:has(.bs-accent),
-h2:has(.bs-accent) {
-  display: flex;
-  align-items: flex-start;
+  margin-top: -4px;
 }
