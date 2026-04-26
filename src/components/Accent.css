@@ -1,21 +1,21 @@
 /*
-  Berg+Schmidt accent mark — matches the global site exactly.
-  Shape: thick ribbon folding over — top arm goes right, curves gently,
-  then drops down. Achieved with CSS borders + border-radius (NOT clip-path).
+  Mirror of uppercase L:
+  - Vertical stroke on the RIGHT going down
+  - Horizontal arm at the BOTTOM going left
+  - Gentle curve at the bottom-right fold (the ribbon effect)
   
-  Technique: a small element with:
-  - border-top: thick coloured bar
-  - border-right: thick coloured bar  
-  - border-radius on the top-right corner (the "fold")
-  - width/height control the arm lengths
+  Visual:
+      ┃
+      ┃
+  ━━━━┛
 */
 .bs-accent {
   display: inline-block;
-  width: 10px;
-  height: 14px;
-  border-top: 5px solid var(--accent-red);
+  width: 12px;
+  height: 16px;
   border-right: 5px solid var(--accent-red);
-  border-radius: 0 4px 0 0;   /* gentle curve only on the fold corner */
+  border-bottom: 5px solid var(--accent-red);
+  border-radius: 0 0 4px 0;   /* ribbon curve at the fold (bottom-right) */
   margin-right: 9px;
   vertical-align: middle;
   position: relative;
