@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react';
 import lottie from 'lottie-web';
 
-// The Lottie JSON URL — self-hosted in /public/bs-logo.json
-// Falls back gracefully to static wordmark if file not present
 const LOTTIE_URL = '/bs-logo.json';
 
 export default function Logo({ size = 'sm', white = false, animate = false }) {
@@ -12,7 +10,6 @@ export default function Logo({ size = 'sm', white = false, animate = false }) {
   useEffect(() => {
     if (!animate || !containerRef.current) return;
     let cancelled = false;
-
     fetch(LOTTIE_URL)
       .then(r => r.ok ? r.json() : null)
       .then(data => {
@@ -24,7 +21,6 @@ export default function Logo({ size = 'sm', white = false, animate = false }) {
           autoplay: false,
           animationData: data,
         });
-        // Scroll-driven: frames 0-60 mapped to first 90vh of scroll
         const drive = () => {
           if (!animRef.current) return;
           const pct = Math.min(1, window.scrollY / (window.innerHeight * 0.9));
@@ -35,7 +31,6 @@ export default function Logo({ size = 'sm', white = false, animate = false }) {
         return () => window.removeEventListener('scroll', drive);
       })
       .catch(() => {});
-
     return () => { cancelled = true; animRef.current?.destroy(); };
   }, [animate]);
 
@@ -43,19 +38,45 @@ export default function Logo({ size = 'sm', white = false, animate = false }) {
     return <div ref={containerRef} style={{ width: 200, height: 62 }} aria-label="Berg+Schmidt Animal Nutrition" />;
   }
 
-  // Static wordmark
-  const s = size === 'sm' ? 0.75 : size === 'lg' ? 1.3 : 1;
+  const s = size === 'sm' ? 0.78 : size === 'lg' ? 1.3 : 1;
   const tc = white ? '#fff' : '#004c3e';
   const gc = white ? '#7dd4b8' : '#4cb496';
   const dc = white ? 'rgba(255,255,255,.65)' : '#5a7a72';
 
   return (
-    <div style={{ lineHeight: 1.1, userSelect: 'none' }}>
-      <div style={{ fontWeight: 800, fontSize: `${s * 1.4}rem`, letterSpacing: '-.02em', color: tc, display: 'flex', alignItems: 'center' }}>
-        Berg<span style={{ color: gc, fontWeight: 800, fontSize: `${s * 1.55}rem`, margin: `0 ${s * 2}px`, lineHeight: 0.85 }}>+</span>Schmidt
+    <div style={{ lineHeight: 1.15, userSelect: 'none' }}>
+      {/*
+        Global site wordmark: "Berg+Schmidt" — the + is directly touching both words,
+        no spaces, slightly larger, in brand green.
+        Font weights all 800 (black).
+      */}
+      <div style={{
+        fontWeight: 800,
+        fontSize: `${s * 1.32}rem`,
+        letterSpacing: '-.02em',
+        color: tc,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 0,
+      }}>
+        <span>Berg</span>
+        <span style={{
+          color: gc,
+          fontWeight: 800,
+          /* + is slightly larger than surrounding text — exactly like global site */
+          fontSize: `${s * 1.52}rem`,
+          lineHeight: 1,
+          /* No horizontal margin — directly touching Berg and Schmidt */
+          margin: '0 1px',
+        }}>+</span>
+        <span>Schmidt</span>
       </div>
-      <div style={{ fontWeight: 600, fontSize: `${s * 1.0}rem`, color: gc }}>Animal Nutrition</div>
-      <div style={{ fontWeight: 400, fontSize: `${s * 0.72}rem`, color: dc, marginTop: `${s * 2}px` }}>For extra performance.</div>
+      <div style={{ fontWeight: 600, fontSize: `${s * 0.98}rem`, color: gc, letterSpacing: '0.01em' }}>
+        Animal Nutrition
+      </div>
+      <div style={{ fontWeight: 400, fontSize: `${s * 0.7}rem`, color: dc, marginTop: `${s * 1}px` }}>
+        For extra performance.
+      </div>
     </div>
   );
 }
