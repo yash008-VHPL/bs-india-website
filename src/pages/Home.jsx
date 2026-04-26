@@ -11,7 +11,7 @@ const HERO_IMAGES = [
 
 export default function Home() {
   return (
-    <main className="home">
+    <main className="home" style={{position:"relative"}}>
       <section className="hero">
         <div className="hero-panels">
           {HERO_IMAGES.map(img=>(

@@ -17,19 +17,21 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
 
-  // Logo floats in from top on scroll — matches global site behaviour
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
+    const onScroll = () => setScrolled(window.scrollY > 100);
     window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close menu on route change
   useEffect(() => { setOpen(false); }, [pathname]);
+
+  const isHome = pathname === '/';
+  const showOverlay = isHome && !scrolled;
 
   return (
     <>
-      {/* Top utility bar — light green, scrolls away */}
+      {/* Top utility bar */}
       <div className="topbar">
         <div className="topbar-inner">
           <span className="topbar-entity">Berg + Schmidt India Pvt. Ltd.</span>
@@ -41,33 +43,48 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Main navbar — floats in sticky when scrolled, invisible logo when at top */}
-      <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
-        <Link to="/" className={`navbar-logo ${scrolled ? 'navbar-logo--visible' : ''}`}>
-          <Logo size="sm" />
-        </Link>
+      {/* Hero overlay nav — logo top-left floating over image, links top-right white panel */}
+      {showOverlay && (
+        <div className="hero-nav-overlay">
+          <div className="hero-logo-float">
+            <Link to="/"><Logo size="md" /></Link>
+          </div>
+          <div className="hero-nav-panel">
+            <ul>
+              {NAV.map(({ label, href, badge }) => (
+                <li key={href}>
+                  <Link to={href}>
+                    {label}{badge && <span className="nav-badge">{badge}</span>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
-        <ul className={`navbar-links ${open ? 'open' : ''}`}>
-          {NAV.map(({ label, href, badge }) => (
-            <li key={href}>
-              <Link
-                to={href}
-                className={pathname.startsWith(href) ? 'active' : ''}
-              >
-                {label}{badge && <span className="nav-badge">{badge}</span>}
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        <button
-          className={`burger ${open ? 'open' : ''}`}
-          onClick={() => setOpen(o => !o)}
-          aria-label="Toggle menu"
-        >
-          <span/><span/><span/>
-        </button>
-      </nav>
+      {/* Sticky compact navbar — always on non-home pages, appears on scroll on home */}
+      {(!isHome || scrolled) && (
+        <nav className="navbar">
+          <Link to="/" className="navbar-logo"><Logo size="sm" /></Link>
+          <ul className={`navbar-links${open ? ' open' : ''}`}>
+            {NAV.map(({ label, href, badge }) => (
+              <li key={href}>
+                <Link
+                  to={href}
+                  className={pathname.startsWith(href) ? 'active' : ''}
+                  onClick={() => setOpen(false)}
+                >
+                  {label}{badge && <span className="nav-badge">{badge}</span>}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <button className={`burger${open ? ' open' : ''}`} onClick={() => setOpen(o => !o)} aria-label="Toggle menu">
+            <span /><span /><span />
+          </button>
+        </nav>
+      )}
     </>
   );
 }
