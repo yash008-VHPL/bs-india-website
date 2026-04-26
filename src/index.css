@@ -5,7 +5,6 @@
 :root {
   --green: #4cb496;
   --green-dark: #004c3e;
-  --green-mid: #3a9a82;
   --mint-bg: #c8ddd8;
   --mint-light: #dceee9;
   --accent-red: #c0404a;
@@ -26,23 +25,22 @@ button { font-family: var(--font); cursor: pointer; border: none; }
 ul { list-style: none; }
 
 /*
-  Berg+Schmidt accent mark — EXACT replica of global site.
+  Berg+Schmidt accent mark — matches global site CSS exactly.
   Source: an.berg-schmidt.com
     .bs-mark { position: relative; }
     .bs-mark::before {
       content: url("bs-mark-red.svg");
       height: 0.5em; width: 0.5em;
-      position: absolute;
-      top: -0.75em; left: -0.5em;
+      position: absolute; top: -0.75em; left: -0.5em;
     }
   
-  The heading needs padding-left: 0.6em so the mark (at left:-0.5em) 
-  sits just to the left of the text, not colliding with the container edge.
-  This matches how the global site's container layout works.
+  We match this exactly. The heading needs margin-left: 0.6em to 
+  ensure the absolutely-positioned mark (at left:-0.5em) is visible
+  and not clipped by the container.
 */
 .bs-mark {
   position: relative;
-  padding-left: 0.6em;
+  margin-left: 0.6em;
 }
 .bs-mark::before {
   content: url("/bs-mark.svg");
@@ -50,13 +48,12 @@ ul { list-style: none; }
   width: 0.5em;
   position: absolute;
   top: -0.75em;
-  left: 0.05em;
+  left: -0.5em;
 }
 
-/* Green variant for dark section headings */
 .bs-mark-green {
   position: relative;
-  padding-left: 0.6em;
+  margin-left: 0.6em;
 }
 .bs-mark-green::before {
   content: url("/bs-mark-green.svg");
@@ -64,5 +61,5 @@ ul { list-style: none; }
   width: 0.5em;
   position: absolute;
   top: -0.75em;
-  left: 0.05em;
+  left: -0.5em;
 }

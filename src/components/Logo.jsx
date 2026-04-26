@@ -3,6 +3,28 @@ import lottie from 'lottie-web';
 
 const LOTTIE_URL = '/bs-logo.json';
 
+// The + cross shape — exact path from bs-ani-nutri-logo.json Lottie file
+// Layer 0, Group 1, Path 1: 7 vertices, fill #4CB496 (brand green)
+// ViewBox centered at origin (-35,-35 to 35,35 with padding)
+// The top-right corner (segment from v6 to v0) has a cubic bezier curve
+// Control points: (30.15,-18.849) and (18.848,-30.15)
+const PlusIcon = ({ color, size }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="-35 -35 70 70"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ display: 'inline-block', verticalAlign: 'middle', flexShrink: 0 }}
+    aria-hidden="true"
+  >
+    <path
+      d="M 4.956,-30.15 L -30.15,-30.15 L -30.15,-5.314 L 5.313,-5.314 L 5.313,30.15 L 30.15,30.15 L 30.15,-4.957 C 30.15,-18.849 18.848,-30.15 4.956,-30.15 Z"
+      fill={color}
+    />
+  </svg>
+);
+
 export default function Logo({ size = 'sm', white = false, animate = false }) {
   const containerRef = useRef(null);
   const animRef = useRef(null);
@@ -42,17 +64,17 @@ export default function Logo({ size = 'sm', white = false, animate = false }) {
   const tc = white ? '#fff' : '#004c3e';
   const gc = white ? '#7dd4b8' : '#4cb496';
   const dc = white ? 'rgba(255,255,255,.65)' : '#5a7a72';
+  
+  // Font size for Berg/Schmidt text
+  const fs = s * 1.32;
+  // Plus icon size — matches capital letter height of surrounding text
+  const plusPx = fs * 16 * 0.85; // em to px approx
 
   return (
     <div style={{ lineHeight: 1.15, userSelect: 'none' }}>
-      {/*
-        Global site wordmark: "Berg+Schmidt" — the + is directly touching both words,
-        no spaces, slightly larger, in brand green.
-        Font weights all 800 (black).
-      */}
       <div style={{
         fontWeight: 800,
-        fontSize: `${s * 1.32}rem`,
+        fontSize: `${fs}rem`,
         letterSpacing: '-.02em',
         color: tc,
         display: 'flex',
@@ -60,15 +82,7 @@ export default function Logo({ size = 'sm', white = false, animate = false }) {
         gap: 0,
       }}>
         <span>Berg</span>
-        <span style={{
-          color: gc,
-          fontWeight: 800,
-          /* + is slightly larger than surrounding text — exactly like global site */
-          fontSize: `${s * 1.52}rem`,
-          lineHeight: 1,
-          /* No horizontal margin — directly touching Berg and Schmidt */
-          margin: '0 1px',
-        }}>+</span>
+        <PlusIcon color={gc} size={plusPx} />
         <span>Schmidt</span>
       </div>
       <div style={{ fontWeight: 600, fontSize: `${s * 0.98}rem`, color: gc, letterSpacing: '0.01em' }}>
