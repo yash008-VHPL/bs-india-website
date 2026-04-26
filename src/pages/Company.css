@@ -27,7 +27,7 @@
 .gl-card > p { font-size: .85rem; color: var(--text-mid); line-height: 1.75; margin-bottom: 14px; }
 .gl-list { display: flex; flex-direction: column; gap: 6px; }
 .gl-list li { font-size: .8rem; color: var(--text-mid); padding-left: 10px; border-left: 2px solid var(--green); line-height: 1.5; }
-.acc-green { display: inline-block; width: 16px; height: 16px; min-width: 16px; background: var(--green); clip-path: polygon(0 0,100% 0,100% 100%,78% 100%,78% 22%,0 22%); margin-right: 10px; vertical-align: middle; position: relative; top: -2px; }
+.acc-green { display: inline-block; width: 10px; height: 14px; border-top: 5px solid var(--green); border-right: 5px solid var(--green); border-radius: 0 4px 0 0; margin-right: 9px; vertical-align: middle; position: relative; top: -1px; flex-shrink: 0; box-sizing: border-box; }
 .pillars-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
 .pillar-card { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); border-radius: 8px; padding: 22px 18px; transition: background .2s; }
 .pillar-card:hover { background: rgba(76,180,150,.18); }
