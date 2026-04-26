@@ -1,25 +1,31 @@
 /*
-  Mirror of uppercase L:
-  - Vertical stroke on the RIGHT going down
-  - Horizontal arm at the BOTTOM going left
-  - Gentle curve at the bottom-right fold (the ribbon effect)
+  Berg+Schmidt accent mark — mirror-image L shape with ribbon fold.
+  Sits slightly ABOVE the text, aligned to the top of the heading.
   
-  Visual:
-      ┃
-      ┃
-  ━━━━┛
+  Shape:  ┃   (right vertical stroke)
+          ┃
+          ┗━━ (bottom arm going left)
+          
+  Positioned at top of heading, slightly elevated.
 */
 .bs-accent {
   display: inline-block;
-  width: 12px;
-  height: 16px;
-  border-right: 5px solid var(--accent-red);
-  border-bottom: 5px solid var(--accent-red);
-  border-radius: 0 0 4px 0;   /* ribbon curve at the fold (bottom-right) */
-  margin-right: 9px;
-  vertical-align: middle;
-  position: relative;
-  top: -1px;
+  width: 11px;
+  height: 15px;
+  border-right: 4px solid var(--accent-red);
+  border-bottom: 4px solid var(--accent-red);
+  border-radius: 0 0 3px 0;   /* gentle curve at the fold */
+  margin-right: 8px;
   flex-shrink: 0;
   box-sizing: border-box;
+  /* Align to TOP of heading, shifted slightly up */
+  align-self: flex-start;
+  margin-top: -2px;
+}
+
+/* Headings containing Accent must be flex */
+h1:has(.bs-accent),
+h2:has(.bs-accent) {
+  display: flex;
+  align-items: flex-start;
 }
