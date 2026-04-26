@@ -1,12 +1,11 @@
 import { Link } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
-import Accent from '../components/Accent';
 import './Webstore.css';
 export default function Webstore() {
   return (
     <main className="ws-page">
       <div className="pg-hero"><div className="pg-hero-inner">
-        <h1><Accent/>Shop Online</h1>
+        <h1 className="bs-mark">Shop Online</h1>
         <p>Direct purchase of Berg + Schmidt India products — coming soon.</p>
       </div></div>
       <section className="ws-body">
@@ -14,7 +13,7 @@ export default function Webstore() {
           <div className="ws-card">
             <div className="ws-badge">Coming Soon</div>
             <div className="ws-chips"><div className="ws-chip">🐓 Poultry</div><div className="ws-chip">🐄🦬 Dairy</div></div>
-            <h2><Accent/>Our Online Store is Being Built</h2>
+            <h2 className="bs-mark">Our Online Store is Being Built</h2>
             <p>We are setting up a direct online purchasing channel for Indian poultry and dairy producers. Once live, you will be able to browse our full product range, place orders, and arrange delivery directly from Berg + Schmidt India.</p>
             <div className="ws-prod-preview">
               <h3>Products That Will Be Available</h3>

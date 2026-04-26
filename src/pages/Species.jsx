@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { PRODUCTS, SPECIES } from '../data/products';
-import Accent from '../components/Accent';
 import './Species.css';
 const SD = {
   poultry:{label:'Poultry',img:'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&q=75',headline:'Optimal Nutrition for Broilers & Layers',
@@ -19,7 +18,7 @@ export default function Species() {
   return (
     <main className="sp-page">
       <div className="pg-hero"><div className="pg-hero-inner">
-        <h1><Accent/>Species</h1>
+        <h1 className="bs-mark">Species</h1>
         <p>Tailored nutritional solutions for India's poultry and dairy producers.</p>
       </div></div>
       <nav className="sp-tabs">
@@ -32,7 +31,7 @@ export default function Species() {
             <div className="sp-inner">
               <div className="sp-img"><img src={d.img} alt={d.label} loading="lazy"/></div>
               <div className="sp-content">
-                <h2><Accent/>{d.headline}</h2>
+                <h2 className="bs-mark">{d.headline}</h2>
                 <p className="sp-intro">{d.intro}</p>
                 <h3>Key Challenges We Address</h3>
                 <ul className="ch-list">{d.ch.map((c,i)=><li key={i}><span className="ch-dot"/>{c}</li>)}</ul>

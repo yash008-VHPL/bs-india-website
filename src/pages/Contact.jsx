@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { PRODUCTS } from '../data/products';
-import Accent from '../components/Accent';
 import './Contact.css';
 export default function Contact() {
   const [form,setForm]=useState({name:'',company:'',email:'',phone:'',product:'',message:'',type:'enquiry'});
@@ -16,7 +15,7 @@ export default function Contact() {
   return (
     <main className="contact-page">
       <div className="pg-hero"><div className="pg-hero-inner">
-        <h1><Accent/>Contact Us</h1>
+        <h1 className="bs-mark">Contact Us</h1>
         <p>Our team is here to support you — from product selection to technical guidance.</p>
       </div></div>
       <div className="ct-inner">

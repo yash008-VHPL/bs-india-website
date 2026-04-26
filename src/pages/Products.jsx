@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PRODUCTS, SPECIES } from '../data/products';
-import Accent from '../components/Accent';
 import './Products.css';
 
 export default function Products() {
@@ -28,7 +27,7 @@ export default function Products() {
           <div className="sb-div">Animal Nutrition</div>
           <div className="sb-tag">For extra performance.</div>
         </div>
-        <div className="sb-title"><h2><Accent/>Product Finder</h2></div>
+        <div className="sb-title"><h2 className="bs-mark">Product Finder</h2></div>
         <input className="sb-search" type="text" placeholder="Search …" value={search} onChange={e=>setSearch(e.target.value)}/>
         <div className="sb-filter">
           <button className="sb-ftoggle" onClick={()=>setTypeOpen(o=>!o)}>Type <span>{typeOpen?'−':'+'}</span></button>

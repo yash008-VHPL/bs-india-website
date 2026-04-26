@@ -1,8 +1,1 @@
-/* Accent wrapper — zero-width inline span so it doesn't push text */
-.bs-accent-wrap {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  position: relative;
-  vertical-align: baseline;
-}
+/* Accent mark handled by .bs-mark CSS class in index.css */

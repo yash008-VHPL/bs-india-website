@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
-import Accent from '../components/Accent';
 import './Home.css';
 
 const HERO_IMAGES = [
@@ -22,8 +21,7 @@ export default function Home() {
           ))}
         </div>
         <div className="hero-caption">
-          <Accent size={12} />
-          <h1>Improving Livestock Performance<br/>Across India</h1>
+          <h1 className="bs-mark">Improving Livestock Performance<br/>Across India</h1>
         </div>
       </section>
 
@@ -42,7 +40,7 @@ export default function Home() {
       <section className="home-about">
         <div className="home-about-inner">
           <div className="home-about-text">
-            <h2><Accent/>Our Story</h2>
+            <h2 className="bs-mark">Our Story</h2>
             <p>Berg + Schmidt India has been present in India since 2001, bringing world-class nutritional science to India's poultry and dairy sectors. With over two decades of domestic experience and the backing of a group with over 75 years of global expertise, we combine international knowledge with deep local understanding.</p>
             <p>Our team knows Indian breeds, Indian raw materials, and Indian farming conditions — and we apply that knowledge every time we make a recommendation.</p>
             <Link to="/company" className="btn-outline">Learn More →</Link>
@@ -57,7 +55,7 @@ export default function Home() {
 
       <section className="home-products">
         <div className="home-products-header">
-          <h2><Accent/>Our Solutions</h2>
+          <h2 className="bs-mark">Our Solutions</h2>
           <p>Science-based feed additives for India's poultry and dairy industries.</p>
         </div>
         <div className="solutions-split">
@@ -99,7 +97,7 @@ export default function Home() {
 
       <section className="home-cta">
         <div className="home-cta-inner">
-          <h2><Accent/>Partner with Berg + Schmidt India</h2>
+          <h2 className="bs-mark">Partner with Berg + Schmidt India</h2>
           <p>Get expert guidance on the right nutritional solution for your operation.</p>
           <Link to="/contact" className="btn-white">Contact Our Team →</Link>
         </div>

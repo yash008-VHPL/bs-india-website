@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import IndiaMap from '../components/IndiaMap';
-import Accent from '../components/Accent';
 import './Company.css';
 
 const CAPS = [
@@ -17,7 +16,7 @@ export default function Company() {
     <main className="company-page">
       <div className="pg-hero">
         <div className="pg-hero-inner">
-          <h1><Accent/>About Berg + Schmidt India</h1>
+          <h1 className="bs-mark">About Berg + Schmidt India</h1>
           <p>World-class animal nutrition science. Applied for India.</p>
         </div>
       </div>
@@ -25,7 +24,7 @@ export default function Company() {
       <section className="co-sec">
         <div className="co-sec-inner two-col">
           <div className="co-text">
-            <h2><Accent/>Present in India Since 2001</h2>
+            <h2 className="bs-mark">Present in India Since 2001</h2>
             <p>Berg + Schmidt India Pvt. Ltd. has been operating in India since 2001, headquartered in Pune, Maharashtra. The mandate from day one has been to bring the nutritional science of a group with over 75 years of global expertise to India's poultry and dairy sectors — and to make it work for Indian producers.</p>
             <p>Over more than two decades of domestic operations, we have built a team with genuine roots in Indian animal agriculture — people who understand the breeds, the raw materials, the climate challenges, and the economics of Indian livestock production. That accumulated knowledge is what allows us to translate global science into field-level results.</p>
             <p>Today, Berg + Schmidt India serves producers, nutritionists, and feed manufacturers across the country — with a focused presence in poultry and dairy.</p>
@@ -45,7 +44,7 @@ export default function Company() {
         <div className="co-sec-inner">
           <div className="two-col" style={{alignItems:'center'}}>
             <div>
-              <h2><Accent/>58 Locations Across India</h2>
+              <h2 className="bs-mark">58 Locations Across India</h2>
               <p>Our field presence spans India's key livestock geographies — from the large integrated poultry operations of Andhra Pradesh and Telangana to the dairy heartlands of Gujarat, Punjab, and Maharashtra. We cover smallholder dairy clusters in Uttar Pradesh and Bihar as readily as the commercial poultry belts of Tamil Nadu and Karnataka.</p>
               <p>This breadth of presence means our technical team understands local raw material profiles, local breed characteristics, and local production challenges — and can provide support that is genuinely relevant to each region's conditions.</p>
               <div className="pres-stats">
@@ -61,7 +60,7 @@ export default function Company() {
 
       <section className="co-sec">
         <div className="co-sec-inner">
-          <h2 style={{marginBottom:'24px'}}><Accent/>Global Expertise. Local Knowledge.</h2>
+          <h2 className="bs-mark">Global Expertise. Local Knowledge.</h2>
           <div className="gl-grid">
             <div className="gl-card gl-card--g">
               <div className="gl-head"><span className="gl-ico">🌍</span><h3>Global Expertise</h3></div>
@@ -89,7 +88,7 @@ export default function Company() {
 
       <section className="co-sec co-sec--dark">
         <div className="co-sec-inner">
-          <h2 style={{justifyContent:'center',marginBottom:'8px',color:'#fff'}}><Accent size={14} color="var(--green)" />Our Team</h2>
+          <h2 className="bs-mark-green" style={{color:"#fff"}}>Our Team</h2>
           <p style={{textAlign:'center',color:'rgba(255,255,255,.7)',marginBottom:'32px',fontSize:'.95rem'}}>A leadership team combining international exposure with deep, practical knowledge of Indian livestock production.</p>
           <div className="pillars-grid">
             {CAPS.map(c=><div className="pillar-card" key={c.title}>
@@ -103,7 +102,7 @@ export default function Company() {
 
       <section className="co-cta">
         <div className="co-cta-inner">
-          <h2><Accent/>Talk to Our Team</h2>
+          <h2 className="bs-mark">Talk to Our Team</h2>
           <p>Whether you are a producer, nutritionist, or feed manufacturer — we are ready to help.</p>
           <Link to="/contact" className="btn-primary">Get In Touch</Link>
         </div>
