@@ -1,44 +1,55 @@
 import './IndiaMap.css';
 
-const LOCATIONS = [
-  {
-    name: 'Head Office — Pune',
-    type: 'hq',
-    address: 'Pune, Maharashtra',
-    note: 'Headquarters & inventory hub',
-    color: '#004c3e',
-    mapsUrl: 'https://maps.google.com/?q=Pune,Maharashtra,India',
-  },
-  {
-    name: 'Production & Warehouse — Nellore',
-    type: 'production',
-    address: 'Nellore, Andhra Pradesh',
-    note: 'South India dispatch facility',
-    color: '#c0404a',
-    mapsUrl: 'https://maps.google.com/?q=Nellore,Andhra+Pradesh,India',
-  },
-];
-
-// Legend colours match actual Google My Maps pin colours:
-// HQ = green star, Production = dark red pin
-const LEGEND = [
-  { color: '#004c3e', label: 'Head Office', shape: 'star' },
-  { color: '#8B2222', label: 'Production / Warehouse', shape: 'circle' },
-  { color: '#f59e0b', label: 'Partner / Distributor', shape: 'circle' },
-  { color: '#4cb496', label: 'Agent (BDE)', shape: 'circle' },
-];
-
 const MAPS_EMBED_SRC =
   'https://www.google.com/maps/d/embed?mid=12GPpbIxdSWP-Mnty621NXPZJQkOpU4g';
 
-// Height of the Google My Maps header bar (profile picture + title)
-const HEADER_H = 60;
+const HEADER_H = 60; // px height of Google My Maps profile bar to hide
+
+const LEGEND = [
+  {
+    color: '#1e7e34',
+    label: 'Head Office',
+    icon: 'star',
+  },
+  {
+    color: '#8B2222',
+    label: 'Production / Warehouse',
+    icon: 'pin',
+  },
+];
+
+function StarIcon({ color }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+      <polygon
+        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+        fill={color}
+        stroke="#fff"
+        strokeWidth="1"
+      />
+    </svg>
+  );
+}
+
+function PinIcon({ color }) {
+  return (
+    <svg width="14" height="18" viewBox="0 0 14 18" style={{ flexShrink: 0 }}>
+      <path
+        d="M7 0C3.13 0 0 3.13 0 7c0 5.25 7 11 7 11s7-5.75 7-11c0-3.87-3.13-7-7-7z"
+        fill={color}
+        stroke="#fff"
+        strokeWidth="1"
+      />
+      <circle cx="7" cy="7" r="2.5" fill="#fff" />
+    </svg>
+  );
+}
 
 export default function IndiaMap() {
   return (
     <div className="india-map-wrap">
 
-      {/* Clip the profile picture header out of view */}
+      {/* Map — clips the Google My Maps profile bar (photo + name) */}
       <div className="india-map-clip">
         <iframe
           title="Berg+Schmidt India Locations"
@@ -51,35 +62,20 @@ export default function IndiaMap() {
         />
       </div>
 
-      {/* Location cards */}
-      <div className="india-map-cards">
-        {LOCATIONS.map(loc => (
-          <a key={loc.name} href={loc.mapsUrl} target="_blank" rel="noreferrer"
-            className="india-map-card" style={{ borderLeftColor: loc.color }}>
-            <div className="india-map-card-dot" style={{ background: loc.color }} />
-            <div>
-              <div className="india-map-card-name">{loc.name}</div>
-              <div className="india-map-card-addr">{loc.address}</div>
-              <div className="india-map-card-note">{loc.note}</div>
-            </div>
-          </a>
-        ))}
-      </div>
-
-      {/* Legend — all same size, correctly colour-coded to match map */}
+      {/* Legend — sits below the map, clean and readable */}
       <div className="india-map-legend">
-        {LEGEND.map(({ color, label, shape }) => (
+        <span className="india-map-legend-title">Map key</span>
+        {LEGEND.map(({ color, label, icon }) => (
           <div key={label} className="india-map-legend-item">
-            {shape === 'star'
-              ? <svg width="14" height="14" viewBox="0 0 24 24" fill={color} style={{ flexShrink: 0 }}>
-                  <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
-                </svg>
-              : <div className="india-map-legend-dot" style={{ background: color }} />
+            {icon === 'star'
+              ? <StarIcon color={color} />
+              : <PinIcon color={color} />
             }
             <span>{label}</span>
           </div>
         ))}
       </div>
+
     </div>
   );
 }
