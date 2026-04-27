@@ -36,7 +36,7 @@ const LEGEND = [
 // Google Maps embed — shows both Pune and Nellore with a zoom level that fits both.
 // No API key required. Replace with a Google My Maps embed URL when ready.
 const MAPS_EMBED_SRC =
-  'https://maps.google.com/maps?q=India&t=m&z=5&ie=UTF8&output=embed';
+  'https://www.google.com/maps/d/embed?mid=12GPpbIxdSWP-Mnty621NXPZJQkOpU4g';
 
 export default function IndiaMap() {
   return (
