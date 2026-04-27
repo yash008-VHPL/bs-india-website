@@ -32,7 +32,7 @@ export default function Contact() {
           </div>
           <div className="ct-card" style={{background:'var(--mint-light)'}}>
             <h3 style={{color:'var(--green-dark)'}}>About Berg + Schmidt India</h3>
-            <p style={{fontSize:'.82rem',color:'var(--text-mid)',lineHeight:'1.7'}}>Berg + Schmidt India Pvt. Ltd. has been serving India's poultry and dairy industries since 2001, bringing world-class animal nutrition science to Indian producers.</p>
+            <p style={{fontSize:'.82rem',color:'var(--text-mid)',lineHeight:'1.7'}}>Berg + Schmidt India Pvt. Ltd. has been serving India's poultry and dairy industries since 2002, bringing world-class animal nutrition science to Indian producers.</p>
           </div>
         </div>
         <div className="ct-form-wrap">

@@ -54,13 +54,6 @@ export const PRODUCTS = [
     applications:['Broiler complete feeds','Layer diets','Maize-soya and alternative cereal-based rations'],
     packaging:'Available in 25 kg bags' },
 
-  { id:'hienfat-sa-poultry', name:'HiEnFat SA', subtitle:'High-Energy Saturated Fat for Poultry', type:'Saturated Fat', species:['poultry'],
-    tagline:'High-energy saturated fat blend providing concentrated, stable energy for broiler and layer diets in demanding production conditions.',
-    description:`HiEnFat SA is a saturated fat supplement formulated to deliver a high and consistent energy value in poultry diets. Its predominantly saturated fatty acid profile provides excellent oxidative stability — a significant advantage in India's tropical climate, where rancidity in feed fats can rapidly undermine performance. HiEnFat SA is particularly valuable in formulations requiring high energy density without relying solely on liquid fats.`,
-    benefits:['High saturated fatty acid content for oxidative stability','Consistent energy value across batches','Stable under Indian tropical storage conditions','Suitable for pelleted and mash diets','Effective in both broiler and layer applications'],
-    applications:['Broiler grower and finisher diets','Layer diets','Pelleted and mash feed systems'],
-    packaging:'Available in 25 kg bags' },
-
   { id:'indovax', name:'Indovax Vaccine', subtitle:'Poultry Vaccination Programme Support', type:'Vaccine', species:['poultry'],
     tagline:"Indigenously developed, field-validated vaccine solutions for India's poultry disease challenges.",
     description:`Berg + Schmidt India distributes Indovax vaccination solutions — developed by Indovax Pvt. Ltd., one of India's leading poultry vaccine manufacturers — to complement our nutritional portfolio with a complete flock health offering. Vaccination is the foundation of disease prevention in commercial poultry, and effective programmes protect the nutritional investment made in every flock.`,

@@ -24,14 +24,14 @@ export default function Company() {
       <section className="co-sec">
         <div className="co-sec-inner two-col">
           <div className="co-text">
-            <h2 className="bs-mark">Present in India Since 2001</h2>
-            <p>Berg + Schmidt India Pvt. Ltd. has been operating in India since 2001, headquartered in Pune, Maharashtra. The mandate from day one has been to bring the nutritional science of a group with over 75 years of global expertise to India's poultry and dairy sectors — and to make it work for Indian producers.</p>
+            <h2 className="bs-mark">Present in India Since 2002</h2>
+            <p>Berg + Schmidt India Pvt. Ltd. has been operating in India since 2002, headquartered in Pune, Maharashtra. The mandate from day one has been to bring the nutritional science of a group with over 75 years of global expertise to India's poultry and dairy sectors — and to make it work for Indian producers.</p>
             <p>Over more than two decades of domestic operations, we have built a team with genuine roots in Indian animal agriculture — people who understand the breeds, the raw materials, the climate challenges, and the economics of Indian livestock production. That accumulated knowledge is what allows us to translate global science into field-level results.</p>
             <p>Today, Berg + Schmidt India serves producers, nutritionists, and feed manufacturers across the country — with a focused presence in poultry and dairy.</p>
           </div>
           <div className="co-stats">
             {[
-              {num:'2001',label:'Present in India since'},
+              {num:'2002',label:'Operations commenced'},
               {num:'20+',label:'Years of domestic operations'},
               {num:'75+',label:'Years of global group expertise'},
               {num:'58',label:'Locations across India'},

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 186" role="img" aria-label="Berg+Schmidt Animal Nutrition — For extra performance.">
+  <title>Berg+Schmidt Animal Nutrition</title>
+  
+  <!-- 
+    Exact replica of the Berg+Schmidt Animal Nutrition wordmark
+    Sourced from the Lottie animation at frame 60 (final state)
+    Colors: #14483c (dark green) and #5fc296 (teal/light green)
+  -->
+
+  <!-- Brand cross mark — appears at top-left, two-color J-hook design -->
+  <!-- Teal half: upper-left quadrant -->
+  <g transform="translate(59,60.5) scale(1.13)">
+    <!-- Path from Lottie layer 0 "Unbenannt-2 Outlines", fill #4CB496 -->
+    <path d="M 4.956,-30.15 L -30.15,-30.15 L -30.15,-5.314 L 5.313,-5.314 L 5.313,30.15 L 30.15,30.15 L 30.15,-4.957 C 30.15,-18.849 18.848,-30.15 4.956,-30.15 Z" fill="#5fc296"/>
+    <!-- Dark half: rotated 180deg -->
+    <path d="M -4.956,30.15 L 30.15,30.15 L 30.15,5.314 L -5.313,5.314 L -5.313,-30.15 L -30.15,-30.15 L -30.15,4.957 C -30.15,18.849 -18.848,30.15 -4.956,30.15 Z" fill="#14483c"/>
+  </g>
+
+  <!-- "Berg+Schmidt" wordmark — dark green, bold -->
+  <!-- Using text elements matching the exact style from the global site -->
+  <text x="100" y="72" 
+    font-family="'Neue Haas Grotesk', 'Inter', -apple-system, sans-serif"
+    font-weight="800" 
+    font-size="60" 
+    letter-spacing="-1.5"
+    fill="#14483c">Berg+Schmidt</text>
+
+  <!-- "Animal Nutrition" — teal, semibold -->
+  <text x="100" y="128"
+    font-family="'Neue Haas Grotesk', 'Inter', -apple-system, sans-serif"
+    font-weight="600"
+    font-size="42"
+    fill="#5fc296">Animal Nutrition</text>
+
+  <!-- "For extra performance." — grey, regular -->
+  <text x="100" y="165"
+    font-family="'Neue Haas Grotesk', 'Inter', -apple-system, sans-serif"
+    font-weight="400"
+    font-size="24"
+    fill="#888">For extra performance.</text>
+</svg>
