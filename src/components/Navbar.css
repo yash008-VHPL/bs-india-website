@@ -1,3 +1,11 @@
+/* Sticky wrapper — topbar AND nav scroll together and stay pinned at top */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 12px rgba(0,76,62,.08);
+}
+
 /* ── TOP UTILITY BAR ── */
 .topbar {
   background: var(--green);
@@ -24,9 +32,8 @@
 
 /* ── STICKY NAV — matches global site #sticky-nav exactly ── */
 .sticky-nav {
-  position: sticky;
-  top: 0;
-  z-index: 200;
+  position: relative;
+  z-index: 1;
   height: 68px;
   display: flex;
   align-items: center;

@@ -28,8 +28,9 @@ export default function Navbar() {
   useEffect(() => { setOpen(false); }, [pathname]);
 
   return (
-    <>
-      {/* Top utility bar — light green, always present */}
+    // Wrap BOTH topbar and nav in one sticky container — they move together
+    <header className="site-header">
+      {/* Top utility bar */}
       <div className="topbar">
         <div className="topbar-inner">
           <span className="topbar-entity">Berg + Schmidt India Pvt. Ltd.</span>
@@ -41,18 +42,10 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/*
-        Sticky nav — always at top:0, position:sticky (same as global site #sticky-nav)
-        - Transparent background when at top of homepage
-        - White background + border on all other pages or when scrolled
-        - Logo on left (animated Lottie on home, static wordmark elsewhere)
-        - Nav links on right
-      */}
+      {/* Main nav */}
       <nav className={`sticky-nav${isHome && !scrolled ? ' sticky-nav--transparent' : ''}`}>
         <div className="sticky-nav-logo">
-          <Link to="/">
-            <Logo size="sm" animate={false} white={isHome && !scrolled} />
-          </Link>
+          <Link to="/"><Logo size="sm" white={isHome && !scrolled} /></Link>
         </div>
         <ul className={`sticky-nav-links${open ? ' open' : ''}`}>
           {NAV.map(({ label, href, badge }) => (
@@ -71,6 +64,6 @@ export default function Navbar() {
           <span /><span /><span />
         </button>
       </nav>
-    </>
+    </header>
   );
 }
