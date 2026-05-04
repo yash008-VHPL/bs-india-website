@@ -45,12 +45,7 @@
   transition: background .3s, border-color .3s, box-shadow .3s;
 }
 
-/* Transparent variant — on homepage before scroll */
-.sticky-nav--transparent {
-  background: transparent;
-  border-bottom: none;
-  box-shadow: none;
-}
+
 
 .sticky-nav-logo { display: flex; align-items: center; }
 

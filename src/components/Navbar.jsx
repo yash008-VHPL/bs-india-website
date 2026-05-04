@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from './Logo';
 import './Navbar.css';
@@ -14,21 +14,9 @@ const NAV = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
-  const isHome = pathname === '/';
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => { setOpen(false); }, [pathname]);
 
   return (
-    // Wrap BOTH topbar and nav in one sticky container — they move together
     <header className="site-header">
       {/* Top utility bar */}
       <div className="topbar">
@@ -42,10 +30,10 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Main nav */}
-      <nav className={`sticky-nav${isHome && !scrolled ? ' sticky-nav--transparent' : ''}`}>
+      {/* Main nav — always solid white, always visible */}
+      <nav className="sticky-nav">
         <div className="sticky-nav-logo">
-          <Link to="/"><Logo size="sm" white={isHome && !scrolled} /></Link>
+          <Link to="/"><Logo size="sm" /></Link>
         </div>
         <ul className={`sticky-nav-links${open ? ' open' : ''}`}>
           {NAV.map(({ label, href, badge }) => (
