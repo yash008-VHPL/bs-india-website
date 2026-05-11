@@ -25,7 +25,7 @@ export default function Footer() {
             <li><Link to="/products/bergafat-dln2">Bergafat DLN2</Link></li>
             <li><Link to="/products/bergafat-fg">Bergafat FG</Link></li>
             <li><Link to="/products/bergaapur">Bergaapur</Link></li>
-            <li><Link to="/products/bergaboost">Bergaboost</Link></li>
+            <li><Link to="/products/bergaboost">BergaBoost</Link></li>
             <li><Link to="/products" className="footer-more">More →</Link></li>
           </ul>
         </div>

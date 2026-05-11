@@ -16,8 +16,8 @@ export const PRODUCTS = [
   { id:'bergaapur', logo:'/product-logos/bergaapur.png', name:'Bergaapur',
     subtitle:'Natural Emulsifier with Superior Nutrition',
     type:'Phospholipid Concentrate', species:['poultry'], vertical:'poultry-supplement',
-    tagline:'Formulated from De-oiled soy lecithin using the latest processing technology to maximise broiler performance.',
-    description:`Bergaapur is a complex of phospholipids specifically formulated from De-oiled soy lecithin to maximise broiler performance, using the latest processing technology. Phospholipids are essential for fat emulsification, intestinal absorption, and cell membrane integrity. In broilers, adequate phospholipid supplementation significantly enhances the digestibility of dietary fats and fat-soluble vitamins, supports early gut development in day-old chicks, and promotes liver health.`,
+    tagline:'Formulated from de-oiled soy lecithin using the latest processing technology to maximise broiler performance.',
+    description:`Bergaapur is a complex of phospholipids specifically formulated from de-oiled soy lecithin to maximise broiler performance, using the latest processing technology. Phospholipids are essential for fat emulsification, intestinal absorption, and cell membrane integrity. In broilers, adequate phospholipid supplementation significantly enhances the digestibility of dietary fats and fat-soluble vitamins, supports early gut development in day-old chicks, and promotes liver health.`,
     benefits:[
       'Significantly improves fat and energy digestibility, thereby improving FCR and body weight',
       'Supports early intestinal development in day-old chicks',
@@ -27,18 +27,18 @@ export const PRODUCTS = [
       'Stimulates immune system, thereby reducing morbidity and mortality',
     ],
     applications:[
-      'Broiler prestarter/starter feed: 0.5–1.0 Kg/MT',
-      'Broiler grower feed: 0.3–0.5 Kg/MT',
-      'Broiler finisher feed: 0.3–0.5 Kg/MT',
+      'Broiler prestarter/starter feed: 0.5–1.0 kg/MT',
+      'Broiler grower feed: 0.3–0.5 kg/MT',
+      'Broiler finisher feed: 0.3–0.5 kg/MT',
     ],
     dosageNote:'The correct inclusion depends on the age of the bird and fat content in the diet. Higher fat content in the feed requires more phospholipids. Must be added to mash feed before pelleting.',
-    packaging:'20 Kg Bag (1 Kg plastic pouch × 20 Kg bag)' },
+    packaging:'20 kg bag (1 kg plastic pouch × 20 kg bag)' },
 
   { id:'bergaboost', logo:'/product-logos/bergaboost.png', name:'BergaBoost',
     subtitle:'Improves Consistency in Egg Production',
     type:'Phospholipid Concentrate', species:['poultry'], vertical:'poultry-supplement',
     tagline:'A specially designed nutritional package of pure phospholipids to help laying hens and breeders sustain peak production.',
-    description:`Bergaboost is a specially designed nutritional package comprising pure phospholipids for laying hens and breeders — helping them recharge on a day-to-day basis to cope with production-related stress. During peak production, layers and breeders have an extraordinarily high demand for phospholipids to support the continuous synthesis of yolk lipoproteins — the building blocks of egg yolk. Bergaboost delivers a sustained supply of bioavailable phospholipids that maintain peak production longer, improve yolk quality, strengthen shell integrity, maintain liver cell integrity, and support overall hen health.`,
+    description:`BergaBoost is a specially designed nutritional package comprising pure phospholipids for laying hens and breeders — helping them recharge on a day-to-day basis to cope with production-related stress. During peak production, layers and breeders have an extraordinarily high demand for phospholipids to support the continuous synthesis of yolk lipoproteins — the building blocks of egg yolk. BergaBoost delivers a sustained supply of bioavailable phospholipids that maintain peak production longer, improve yolk quality, strengthen shell integrity, maintain liver cell integrity, and support overall hen health.`,
     benefits:[
       'Improves consistency in egg production and sustains peak production for longer',
       'Improves egg weight, yolk size, yolk colour and shell strength',
@@ -50,17 +50,17 @@ export const PRODUCTS = [
     ],
     applications:[
       'Layers: 300–500 g/ton of feed from start of lay through entire lifecycle',
-      'Breeders: 1 Kg/ton of feed throughout the lifecycle',
-      'Fatty liver syndrome: 1 Kg/ton for 30 days, followed by 300–500 g/ton',
+      'Breeders: 1 kg/ton of feed throughout the lifecycle',
+      'Fatty liver syndrome: 1 kg/ton for 30 days, followed by 300–500 g/ton',
     ],
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
-    packaging:'20 Kg Bag (1 Kg plastic pouch × 20 Kg bag)' },
+    packaging:'20 kg bag (1 kg plastic pouch × 20 kg bag)' },
 
   { id:'lipovital-gl90', logo:'/product-logos/lipovital-gl90.png', name:'LipoVital GL90',
     subtitle:'The Efficient Nutritional & Physiological MCFA Solution',
     type:'Gut Health', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Minimum 90% glycerol monolaurate — the highest-potency MCFA solution available for poultry gut health.',
-    description:`Lipovital GL-90 is a monoglyceride supplement with a minimum of 90% glycerol monolaurate (monolaurin) — the most biologically active form of medium-chain fatty acids. Monolaurin has well-documented antibacterial, antiviral, antifungal and anti-inflammatory properties. Medium-chain fatty acids are also a rapid energy source for intestinal epithelial cells, supporting gut wall integrity and nutrient absorptive capacity, and acting as a natural immune modulator.`,
+    description:`LipoVital GL90 is a monoglyceride supplement with a minimum of 90% glycerol monolaurate (monolaurin) — the most biologically active form of medium-chain fatty acids. Monolaurin has well-documented antibacterial, antiviral, antifungal and anti-inflammatory properties. Medium-chain fatty acids are also a rapid energy source for intestinal epithelial cells, supporting gut wall integrity and nutrient absorptive capacity, and acting as a natural immune modulator.`,
     benefits:[
       'Minimum 90% glycerol monolaurate — highest potency available',
       'Effective against G(+ve) bacteria and several G(-ve) bacteria',
@@ -71,9 +71,9 @@ export const PRODUCTS = [
       'Improves health status, thereby improving performance and reducing mortality',
       'Neutral taste and smell; free-flowing and easy to handle',
     ],
-    applications:['Poultry and Aqua: 500 g–1 Kg/ton of feed'],
+    applications:['Poultry and Aqua: 500 g–1 kg/ton of feed'],
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
-    packaging:'20 Kg Bag in corrugated box' },
+    packaging:'20 kg bag in corrugated box' },
 
   { id:'poulscoby', logo:'/product-logos/poulscoby.png', name:'PoulScoBy',
     subtitle:'Unique Combination of Monogastric Specific Yeast & Spore-Forming Bacteria',
@@ -93,7 +93,7 @@ export const PRODUCTS = [
     ],
     applications:['250–500 g/ton of feed in poultry diet'],
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
-    packaging:'20 Kg Bag (1 Kg plastic pouch × 20 Kg bag)' },
+    packaging:'20 kg bag (1 kg plastic pouch × 20 kg bag)' },
 
   { id:'hienzym', logo:'/product-logos/hienzym.png', name:'HiEnZym',
     subtitle:'Synergistic Multi Enzyme Performance Enhancer',
@@ -113,7 +113,7 @@ export const PRODUCTS = [
     ],
     applications:['100 g/ton of feed in poultry diet'],
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
-    packaging:'20 Kg Bag' },
+    packaging:'20 kg bag' },
 
   { id:'bergafat-fg', name:'BergaFat FG',
     subtitle:'Phospholipid-Emulsified & Highly Digestible Feed Fat for Layers',
@@ -135,7 +135,7 @@ export const PRODUCTS = [
       'Add to mixer and mix with other feed ingredients, or spray on pellet surface',
     ],
     dosageNote:'Dosage can be arrived at in consultation with the nutritionist/veterinarian.',
-    packaging:'Road tankers or 30 Kg plastic cans with unique seals' },
+    packaging:'Road tankers or 30 kg plastic cans with unique seals' },
 
   // ── POULTRY COMMODITY ────────────────────────────────────────────────────
 
