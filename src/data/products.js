@@ -115,7 +115,7 @@ export const PRODUCTS = [
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 Kg Bag' },
 
-  { id:'bergafat-fg', name:'Bergafat FG',
+  { id:'bergafat-fg', name:'BergaFat FG',
     subtitle:'Phospholipid-Emulsified & Highly Digestible Feed Fat for Layers',
     type:'Liquid Fat', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Revolutionising layer energy supplementation — purpose-built fat with far more than just calorific value.',
