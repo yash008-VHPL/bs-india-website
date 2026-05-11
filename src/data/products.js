@@ -13,7 +13,7 @@ export const PRODUCTS = [
 
   // ── POULTRY FEED SUPPLEMENT DIVISION ────────────────────────────────────
 
-  { id:'bergaapur', name:'Bergaapur',
+  { id:'bergaapur', logo:'/product-logos/bergaapur.png', name:'Bergaapur',
     subtitle:'Natural Emulsifier with Superior Nutrition',
     type:'Phospholipid Concentrate', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Formulated from De-oiled soy lecithin using the latest processing technology to maximise broiler performance.',
@@ -34,7 +34,7 @@ export const PRODUCTS = [
     dosageNote:'The correct inclusion depends on the age of the bird and fat content in the diet. Higher fat content in the feed requires more phospholipids. Must be added to mash feed before pelleting.',
     packaging:'20 Kg Bag (1 Kg plastic pouch × 20 Kg bag)' },
 
-  { id:'bergaboost', name:'Bergaboost',
+  { id:'bergaboost', logo:'/product-logos/bergaboost.png', name:'BergaBoost',
     subtitle:'Improves Consistency in Egg Production',
     type:'Phospholipid Concentrate', species:['poultry'], vertical:'poultry-supplement',
     tagline:'A specially designed nutritional package of pure phospholipids to help laying hens and breeders sustain peak production.',
@@ -56,7 +56,7 @@ export const PRODUCTS = [
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 Kg Bag (1 Kg plastic pouch × 20 Kg bag)' },
 
-  { id:'lipovital-gl90', name:'Lipovital GL-90',
+  { id:'lipovital-gl90', logo:'/product-logos/lipovital-gl90.png', name:'LipoVital GL90',
     subtitle:'The Efficient Nutritional & Physiological MCFA Solution',
     type:'Gut Health', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Minimum 90% glycerol monolaurate — the highest-potency MCFA solution available for poultry gut health.',
@@ -75,7 +75,7 @@ export const PRODUCTS = [
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 Kg Bag in corrugated box' },
 
-  { id:'poulscoby', name:'PoulScoBy',
+  { id:'poulscoby', logo:'/product-logos/poulscoby.png', name:'PoulScoBy',
     subtitle:'Unique Combination of Monogastric Specific Yeast & Spore-Forming Bacteria',
     type:'Probiotic', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Saccharomyces boulardii, three Bacillus strains and Seaweed Extract — a complete, science-backed antibiotic alternative.',
@@ -95,7 +95,7 @@ export const PRODUCTS = [
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 Kg Bag (1 Kg plastic pouch × 20 Kg bag)' },
 
-  { id:'hienzym', name:'HiEnZym',
+  { id:'hienzym', logo:'/product-logos/hienzym.png', name:'HiEnZym',
     subtitle:'Synergistic Multi Enzyme Performance Enhancer',
     type:'Enzyme Supplement', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Multi-strain, multi-enzyme preparation using the latest liquid fermentation technology to unlock hidden energy and boost performance.',

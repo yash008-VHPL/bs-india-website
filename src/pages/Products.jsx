@@ -114,7 +114,10 @@ function ProductRow({ p }) {
   return (
     <Link to={`/products/${p.id}`} className="prod-row">
       <div className="prod-row-hdr">
-        <h3><span className="sol-plus">+</span> {p.name}</h3>
+        {p.logo
+          ? <img src={p.logo} alt={p.name} className="prod-row-logo" />
+          : <h3><span className="sol-plus">+</span> {p.name}</h3>
+        }
         <div className="prod-row-badges">
           <span className="prod-row-type">{p.type}</span>
           <span className="prod-row-vert">{VERT[p.vertical]}</span>

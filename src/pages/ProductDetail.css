@@ -56,3 +56,13 @@ h1 {
   border-left: 3px solid var(--green);
   border-radius: 0 4px 4px 0;
 }
+
+/* Product logo image */
+.pd-product-logo {
+  height: 60px;
+  width: auto;
+  max-width: 340px;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 8px;
+}

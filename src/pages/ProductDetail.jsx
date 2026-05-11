@@ -17,7 +17,10 @@ export default function ProductDetail() {
             {p.species.map(s=><span key={s} className="stag">{SPECIES.find(x=>x.id===s)?.label}</span>)}
             <span className="pd-type-badge">{p.type}</span>
           </div>
-          <h1><span className="sol-plus">+ </span>{p.name}</h1>
+          {p.logo
+            ? <img src={p.logo} alt={p.name} className="pd-product-logo" />
+            : <h1><span className="sol-plus">+ </span>{p.name}</h1>
+          }
           <p className="pd-sub">{p.subtitle}</p>
           <p className="pd-tgl">"{p.tagline}"</p>
           <div className="pd-body">
