@@ -25,7 +25,11 @@ export default function ProductDetail() {
             <h2>Key Benefits</h2>
             <ul className="ben-list">{p.benefits.map((b,i)=><li key={i}><span className="ben-dot"/>{b}</li>)}</ul>
             <div className="pd-grid">
-              <div><h2>Applications</h2><ul className="app-list">{p.applications.map((a,i)=><li key={i}>{a}</li>)}</ul></div>
+              <div>
+                <h2>Applications & Dosage</h2>
+                <ul className="app-list">{p.applications.map((a,i)=><li key={i}>{a}</li>)}</ul>
+                {p.dosageNote && <p className="pd-dose-note">{p.dosageNote}</p>}
+              </div>
               <div><h2>Packaging</h2><p className="pd-pack">{p.packaging}</p></div>
             </div>
             <div className="pd-cta">

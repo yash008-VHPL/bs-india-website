@@ -45,3 +45,14 @@ h1 {
 .pd-sb-dark h3 { color: var(--green); }
 .pd-sb-dark p { font-size: .82rem; color: rgba(255,255,255,.75); line-height: 1.6; }
 @media (max-width: 820px) { .pd-inner { grid-template-columns: 1fr; gap: 28px; padding: 24px 16px; } .pd-grid { grid-template-columns: 1fr; } }
+
+.pd-dose-note {
+  font-size: .82rem;
+  color: var(--text-mid);
+  line-height: 1.65;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--mint-light);
+  border-left: 3px solid var(--green);
+  border-radius: 0 4px 4px 0;
+}

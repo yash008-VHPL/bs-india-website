@@ -25,7 +25,7 @@ export default function Company() {
         <div className="co-sec-inner two-col">
           <div className="co-text">
             <h2 className="bs-mark">Present in India Since 2002</h2>
-            <p>Berg + Schmidt India Pvt. Ltd. has been operating in India since 2002, headquartered in Pune, Maharashtra. The mandate from day one has been to bring the nutritional science of a group with over 75 years of global expertise to India's poultry and dairy sectors — and to make it work for Indian producers.</p>
+            <p>Established in 2002 with its Head Office in Pune, Berg+Schmidt India Pvt. Ltd. (BSI) is dedicated to delivering high-quality processed oil and fat solutions to the Indian market. The mandate from day one has been to bring the nutritional science of a group with over 75 years of global expertise to India's poultry and dairy sectors — and to make it work for Indian producers.</p>
             <p>Over more than two decades of domestic operations, we have built a team with genuine roots in Indian animal agriculture — people who understand the breeds, the raw materials, the climate challenges, and the economics of Indian livestock production. That accumulated knowledge is what allows us to translate global science into field-level results.</p>
             <p>Today, Berg + Schmidt India serves producers, nutritionists, and feed manufacturers across the country — with a focused presence in poultry and dairy.</p>
           </div>
@@ -45,7 +45,7 @@ export default function Company() {
           <div className="two-col" style={{alignItems:'center'}}>
             <div>
               <h2 className="bs-mark">58 Locations Across India</h2>
-              <p>Our field presence spans India's key livestock geographies — from the large integrated poultry operations of Andhra Pradesh and Telangana to the dairy heartlands of Gujarat, Punjab, and Maharashtra. We cover smallholder dairy clusters in Uttar Pradesh and Bihar as readily as the commercial poultry belts of Tamil Nadu and Karnataka.</p>
+              <p>Our extensive field presence spans the key livestock regions of India — from large-scale integrated poultry operations in Andhra Pradesh and Telangana to the dairy heartlands of Gujarat, Punjab, and Maharashtra. We also serve smallholder dairy clusters in Uttar Pradesh and Bihar, alongside the thriving commercial poultry sectors of Tamil Nadu and Karnataka and the rest of India.</p>
               <p>This breadth of presence means our technical team understands local raw material profiles, local breed characteristics, and local production challenges — and can provide support that is genuinely relevant to each region's conditions.</p>
               <div className="pres-stats">
                 <div className="pstat"><span className="pstat-num">15+</span><span className="pstat-lbl">States covered</span></div>
@@ -60,7 +60,7 @@ export default function Company() {
 
       <section className="co-sec">
         <div className="co-sec-inner">
-          <h2 className="bs-mark">Global Expertise. Local Knowledge.</h2>
+          <h2 className="bs-mark">Think Global, Act Local.</h2>
           <div className="gl-grid">
             <div className="gl-card gl-card--g">
               <div className="gl-head"><span className="gl-ico">🌍</span><h3>Global Expertise</h3></div>
