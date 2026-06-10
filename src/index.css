@@ -37,6 +37,10 @@ ul { list-style: none; }
 .bs-mark-green {
   position: relative;
   margin-left: 0.6em;
+  /* Global site sets line-height:1.2em on headings; ours inherited body 1.6,
+     which dropped the text far below the top-anchored mark (the "floating"
+     gap). Match the global value so the mark sits snug at the heading top. */
+  line-height: 1.2;
 }
 .bs-mark::before,
 .bs-mark-green::before {
