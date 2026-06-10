@@ -37,10 +37,15 @@ ul { list-style: none; }
 .bs-mark-green {
   position: relative;
   margin-left: 0.6em;
-  /* Global site sets line-height:1.2em on headings; ours inherited body 1.6,
-     which dropped the text far below the top-anchored mark (the "floating"
-     gap). Match the global value so the mark sits snug at the heading top. */
   line-height: 1.2;
+  /* The page CSS sets `h1/h2 { padding-top: 30px }`, which pushed the heading
+     TEXT 30px down inside its box while the accent mark stayed pinned to the
+     box top — that was the real "floating" gap (measured 35px vs the global
+     site's 11px). Move that 30px from padding to margin on accented headings:
+     the text returns to the box top so the mark sits snug (like the global
+     site), and the spacing above the heading is preserved. */
+  padding-top: 0;
+  margin-top: 30px;
 }
 .bs-mark::before,
 .bs-mark-green::before {
