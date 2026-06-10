@@ -25,41 +25,30 @@ button { font-family: var(--font); cursor: pointer; border: none; }
 ul { list-style: none; }
 
 /*
-  Berg+Schmidt accent mark — matches global site CSS exactly.
-  Source: an.berg-schmidt.com
-    .bs-mark { position: relative; }
-    .bs-mark::before {
-      content: url("bs-mark-red.svg");
-      height: 0.5em; width: 0.5em;
-      position: absolute; top: -0.75em; left: -0.5em;
-    }
-  
-  We match this exactly. The heading needs margin-left: 0.6em to 
-  ensure the absolutely-positioned mark (at left:-0.5em) is visible
-  and not clipped by the container.
+  Berg+Schmidt accent mark — matches the global site (an.berg-schmidt.com).
+  Global rule:  .bs-mark::before { content: url(bs-mark-red.svg);
+                height:.5em; width:.5em; top:-.75em; left:-.5em; }
+  Problem: content:url() does NOT reliably size a viewBox-only SVG, so the
+  mark rendered far larger than 0.5em and floated high above the heading.
+  Fix: render the same SVG as a fixed-size background-image (always honours
+  width/height), keeping the exact global offsets so placement matches.
 */
-.bs-mark {
-  position: relative;
-  margin-left: 0.6em;
-}
-.bs-mark::before {
-  content: url("/bs-mark.svg");
-  height: 0.5em;
-  width: 0.5em;
-  position: absolute;
-  top: -0.75em;
-  left: -0.5em;
-}
-
+.bs-mark,
 .bs-mark-green {
   position: relative;
   margin-left: 0.6em;
 }
+.bs-mark::before,
 .bs-mark-green::before {
-  content: url("/bs-mark-green.svg");
-  height: 0.5em;
-  width: 0.5em;
+  content: "";
   position: absolute;
   top: -0.75em;
   left: -0.5em;
+  width: 0.5em;
+  height: 0.5em;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
+.bs-mark::before { background-image: url("/bs-mark.svg"); }
+.bs-mark-green::before { background-image: url("/bs-mark-green.svg"); }
