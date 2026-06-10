@@ -6,6 +6,7 @@ import './IndiaMap.css';
 const C_COMPANY = '#004c3e';  // --green-dark
 const C_DAIRY = '#4cb496';    // --green
 const C_POULTRY = '#c0404a';  // --accent-red
+const C_COMMODITY = '#c8841a';// amber — Commodity Business Division
 
 /* Final on-map marker positions. A few coincident / clustered cities are
    nudged a couple of px so every pin stays legible; the number keys the
@@ -58,6 +59,11 @@ function buildMarkers() {
   map.poultry.forEach(([name, city, cover]) => {
     const proposed = name.toLowerCase().includes('proposed');
     add('p:' + city, { color: C_POULTRY, kind: 'poultry', city, detail: name, cover, proposed });
+  });
+  // Commodity reps carry explicit [x, y] (cities repeat, so positions are inline)
+  (map.commodity || []).forEach(([name, city, cover, x, y]) => {
+    n += 1;
+    out.push({ n, x, y, color: C_COMMODITY, kind: 'commodity', city, detail: name, cover });
   });
   return out;
 }
@@ -136,6 +142,7 @@ export default function IndiaMap() {
   const company = MARKERS.filter((m) => m.kind === 'company');
   const dairy = MARKERS.filter((m) => m.kind === 'dairy');
   const poultry = MARKERS.filter((m) => m.kind === 'poultry');
+  const commodity = MARKERS.filter((m) => m.kind === 'commodity');
 
   return (
     <div className="india-map-wrap">
@@ -175,6 +182,7 @@ export default function IndiaMap() {
         <LegendBlock title="Hightech Energy Feeds Locations" color={C_COMPANY} items={company} active={active} setActive={setActive} />
         <LegendBlock title="Dairy Feed Supplement Representatives" color={C_DAIRY} items={dairy} active={active} setActive={setActive} />
         <LegendBlock title="Poultry Feed Supplement Representatives" color={C_POULTRY} items={poultry} active={active} setActive={setActive} />
+        <LegendBlock title="Commodity Business Division Representatives" color={C_COMMODITY} items={commodity} active={active} setActive={setActive} />
       </div>
     </div>
   );

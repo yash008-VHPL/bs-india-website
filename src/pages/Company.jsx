@@ -42,19 +42,17 @@ export default function Company() {
 
       <section className="co-sec co-sec--mint">
         <div className="co-sec-inner">
-          <div className="two-col" style={{alignItems:'center'}}>
-            <div>
-              <h2 className="bs-mark">58 Locations Across India</h2>
-              <p>Our extensive field presence spans the key livestock regions of India — from large-scale integrated poultry operations in Andhra Pradesh and Telangana to the dairy heartlands of Gujarat, Punjab, and Maharashtra. We also serve smallholder dairy clusters in Uttar Pradesh and Bihar, alongside the thriving commercial poultry sectors of Tamil Nadu and Karnataka and the rest of India.</p>
-              <p>This breadth of presence means our technical team understands local raw material profiles, local breed characteristics, and local production challenges — and can provide support that is genuinely relevant to each region's conditions.</p>
-              <div className="pres-stats">
-                <div className="pstat"><span className="pstat-num">15+</span><span className="pstat-lbl">States covered</span></div>
-                <div className="pstat"><span className="pstat-num">58</span><span className="pstat-lbl">Active locations</span></div>
-                <div className="pstat"><span className="pstat-num">2</span><span className="pstat-lbl">Species focus areas</span></div>
-              </div>
+          <div className="map-intro">
+            <h2 className="bs-mark">58 Locations Across India</h2>
+            <p>Our extensive field presence spans the key livestock regions of India — from large-scale integrated poultry operations in Andhra Pradesh and Telangana to the dairy heartlands of Gujarat, Punjab, and Maharashtra. We also serve smallholder dairy clusters in Uttar Pradesh and Bihar, alongside the thriving commercial poultry sectors of Tamil Nadu and Karnataka and the rest of India.</p>
+            <p>This breadth of presence means our technical team understands local raw material profiles, local breed characteristics, and local production challenges — and can provide support that is genuinely relevant to each region's conditions.</p>
+            <div className="pres-stats">
+              <div className="pstat"><span className="pstat-num">15+</span><span className="pstat-lbl">States covered</span></div>
+              <div className="pstat"><span className="pstat-num">58</span><span className="pstat-lbl">Active locations</span></div>
+              <div className="pstat"><span className="pstat-num">2</span><span className="pstat-lbl">Species focus areas</span></div>
             </div>
-            <div style={{display:'flex',justifyContent:'center'}}><IndiaMap/></div>
           </div>
+          <div className="india-map-center"><IndiaMap/></div>
         </div>
       </section>
 

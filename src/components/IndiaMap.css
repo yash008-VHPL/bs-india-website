@@ -7,7 +7,7 @@
 .india-map-svg {
   width: 100%;
   height: auto;
-  max-width: 480px;
+  max-width: 560px;
   display: block;
   margin: 0 auto;
   overflow: visible;
@@ -55,8 +55,8 @@
   margin-top: 18px;
 }
 
-@media (min-width: 760px) {
-  .india-map-legend { grid-template-columns: 1fr 1fr 1fr; }
+@media (min-width: 600px) {
+  .india-map-legend { grid-template-columns: 1fr 1fr; }
 }
 
 .im-leg-block {
