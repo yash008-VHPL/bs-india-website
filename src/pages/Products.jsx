@@ -11,7 +11,7 @@ export default function Products() {
   const filtered = PRODUCTS.filter(p => {
     const q = search.toLowerCase();
     const matchSearch = !q || p.name.toLowerCase().includes(q) || p.subtitle.toLowerCase().includes(q) || p.type.toLowerCase().includes(q);
-    const matchVertical = activeVertical === 'all' || p.vertical === activeVertical;
+    const matchVertical = activeVertical === 'all' || (p.verticals || [p.vertical]).includes(activeVertical);
     const matchSp = activeSp === 'all' || p.species.includes(activeSp);
     return matchSearch && matchVertical && matchSp;
   });
@@ -80,7 +80,7 @@ export default function Products() {
           {/* Group by vertical if showing all */}
           {activeVertical === 'all'
             ? VERTICALS.map(v => {
-                const vProds = filtered.filter(p => p.vertical === v.id);
+                const vProds = filtered.filter(p => (p.verticals || [p.vertical]).includes(v.id));
                 if (!vProds.length) return null;
                 return (
                   <div key={v.id} className="prod-group">
