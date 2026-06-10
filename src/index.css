@@ -51,7 +51,10 @@ ul { list-style: none; }
 .bs-mark-green::before {
   content: "";
   position: absolute;
-  top: -0.75em;
+  /* -0.35em (not the global site's -0.75em): our Inter font has more internal
+     ascent leading than the global site's Geist, so -0.75em left an ~18px gap.
+     Pixel-measured: -0.35em puts the mark 2-4px above the caps — snug. */
+  top: -0.35em;
   left: -0.5em;
   width: 0.5em;
   height: 0.5em;
