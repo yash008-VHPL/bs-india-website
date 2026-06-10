@@ -1,81 +1,181 @@
+import { useState } from 'react';
+import map from './indiaMapData.json';
 import './IndiaMap.css';
 
-const MAPS_EMBED_SRC =
-  'https://www.google.com/maps/d/embed?mid=12GPpbIxdSWP-Mnty621NXPZJQkOpU4g';
+/* Theme colours (mirrors CSS custom properties) */
+const C_COMPANY = '#004c3e';  // --green-dark
+const C_DAIRY = '#4cb496';    // --green
+const C_POULTRY = '#c0404a';  // --accent-red
 
-const HEADER_H = 60; // px height of Google My Maps profile bar to hide
+/* Final on-map marker positions. A few coincident / clustered cities are
+   nudged a couple of px so every pin stays legible; the number keys the
+   legend below. [x, y] are in the SVG's projected coordinate space. */
+const POS = {
+  'c:Head Office': [131, 349],
+  'c:Shivane (Pune)': [124, 360],
+  'c:Nagpur': [215, 304],
+  'c:Kolhapur': [137, 380],
+  'c:Kolkata (W. outskirts)': [354, 272],
+  'c:Badlapur': [118, 330],
+  'd:Ludhiana': [156, 130],
+  'd:Jaipur': [162, 206],
+  'd:Ahmedabad': [111, 272],
+  'd:Indore': [163, 277],
+  'd:Kolhapur': [148, 386],
+  'p:Namakkal': [200, 475],
+  'p:Bengaluru': [191, 444],
+  'p:Hyderabad': [205, 369],
+  'p:Anaparthy': [261, 376],
+  'p:Ludhiana': [170, 130],
+  'p:Pune': [141, 357],
+  'p:Bhubaneswar': [322, 319],
+  'p:Kolkata': [369, 285],
+  'p:Kathmandu (Nepal)': [314, 192],
+};
 
-const LEGEND = [
-  {
-    color: '#1e7e34',
-    label: 'Head Office',
-    icon: 'star',
-  },
-  {
-    color: '#8B2222',
-    label: 'Production / Warehouse',
-    icon: 'pin',
-  },
-];
+/* Build an ordered, numbered marker list from the data file.
+   Position lookups are guarded: an unmatched key is skipped (with a warning)
+   rather than crashing the page on destructure. */
+function buildMarkers() {
+  const out = [];
+  let n = 0;
+  const add = (key, props) => {
+    const p = POS[key];
+    if (!p) {
+      if (typeof console !== 'undefined') console.warn('IndiaMap: no position for', key);
+      return;
+    }
+    n += 1;
+    out.push({ n, x: p[0], y: p[1], ...props });
+  };
+  map.company.forEach(([role, city]) => {
+    const key = 'c:' + (role === 'Head Office' ? 'Head Office' : city);
+    add(key, { color: C_COMPANY, kind: 'company', city, detail: role });
+  });
+  map.dairy.forEach(([name, city, cover]) => {
+    add('d:' + city, { color: C_DAIRY, kind: 'dairy', city, detail: name, cover });
+  });
+  map.poultry.forEach(([name, city, cover]) => {
+    const proposed = name.toLowerCase().includes('proposed');
+    add('p:' + city, { color: C_POULTRY, kind: 'poultry', city, detail: name, cover, proposed });
+  });
+  return out;
+}
 
-function StarIcon({ color }) {
+const MARKERS = buildMarkers();
+
+function Marker({ m, active, setActive }) {
+  const on = active === m.n;
+  const r = on ? 8.5 : 6.2;
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
-      <polygon
-        points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
-        fill={color}
-        stroke="#fff"
-        strokeWidth="1"
+    <g
+      className="im-marker"
+      onMouseEnter={() => setActive(m.n)}
+      onMouseLeave={() => setActive(null)}
+      onClick={() => setActive(on ? null : m.n)}
+    >
+      {on && <circle cx={m.x} cy={m.y} r={r + 3} className="im-halo" />}
+      <circle
+        cx={m.x}
+        cy={m.y}
+        r={r}
+        fill={m.proposed ? '#ffffff' : m.color}
+        stroke={m.proposed ? m.color : '#ffffff'}
+        strokeWidth={m.proposed ? 1.4 : 1.2}
+        strokeDasharray={m.proposed ? '2.4 1.6' : undefined}
       />
-    </svg>
+      <text
+        x={m.x}
+        y={m.y}
+        className="im-num"
+        fill={m.proposed ? m.color : '#ffffff'}
+        textAnchor="middle"
+        dominantBaseline="central"
+      >
+        {m.n}
+      </text>
+    </g>
   );
 }
 
-function PinIcon({ color }) {
+function LegendBlock({ title, color, items, active, setActive }) {
   return (
-    <svg width="14" height="18" viewBox="0 0 14 18" style={{ flexShrink: 0 }}>
-      <path
-        d="M7 0C3.13 0 0 3.13 0 7c0 5.25 7 11 7 11s7-5.75 7-11c0-3.87-3.13-7-7-7z"
-        fill={color}
-        stroke="#fff"
-        strokeWidth="1"
-      />
-      <circle cx="7" cy="7" r="2.5" fill="#fff" />
-    </svg>
+    <div className="im-leg-block">
+      <div className="im-leg-head">
+        <span className="im-leg-swatch" style={{ background: color }} />
+        {title}
+      </div>
+      <ul className="im-leg-list">
+        {items.map((m) => (
+          <li
+            key={m.n}
+            className={'im-leg-row' + (active === m.n ? ' is-active' : '')}
+            onMouseEnter={() => setActive(m.n)}
+            onMouseLeave={() => setActive(null)}
+          >
+            <span className="im-leg-badge" style={{ background: m.color, color: '#fff' }}>
+              {m.n}
+            </span>
+            <span className="im-leg-txt">
+              <strong>{m.city}</strong>
+              {m.kind === 'company' ? (
+                <em>{m.detail}</em>
+              ) : (
+                <em>{m.detail}{m.cover ? ` · ${m.cover}` : ''}{m.proposed ? ' · proposed' : ''}</em>
+              )}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
 export default function IndiaMap() {
+  const [active, setActive] = useState(null);
+  const company = MARKERS.filter((m) => m.kind === 'company');
+  const dairy = MARKERS.filter((m) => m.kind === 'dairy');
+  const poultry = MARKERS.filter((m) => m.kind === 'poultry');
+
   return (
     <div className="india-map-wrap">
+      <svg
+        className="india-map-svg"
+        viewBox={map.viewBox}
+        role="img"
+        aria-label="Berg+Schmidt India — locations and distribution network"
+      >
+        {/* Neighbouring countries — faint context outlines */}
+        <g className="im-neighbors">
+          {Object.values(map.neighbors).flat().map((d, i) => (
+            <path key={'n' + i} d={d} />
+          ))}
+        </g>
+        {/* India — state boundaries */}
+        <g className="im-states">
+          {map.states.map((d, i) => (
+            <path key={'s' + i} d={d} />
+          ))}
+        </g>
+        {/* India — national outline */}
+        <g className="im-outline">
+          {map.outline.map((d, i) => (
+            <path key={'o' + i} d={d} />
+          ))}
+        </g>
+        {/* Markers */}
+        <g>
+          {MARKERS.map((m) => (
+            <Marker key={m.n} m={m} active={active} setActive={setActive} />
+          ))}
+        </g>
+      </svg>
 
-      {/* Map — clips the Google My Maps profile bar (photo + name) */}
-      <div className="india-map-clip">
-        <iframe
-          title="Berg+Schmidt India Locations"
-          src={MAPS_EMBED_SRC}
-          className="india-map-iframe"
-          allowFullScreen={false}
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          style={{ marginTop: `-${HEADER_H}px` }}
-        />
-      </div>
-
-      {/* Legend — sits below the map, clean and readable */}
       <div className="india-map-legend">
-        <span className="india-map-legend-title">Map key</span>
-        {LEGEND.map(({ color, label, icon }) => (
-          <div key={label} className="india-map-legend-item">
-            {icon === 'star'
-              ? <StarIcon color={color} />
-              : <PinIcon color={color} />
-            }
-            <span>{label}</span>
-          </div>
-        ))}
+        <LegendBlock title="Hightech Energy Feeds Locations" color={C_COMPANY} items={company} active={active} setActive={setActive} />
+        <LegendBlock title="Dairy Feed Supplement Representatives" color={C_DAIRY} items={dairy} active={active} setActive={setActive} />
+        <LegendBlock title="Poultry Feed Supplement Representatives" color={C_POULTRY} items={poultry} active={active} setActive={setActive} />
       </div>
-
     </div>
   );
 }
