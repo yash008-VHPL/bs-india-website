@@ -36,6 +36,10 @@ ul { list-style: none; }
 .bs-mark,
 .bs-mark-green {
   position: relative;
+  /* shrink-wrap to the text so the accent tracks the words even when the
+     heading is centered (otherwise the absolute mark sits at the line's
+     left edge while the text is centered). */
+  display: inline-block;
   margin-left: 0.6em;
   line-height: 1.2;
   /* The page CSS sets `h1/h2 { padding-top: 30px }`, which pushed the heading
