@@ -119,15 +119,22 @@ function LegendBlock({ title, color, items, active, setActive }) {
             onMouseEnter={() => setActive(m.n)}
             onMouseLeave={() => setActive(null)}
           >
-            <span className="im-leg-badge" style={{ background: m.color, color: '#fff' }}>
+            <span
+              className="im-leg-badge"
+              style={m.proposed
+                ? { background: '#fff', color: m.color, border: `1.5px dashed ${m.color}` }
+                : { background: m.color, color: '#fff' }}
+            >
               {m.n}
             </span>
             <span className="im-leg-txt">
               <strong>{m.city}</strong>
               {m.kind === 'company' ? (
                 <em>{m.detail}</em>
+              ) : m.proposed ? (
+                <em>Coming soon{m.cover ? ` · ${m.cover}` : ''}</em>
               ) : (
-                <em>{m.detail}{m.cover ? ` · ${m.cover}` : ''}{m.proposed ? ' · proposed' : ''}</em>
+                <em>{m.detail}{m.cover ? ` · ${m.cover}` : ''}</em>
               )}
             </span>
           </li>
