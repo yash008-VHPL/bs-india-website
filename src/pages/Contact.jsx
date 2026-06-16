@@ -1,9 +1,46 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
 import './Contact.css';
+
+const SEGMENT_LABEL = {
+  dairy: 'dairy feed supplements',
+  poultry: 'poultry feed supplements',
+  commodity: 'commodity feed fats and oils',
+};
+
+function buildPrefillMessage({ segment, city, detail }) {
+  const context = city ? ` (referred via ${city}${detail ? ` — ${detail}` : ''})` : '';
+  if (segment === 'company') {
+    return `Hello,\n\nI would like to get in touch about Hightech Energy Feeds${context}. Please let me know the best point of contact.\n\nThank you.`;
+  }
+  const topic = SEGMENT_LABEL[segment];
+  if (!topic) return '';
+  return `Hello,\n\nI would like to know more about Berg + Schmidt's ${topic}${context}. Please share product details, pricing, and availability.\n\nThank you.`;
+}
+
 export default function Contact() {
+  const [params] = useSearchParams();
+  const segment = params.get('segment');
+  const city = params.get('city') || '';
+  const detail = params.get('detail') || '';
+
   const [form,setForm]=useState({name:'',company:'',email:'',phone:'',product:'',message:'',type:'enquiry'});
   const [submitted,setSubmitted]=useState(false);
+
+  // Pre-fill from query params (segment-level enquiry). Runs once per param change.
+  useEffect(() => {
+    if (!segment) return;
+    setForm((f) => ({
+      ...f,
+      message: f.message || buildPrefillMessage({ segment, city, detail }),
+      type: 'enquiry',
+    }));
+    // After paint, jump to the form so the user lands on the prefilled fields.
+    const el = document.getElementById('contact-form');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [segment, city, detail]);
+
   const handleChange=e=>setForm(f=>({...f,[e.target.name]:e.target.value}));
   const handleSubmit=e=>{
     e.preventDefault();
@@ -43,7 +80,7 @@ export default function Contact() {
               <p>Your email client should have opened with your message pre-filled. We will be in touch shortly.</p>
             </div>
           ):(
-            <form className="ct-form" onSubmit={handleSubmit}>
+            <form id="contact-form" className="ct-form" onSubmit={handleSubmit}>
               <h2>Send us a message</h2>
               <div className="form-row">
                 <div className="fg"><label>Full Name *</label><input name="name" type="text" required value={form.name} onChange={handleChange} placeholder="Your name"/></div>

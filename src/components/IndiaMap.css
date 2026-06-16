@@ -94,22 +94,30 @@
   padding: 5px 6px;
   border-radius: 6px;
   transition: background 0.12s ease;
+  cursor: pointer;
 }
 
 .im-leg-row.is-active { background: var(--mint-light); }
+.im-leg-row:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; }
 
 .im-leg-badge {
   flex-shrink: 0;
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  font-size: 0.66rem;
+  font-size: 0.7rem;
   font-weight: 700;
+  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 1px;
+  /* Tabular-nums keeps digit widths even, and -0.5px transform compensates
+     for typical sans-serif baseline metrics that push glyphs above geometric centre. */
+  font-variant-numeric: tabular-nums;
 }
+
+.im-leg-badge > span { display: block; transform: translateY(0.5px); }
 
 .im-leg-txt {
   display: flex;

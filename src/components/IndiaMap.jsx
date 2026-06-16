@@ -1,6 +1,15 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import map from './indiaMapData.json';
 import './IndiaMap.css';
+
+/* Segment key used by /contact to pre-fill the enquiry form. */
+const SEGMENT_BY_KIND = {
+  company: 'company',
+  dairy: 'dairy',
+  poultry: 'poultry',
+  commodity: 'commodity',
+};
 
 /* Theme colours (mirrors CSS custom properties) */
 const C_COMPANY = '#004c3e';  // --green-dark
@@ -104,7 +113,7 @@ function Marker({ m, active, setActive }) {
   );
 }
 
-function LegendBlock({ title, color, items, active, setActive }) {
+function LegendBlock({ title, color, items, active, setActive, onEnquire }) {
   return (
     <div className="im-leg-block">
       <div className="im-leg-head">
@@ -116,8 +125,13 @@ function LegendBlock({ title, color, items, active, setActive }) {
           <li
             key={m.n}
             className={'im-leg-row' + (active === m.n ? ' is-active' : '')}
+            role="button"
+            tabIndex={0}
+            title={`Enquire about ${m.city}`}
             onMouseEnter={() => setActive(m.n)}
             onMouseLeave={() => setActive(null)}
+            onClick={() => onEnquire(m)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onEnquire(m); } }}
           >
             <span
               className="im-leg-badge"
@@ -125,7 +139,7 @@ function LegendBlock({ title, color, items, active, setActive }) {
                 ? { background: '#fff', color: m.color, border: `1.5px dashed ${m.color}` }
                 : { background: m.color, color: '#fff' }}
             >
-              {m.n}
+              <span>{m.n}</span>
             </span>
             <span className="im-leg-txt">
               <strong>{m.city}</strong>
@@ -146,10 +160,19 @@ function LegendBlock({ title, color, items, active, setActive }) {
 
 export default function IndiaMap() {
   const [active, setActive] = useState(null);
+  const navigate = useNavigate();
   const company = MARKERS.filter((m) => m.kind === 'company');
   const dairy = MARKERS.filter((m) => m.kind === 'dairy');
   const poultry = MARKERS.filter((m) => m.kind === 'poultry');
   const commodity = MARKERS.filter((m) => m.kind === 'commodity');
+
+  const handleEnquire = (m) => {
+    const params = new URLSearchParams();
+    params.set('segment', SEGMENT_BY_KIND[m.kind] || 'general');
+    if (m.city) params.set('city', m.city);
+    if (m.detail) params.set('detail', m.detail);
+    navigate(`/contact?${params.toString()}#contact-form`);
+  };
 
   return (
     <div className="india-map-wrap">
@@ -186,10 +209,10 @@ export default function IndiaMap() {
       </svg>
 
       <div className="india-map-legend">
-        <LegendBlock title="Hightech Energy Feeds Locations" color={C_COMPANY} items={company} active={active} setActive={setActive} />
-        <LegendBlock title="Dairy Feed Supplement Representatives" color={C_DAIRY} items={dairy} active={active} setActive={setActive} />
-        <LegendBlock title="Poultry Feed Supplement Representatives" color={C_POULTRY} items={poultry} active={active} setActive={setActive} />
-        <LegendBlock title="Commodity Business Division Representatives" color={C_COMMODITY} items={commodity} active={active} setActive={setActive} />
+        <LegendBlock title="Hightech Energy Feeds Locations" color={C_COMPANY} items={company} active={active} setActive={setActive} onEnquire={handleEnquire} />
+        <LegendBlock title="Dairy Feed Supplement Representatives" color={C_DAIRY} items={dairy} active={active} setActive={setActive} onEnquire={handleEnquire} />
+        <LegendBlock title="Poultry Feed Supplement Representatives" color={C_POULTRY} items={poultry} active={active} setActive={setActive} onEnquire={handleEnquire} />
+        <LegendBlock title="Commodity Business Division Representatives" color={C_COMMODITY} items={commodity} active={active} setActive={setActive} onEnquire={handleEnquire} />
       </div>
     </div>
   );
