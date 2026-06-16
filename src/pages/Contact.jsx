@@ -11,8 +11,11 @@ const SEGMENT_LABEL = {
 
 function buildPrefillMessage({ segment, city, detail }) {
   const context = city ? ` (referred via ${city}${detail ? ` — ${detail}` : ''})` : '';
-  if (segment === 'company') {
-    return `Hello,\n\nI would like to get in touch about Hightech Energy Feeds${context}. Please let me know the best point of contact.\n\nThank you.`;
+  if (segment === 'hq') {
+    return `Hello,\n\nI would like to get in touch with the Berg + Schmidt India team${context}. Please let me know the best point of contact.\n\nThank you.`;
+  }
+  if (segment === 'hef' || segment === 'company') {
+    return `Hello,\n\nI would like to get in touch about Hightech Energy Feeds manufacturing${context}. Please let me know the best point of contact.\n\nThank you.`;
   }
   const topic = SEGMENT_LABEL[segment];
   if (!topic) return '';

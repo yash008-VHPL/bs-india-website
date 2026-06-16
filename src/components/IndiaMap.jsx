@@ -12,10 +12,11 @@ const SEGMENT_BY_KIND = {
 };
 
 /* Theme colours (mirrors CSS custom properties) */
-const C_COMPANY = '#004c3e';  // --green-dark
-const C_DAIRY = '#4cb496';    // --green
-const C_POULTRY = '#c0404a';  // --accent-red
-const C_COMMODITY = '#c8841a';// amber — Commodity Business Division
+const C_HEAD_OFFICE = '#2c5282'; // slate-blue — Berg + Schmidt India HQ (not HEF)
+const C_HEF = '#004c3e';         // --green-dark — Hightech Energy Feeds plants
+const C_DAIRY = '#4cb496';       // --green
+const C_POULTRY = '#c0404a';     // --accent-red
+const C_COMMODITY = '#c8841a';   // amber — Commodity Business Division
 
 /* Final on-map marker positions. A few coincident / clustered cities are
    nudged a couple of px so every pin stays legible; the number keys the
@@ -60,7 +61,15 @@ function buildMarkers() {
   };
   map.company.forEach(([role, city]) => {
     const key = 'c:' + (role === 'Head Office' ? 'Head Office' : city);
-    add(key, { color: C_COMPANY, kind: 'company', city, detail: role });
+    // BSI India HQ is conceptually distinct from HEF manufacturing plants.
+    const isBSIHQ = role === 'Head Office';
+    add(key, {
+      color: isBSIHQ ? C_HEAD_OFFICE : C_HEF,
+      kind: 'company',
+      subkind: isBSIHQ ? 'hq' : 'hef',
+      city,
+      detail: role,
+    });
   });
   map.dairy.forEach(([name, city, cover]) => {
     add('d:' + city, { color: C_DAIRY, kind: 'dairy', city, detail: name, cover });
@@ -168,7 +177,12 @@ export default function IndiaMap() {
 
   const handleEnquire = (m) => {
     const params = new URLSearchParams();
-    params.set('segment', SEGMENT_BY_KIND[m.kind] || 'general');
+    // For Offices & Manufacturing, split BSI HQ vs HEF plants so the form
+    // pre-fills with the right wording for each.
+    const segment = m.kind === 'company'
+      ? (m.subkind === 'hq' ? 'hq' : 'hef')
+      : (SEGMENT_BY_KIND[m.kind] || 'general');
+    params.set('segment', segment);
     if (m.city) params.set('city', m.city);
     if (m.detail) params.set('detail', m.detail);
     navigate(`/contact?${params.toString()}#contact-form`);
@@ -209,10 +223,10 @@ export default function IndiaMap() {
       </svg>
 
       <div className="india-map-legend">
-        <LegendBlock title="Hightech Energy Feeds Locations" color={C_COMPANY} items={company} active={active} setActive={setActive} onEnquire={handleEnquire} />
         <LegendBlock title="Dairy Feed Supplement Representatives" color={C_DAIRY} items={dairy} active={active} setActive={setActive} onEnquire={handleEnquire} />
         <LegendBlock title="Poultry Feed Supplement Representatives" color={C_POULTRY} items={poultry} active={active} setActive={setActive} onEnquire={handleEnquire} />
         <LegendBlock title="Commodity Business Division Representatives" color={C_COMMODITY} items={commodity} active={active} setActive={setActive} onEnquire={handleEnquire} />
+        <LegendBlock title="Offices & Manufacturing" color={C_HEF} items={company} active={active} setActive={setActive} onEnquire={handleEnquire} />
       </div>
     </div>
   );
