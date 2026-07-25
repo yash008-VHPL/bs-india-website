@@ -1,0 +1,82 @@
+/* All headings with accent — position relative for absolute accent */
+.v2-root h1, .v2-root h2, .v2-root h3 {
+  position: relative;
+}
+.v2-root h2 {
+  padding-top: 30px;
+}
+.v2-root h1 {
+  padding-top: 30px;
+}
+.v2-root .pg-hero {background:var(--mint-bg);padding:56px 24px 48px}
+.v2-root .pg-hero-inner {max-width:1200px;margin:0 auto}
+.v2-root .pg-hero h1 {font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:700;margin-bottom:8px;color:var(--text-mid)}
+
+/* ── Species index — alternating image/text bands ─────────────────────────
+   V2: the image is the dominant element and swaps side per species; the
+   product list has moved to the per-species page (/v2/species/:id). */
+.v2-root .sp-sec {padding:72px 24px;border-bottom:1px solid var(--border)}
+.v2-root .sp-sec-alt {background:var(--off-white)}
+.v2-root .sp-inner {max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.15fr 1fr;gap:56px;align-items:center}
+/* Alternate: on odd bands the image moves to the right column */
+.v2-root .sp-sec-alt .sp-inner {grid-template-columns:1fr 1.15fr}
+.v2-root .sp-sec-alt .sp-img {order:2}
+.v2-root .sp-sec-alt .sp-content {order:1}
+
+.v2-root .sp-img {display:block;overflow:hidden;aspect-ratio:4/3;box-shadow:0 10px 34px rgba(0,0,0,.14)}
+.v2-root .sp-img img {width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.v2-root .sp-img:hover img {transform:scale(1.04)}
+
+.v2-root .sp-eyebrow {display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--green);margin-bottom:2px}
+.v2-root .sp-content h2 {font-size:clamp(1.35rem,2.4vw,1.9rem);font-weight:700;color:var(--text-dark);line-height:1.35;margin-bottom:16px}
+.v2-root .sp-intro {font-size:.94rem;color:var(--text-mid);line-height:1.75;margin-bottom:8px}
+.v2-root .sp-content h3 {font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin:22px 0 10px}
+.v2-root .ch-list {display:flex;flex-direction:column;gap:7px}
+.v2-root .ch-list li {display:flex;align-items:flex-start;gap:9px;font-size:.86rem;color:var(--text-mid);line-height:1.55}
+.v2-root .ch-dot {width:6px;height:6px;min-width:6px;border-radius:50%;background:var(--green);margin-top:7px}
+
+.v2-root .sp-cta {display:inline-block;margin-top:26px;padding:12px 28px;background:var(--accent-red);color:#fff;border-radius:4px;font-weight:700;font-size:.88rem;transition:background .2s}
+.v2-root .sp-cta:hover {background:var(--accent-red-dark)}
+
+@media(max-width:900px){
+  .v2-root .sp-inner, .v2-root .sp-sec-alt .sp-inner {grid-template-columns:1fr;gap:26px}
+  .v2-root .sp-sec-alt .sp-img, .v2-root .sp-sec-alt .sp-content {order:initial}
+  .v2-root .sp-img {aspect-ratio:16/9}
+  .v2-root .sp-sec {padding:44px 18px}
+}
+
+/* ── Species detail (/v2/species/:id) ─────────────────────────────────── */
+.v2-root .spd-hero {position:relative;height:clamp(260px,38vw,420px);overflow:hidden}
+.v2-root .spd-hero>img {width:100%;height:100%;object-fit:cover}
+.v2-root .spd-hero-overlay {position:absolute;inset:0;display:flex;align-items:flex-end;background:linear-gradient(to top,rgba(0,42,34,.86) 0%,rgba(0,42,34,.35) 55%,rgba(0,42,34,.1) 100%)}
+.v2-root .spd-hero-inner {max-width:1200px;width:100%;margin:0 auto;padding:0 24px 34px}
+.v2-root .spd-crumb {display:flex;align-items:center;gap:8px;font-size:.78rem;color:rgba(255,255,255,.82);margin-bottom:10px}
+.v2-root .spd-crumb a:hover {color:#fff;text-decoration:underline}
+.v2-root .spd-hero h1 {font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:700;color:#fff;padding-top:0;line-height:1.25}
+
+.v2-root .spd-body {padding:52px 24px 8px}
+.v2-root .spd-inner {max-width:1200px;margin:0 auto}
+.v2-root .spd-intro {font-size:1rem;color:var(--text-mid);line-height:1.8;max-width:900px}
+.v2-root .spd-body h2, .v2-root .spd-prods h2 {font-size:1.25rem;font-weight:700;color:var(--text-dark);margin-bottom:14px}
+.v2-root .spd-ch {max-width:900px}
+
+.v2-root .spd-prods {padding:36px 24px 72px}
+.v2-root .spd-group {margin-top:26px}
+.v2-root .spd-group h3 {font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:14px;padding-top:0}
+.v2-root .spd-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.v2-root .spd-card {display:flex;flex-direction:column;padding:18px;border:1px solid var(--border);border-radius:8px;background:#fff;transition:box-shadow .2s,border-color .2s,transform .2s}
+.v2-root .spd-card:hover {border-color:var(--green);box-shadow:0 8px 22px rgba(0,0,0,.08);transform:translateY(-2px)}
+.v2-root .spd-card-logo {height:56px;display:flex;align-items:center;margin-bottom:12px}
+.v2-root .spd-card-logo img {max-height:56px;width:auto;object-fit:contain}
+.v2-root .spd-card-logo-text {font-weight:700;color:var(--green-dark);font-size:1rem}
+.v2-root .spd-card-name {font-size:.92rem;font-weight:700;color:var(--text-dark)}
+.v2-root .spd-card-sub {font-size:.78rem;color:var(--text-light);margin-top:3px;line-height:1.5;flex:1}
+.v2-root .spd-card-more {font-size:.76rem;font-weight:600;color:var(--green);margin-top:12px}
+
+.v2-root .spd-foot {display:flex;flex-wrap:wrap;gap:12px;margin-top:44px;padding-top:28px;border-top:1px solid var(--border)}
+
+@media(max-width:640px){
+  .v2-root .spd-prods {padding:28px 18px 56px}
+  .v2-root .spd-body {padding:36px 18px 4px}
+  .v2-root .spd-hero-inner {padding:0 18px 24px}
+}

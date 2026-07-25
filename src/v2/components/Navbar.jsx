@@ -1,20 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from './Logo';
 import './Navbar.css';
 
 const NAV = [
-  { label:'Company', href:'/company' },
-  { label:'Products', href:'/products' },
-  { label:'Species', href:'/species' },
-  { label:'News', href:'/news' },
-  { label:'Shop', href:'/shop', badge:'Soon' },
-  { label:'Contact', href:'/contact' },
+  { label:'Company', href:'/v2/company' },
+  { label:'Group', href:'/v2/stern-wywiol-gruppe' },
+  { label:'Products', href:'/v2/products' },
+  { label:'Species', href:'/v2/species' },
+  { label:'News', href:'/v2/news' },
+  { label:'Shop', href:'/v2/shop', badge:'Soon' },
+  { label:'Contact', href:'/v2/contact' },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  // Web-team feedback: header carries the full lockup with the claim, and
+  // collapses to the logo alone once the page is scrolled.
+  const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
     <header className="site-header">
@@ -25,17 +36,15 @@ export default function Navbar() {
           <div className="topbar-links">
             <a href="https://an.berg-schmidt.com" target="_blank" rel="noreferrer">Global Site</a>
             <span className="topbar-sep">|</span>
-            <Link to="/v2">V2 Preview</Link>
-            <span className="topbar-sep">|</span>
-            <Link to="/contact">Enquire</Link>
+            <Link to="/v2/contact">Enquire</Link>
           </div>
         </div>
       </div>
 
       {/* Main nav — always solid white, always visible */}
-      <nav className="sticky-nav">
+      <nav className={`sticky-nav${scrolled ? ' scrolled' : ''}`}>
         <div className="sticky-nav-logo">
-          <Link to="/"><Logo size="sm" /></Link>
+          <Link to="/v2/"><Logo size="sm" claim={!scrolled} /></Link>
         </div>
         <ul className={`sticky-nav-links${open ? ' open' : ''}`}>
           {NAV.map(({ label, href, badge }) => (

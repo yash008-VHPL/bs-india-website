@@ -1,0 +1,168 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   V2 subsite — brand corrections from the Berg + Schmidt web team.
+
+   Everything below is scoped to .v2-root so the live V1 site is untouched;
+   the V2 page stylesheets are machine-scoped the same way. Only @font-face
+   is global, since at-rules cannot be scoped.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Corporate typeface: Geist Sans + Geist Mono (Brand Codes, p.11) ────── */
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/Geist-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/Geist-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/GeistMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/GeistMono-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Brand Codes palette (Brand Codes, p.8) ────────────────────────────── */
+.v2-root {
+  --green:            #4CB496;   /* Green 1 */
+  --green-dark:       #004C3E;   /* Green 2 */
+  --mint-bg:          #BDDFD3;   /* Green 3 */
+  --mint-light:       #DBEDE6;   /* Green 3, lightened for large fills */
+  --accent-red:       #E32653;   /* Red 1  — accent mark + buttons */
+  --accent-red-dark:  #630A20;   /* Red 2  — hover/pressed */
+  --accent-red-light: #F2DEE0;   /* Red 3 */
+  --accent-blue:      #5769A9;   /* Accent 1 */
+  --accent-lime:      #CADB66;   /* Accent 2 */
+  --negative:         #D93E33;   /* Negative */
+
+  --font: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* The brand shape — one rounded corner, matching bs-mark.svg */
+  --shape-corner: 28px;
+
+  font-family: var(--font);
+}
+.v2-root input,
+.v2-root textarea,
+.v2-root select,
+.v2-root button { font-family: var(--font); }
+
+/* Geist ships Regular + Bold only — never ask for a weight it cannot serve */
+.v2-root h1, .v2-root h2, .v2-root h3, .v2-root h4, .v2-root h5, .v2-root h6 { font-weight: 700; }
+
+/* Tabular/technical data uses Geist Mono (Brand Codes, p.11) */
+.v2-root .mono,
+.v2-root table,
+.v2-root .pd-spec-val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* ── Accent mark ───────────────────────────────────────────────────────────
+   Two corrections in one:
+   • colour is Red 1 (#E32653), not the old #c0404a;
+   • the mark now sits ABOVE the heading's own left edge instead of hanging
+     to its left, so heading text and body text share one alignment (the web
+     team's "body text usually follows the same alignment as the header"). */
+.v2-root .bs-mark,
+.v2-root .bs-mark-green {
+  display: inline-block;
+  margin-left: 0;
+  line-height: 1.2;
+  padding-top: 0;
+  margin-top: 30px;
+}
+.v2-root .bs-mark::before,
+.v2-root .bs-mark-green::before {
+  top: -0.62em;
+  left: 0;
+  width: 0.42em;
+  height: 0.42em;
+}
+.v2-root .bs-mark::before { background-image: url("/bs-mark-red1.svg"); }
+.v2-root .bs-mark-green::before { background-image: url("/bs-mark-green.svg"); }
+
+/* ── Brand shape as an image guide ─────────────────────────────────────────
+   "This shape should also be incorporated as a guide for any images." */
+.v2-root .bs-shape,
+.v2-root .sp-img,
+.v2-root .pd-logo-box,
+.v2-root .spd-card-logo { border-radius: 0 var(--shape-corner) 0 0; overflow: hidden; }
+
+/* ── Version strip — only present on the V2 subsite ────────────────────── */
+.v2-bar {
+  background: var(--green-dark, #004C3E);
+  color: #cfe3dc;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+}
+.v2-bar-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 7px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.v2-bar-tag {
+  background: #E32653;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 3px;
+  padding: 1px 7px;
+  letter-spacing: 0.06em;
+}
+.v2-bar-text { opacity: 0.85; }
+.v2-bar-link {
+  margin-left: auto;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+}
+.v2-bar-link:hover { border-bottom-color: #fff; }
+
+@media (max-width: 700px) {
+  .v2-bar-text { display: none; }
+  .v2-bar-link { margin-left: auto; }
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────────
+   Defined once here (V2App.css is loaded on every V2 route) rather than
+   repeated per page: the per-page copies had drifted apart after the Red 1
+   recolour, so a button's appearance depended on which chunk loaded last. */
+.v2-root .btn-primary {
+  display: inline-block; padding: 12px 28px;
+  background: var(--accent-red); color: #fff;
+  border: 2px solid var(--accent-red); border-radius: 4px;
+  font-weight: 700; font-size: .88rem; transition: background .2s, border-color .2s;
+}
+.v2-root .btn-primary:hover { background: var(--accent-red-dark); border-color: var(--accent-red-dark); }
+.v2-root .btn-outline {
+  display: inline-block; padding: 12px 28px;
+  background: transparent; color: var(--accent-red);
+  border: 2px solid var(--accent-red); border-radius: 4px;
+  font-weight: 600; font-size: .88rem; transition: background .2s, color .2s;
+}
+.v2-root .btn-outline:hover { background: var(--accent-red); color: #fff; }
+.v2-root .btn-white {
+  display: inline-block; padding: 12px 28px;
+  background: #fff; color: var(--accent-red);
+  border: 2px solid var(--accent-red); border-radius: 4px;
+  font-weight: 700; font-size: .88rem; transition: background .2s, color .2s;
+}
+.v2-root .btn-white:hover { background: var(--accent-red); color: #fff; }

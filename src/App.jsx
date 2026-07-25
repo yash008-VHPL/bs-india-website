@@ -15,6 +15,9 @@ const News          = lazy(() => import('./pages/News'));
 const Contact       = lazy(() => import('./pages/Contact'));
 const Webstore      = lazy(() => import('./pages/Webstore'));
 
+// V2 subsite — a self-contained parallel build mounted at /v2
+const V2App         = lazy(() => import('./v2/V2App'));
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
@@ -62,7 +65,12 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Layout />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/v2/*" element={<V2App />} />
+          <Route path="/*"    element={<Layout />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }
