@@ -15,8 +15,9 @@ const News          = lazy(() => import('./pages/News'));
 const Contact       = lazy(() => import('./pages/Contact'));
 const Webstore      = lazy(() => import('./pages/Webstore'));
 
-// V2 subsite — a self-contained parallel build mounted at /v2
-const V2App         = lazy(() => import('./v2/V2App'));
+// V1.1 — a byte-for-byte fork of V1 with ONLY the colour palette swapped to
+// the Brand Codes values. Mounted at /v1-1 so V1 stays untouched for review.
+const V11App        = lazy(() => import('./v11/V11App'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -67,8 +68,8 @@ export default function App() {
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/v2/*" element={<V2App />} />
-          <Route path="/*"    element={<Layout />} />
+          <Route path="/v1-1/*" element={<V11App />} />
+          <Route path="/*"      element={<Layout />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

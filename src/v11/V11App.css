@@ -1,0 +1,73 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   V1.1 — the live V1 site with ONLY the colour palette swapped to the
+   Berg + Schmidt Brand Codes values (Brand Codes Documentation, p.8).
+
+   Nothing else changes: same Inter typeface, same accent-mark geometry
+   (inherited from the global index.css), same layout, same content.
+
+   Every rule is scoped to .v11-root so the live V1 site is untouched; the
+   forked page stylesheets are machine-scoped the same way. This file only
+   re-points the colour custom properties, so all V1 components — which read
+   var(--green), var(--mint-bg), etc. — pick up the Brand Codes palette.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.v11-root {
+  /* Greens — Green 1 and Green 2 already matched the Brand Codes exactly;
+     restated here so the full mapping is visible in one place. */
+  --green:       #4CB496;   /* Green 1  (already matched — unchanged) */
+  --green-dark:  #004C3E;   /* Green 2  (already matched — unchanged) */
+  --mint-bg:     #BDDFD3;   /* Green 3 */
+  --mint-light:  #DBEDE6;   /* Green 3, lightened */
+
+  /* Red — the brand accent, replacing the old off-brand red. */
+  --accent-red:  #E32653;   /* Red 1 */
+
+  /* Neutrals (--text-*, --white, --off-white, --border) are intentionally
+     left inheriting from :root — the Brand Codes collateral defines no
+     neutral scale, so the existing greys are kept as-is. */
+}
+
+/* Accent mark colour → Red 1. Geometry is inherited from index.css unchanged;
+   only the SVG fill differs (bs-mark-red1.svg is the #E32653 version). */
+.v11-root .bs-mark::before { background-image: url("/bs-mark-red1.svg"); }
+/* .bs-mark-green already uses Green 1 (#4CB496) — on brand, left as-is. */
+
+/* ── Version strip — V1.1 chrome only, not part of the site design ─────── */
+.v11-bar {
+  background: #004C3E;
+  color: #cfe3dc;
+  font-family: var(--font);
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+}
+.v11-bar-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 7px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.v11-bar-tag {
+  background: #E32653;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 3px;
+  padding: 1px 7px;
+  letter-spacing: 0.06em;
+}
+.v11-bar-text { opacity: 0.85; }
+.v11-bar-link {
+  margin-left: auto;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+}
+.v11-bar-link:hover { border-bottom-color: #fff; }
+
+@media (max-width: 700px) {
+  .v11-bar-text { display: none; }
+  .v11-bar-link { margin-left: auto; }
+}

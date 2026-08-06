@@ -25,9 +25,9 @@ export default function Navbar() {
           <div className="topbar-links">
             <a href="https://an.berg-schmidt.com" target="_blank" rel="noreferrer">Global Site</a>
             <span className="topbar-sep">|</span>
-            <Link to="/v1-1">V1.1 Preview</Link>
+            <a href="/">Current site</a>
             <span className="topbar-sep">|</span>
-            <Link to="/contact">Enquire</Link>
+            <Link to="/v1-1/contact">Enquire</Link>
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@ export default function Navbar() {
       {/* Main nav — always solid white, always visible */}
       <nav className="sticky-nav">
         <div className="sticky-nav-logo">
-          <Link to="/"><Logo size="sm" /></Link>
+          <Link to="/v1-1/"><Logo size="sm" /></Link>
         </div>
         <ul className={`sticky-nav-links${open ? ' open' : ''}`}>
           {NAV.map(({ label, href, badge }) => (
