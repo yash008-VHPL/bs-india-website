@@ -71,3 +71,11 @@
   .v11-bar-text { display: none; }
   .v11-bar-link { margin-left: auto; }
 }
+
+/* Fix: scoping the page CSS turned bare `h1/h2` into `.v11-root h1/h2`, which
+   outranks index.css's `.bs-mark { padding-top:0 }`. The heading's padding-top
+   (30/32px) then won and pushed the text down, opening a gap under the accent
+   that V1 does not have. Re-assert the accent heading's spacing (higher
+   specificity) so V1.1 matches V1 exactly. Spacing only — no colour change. */
+.v11-root .bs-mark,
+.v11-root .bs-mark-green { padding-top: 0; margin-top: 30px; }
