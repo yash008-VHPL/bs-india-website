@@ -36,7 +36,7 @@ h1 {
 .gl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .gl-card { border-radius: 10px; padding: 24px 22px; border: 1px solid var(--border); }
 .gl-card--g { background: var(--mint-light); border-color: var(--green); }
-.gl-card--l { background: #f0f7f4; border-color: var(--green); }
+.gl-card--l { background: var(--mint-light); border-color: var(--green); }
 .gl-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .gl-ico { font-size: 1.4rem; }
 .gl-card h3 { font-size: 1rem; font-weight: 700; color: var(--green-dark); }

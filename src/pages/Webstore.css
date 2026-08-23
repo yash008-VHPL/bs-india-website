@@ -24,7 +24,7 @@ h1 {
 .ws-notify{background:var(--green-dark);border-radius:8px;padding:24px 28px;margin-bottom:28px}
 .ws-notify h3{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:6px}.ws-notify p{font-size:.82rem;color:rgba(255,255,255,.72);margin-bottom:16px}
 .ws-notify-form{display:flex;gap:8px}.ws-email-input{flex:1;padding:10px 12px;border:1.5px solid rgba(255,255,255,.25);border-radius:4px;background:rgba(255,255,255,.1);color:#fff;font-family:var(--font);font-size:.88rem;outline:none}.ws-email-input::placeholder{color:rgba(255,255,255,.4)}.ws-email-input:focus{border-color:var(--green)}
-.ws-notify-btn{padding:10px 20px;background:var(--green);color:#fff;border-radius:4px;font-weight:700;font-size:.85rem;border:none;cursor:pointer;white-space:nowrap;transition:background .2s}.ws-notify-btn:hover{background:#3a9a82}
+.ws-notify-btn{padding:10px 20px;background:var(--green);color:#fff;border-radius:4px;font-weight:700;font-size:.85rem;border:none;cursor:pointer;white-space:nowrap;transition:background .2s}.ws-notify-btn:hover{background:var(--green-dark)}
 .ws-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .btn-primary{display:inline-block;padding:12px 26px;background:var(--green);color:#fff;border-radius:4px;font-weight:700;font-size:.88rem;transition:background .2s}.btn-primary:hover{background:var(--green-dark)}
 .btn-outline{display:inline-block;padding:12px 26px;border:2px solid var(--green);color:var(--green);border-radius:4px;font-weight:600;font-size:.88rem;transition:all .2s}.btn-outline:hover{background:var(--green);color:#fff}

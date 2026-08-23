@@ -25,8 +25,6 @@ export default function Navbar() {
           <div className="topbar-links">
             <a href="https://an.berg-schmidt.com" target="_blank" rel="noreferrer">Global Site</a>
             <span className="topbar-sep">|</span>
-            <Link to="/v1-1">V1.1 Preview</Link>
-            <span className="topbar-sep">|</span>
             <Link to="/contact">Enquire</Link>
           </div>
         </div>

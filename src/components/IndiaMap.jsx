@@ -12,11 +12,11 @@ const SEGMENT_BY_KIND = {
 };
 
 /* Theme colours (mirrors CSS custom properties) */
-const C_HEAD_OFFICE = '#2c5282'; // slate-blue — Berg + Schmidt India HQ (not HEF)
+const C_HEAD_OFFICE = '#5769A9'; // Accent 1 — Berg + Schmidt India HQ (not HEF)
 const C_HEF = '#004c3e';         // --green-dark — Hightech Energy Feeds plants
 const C_DAIRY = '#4cb496';       // --green
-const C_POULTRY = '#c0404a';     // --accent-red
-const C_COMMODITY = '#c8841a';   // amber — Commodity Business Division
+const C_POULTRY = '#E32653';     // --accent-red
+const C_COMMODITY = '#630A20';   // Red 2 — Commodity Business Division
 
 /* Final on-map marker positions. A few coincident / clustered cities are
    nudged a couple of px so every pin stays legible; the number keys the

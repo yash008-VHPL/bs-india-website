@@ -44,17 +44,17 @@ h2 {
 .solutions-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .1; transition: opacity .4s; }
 .solutions-half:hover .solutions-bg-img { opacity: .18; }
 .solutions-half--poultry { background: var(--mint-bg); border-right: 1px solid rgba(76,180,150,.2); }
-.solutions-half--dairy { background: #ccdfd7; }
+.solutions-half--dairy { background: var(--mint-light); }
 .solutions-half-content { position: relative; z-index: 1; padding: 36px 32px 44px; height: 100%; display: flex; flex-direction: column; gap: 20px; }
 .solutions-half-label { display: flex; align-items: center; gap: 10px; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green-dark); border-bottom: 2px solid var(--green); padding-bottom: 10px; }
 .solutions-cards { display: flex; flex-direction: column; }
 .sol-card { display: flex; flex-direction: column; gap: 3px; padding: 14px 0; border-bottom: 1px solid rgba(0,76,62,.1); transition: padding-left .18s; }
 .sol-card:last-child { border-bottom: none; }
 .sol-card:hover { padding-left: 8px; }
-.sol-card-type { font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #4a7068; }
+.sol-card-type { font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green-dark); }
 .sol-plus { color: var(--green); font-weight: 800; }
-.sol-card h3 { font-size: 1rem; font-weight: 700; color: #002d22; line-height: 1.2; }
-.sol-card-sub { font-size: .75rem; font-weight: 500; color: #3d5a52; }
+.sol-card h3 { font-size: 1rem; font-weight: 700; color: var(--green-dark); line-height: 1.2; }
+.sol-card-sub { font-size: .75rem; font-weight: 500; color: var(--text-mid); }
 .home-products-cta { text-align: center; padding: 40px 24px; }
 .btn-primary { display: inline-block; padding: 13px 30px; background: var(--green); color: #fff; border-radius: 4px; font-weight: 700; font-size: .9rem; transition: background .2s; }
 .btn-primary:hover { background: var(--green-dark); }
