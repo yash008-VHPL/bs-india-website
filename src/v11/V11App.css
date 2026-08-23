@@ -73,9 +73,19 @@
 }
 
 /* Fix: scoping the page CSS turned bare `h1/h2` into `.v11-root h1/h2`, which
-   outranks index.css's `.bs-mark { padding-top:0 }`. The heading's padding-top
-   (30/32px) then won and pushed the text down, opening a gap under the accent
-   that V1 does not have. Re-assert the accent heading's spacing (higher
-   specificity) so V1.1 matches V1 exactly. Spacing only — no colour change. */
+   outranks index.css's `.bs-mark` base rule. Two properties leaked through and
+   broke the accent placement that V1 has:
+     • padding-top (30/32px) won → text pushed down → vertical gap under accent;
+     • display:block won → on centred headings the h2 spans the full container,
+       so the accent jumps to the container's left edge and detaches from the
+       text (the "floating" accent on the CTA / footer band).
+   Re-assert the full `.bs-mark` base geometry at a specificity nothing scoped
+   can beat, so every accented heading on every page matches V1 exactly.
+   Layout parity only — no colour or design change. */
 .v11-root .bs-mark,
-.v11-root .bs-mark-green { padding-top: 0; margin-top: 30px; }
+.v11-root .bs-mark-green {
+  display: inline-block;
+  position: relative;
+  padding-top: 0;
+  margin-top: 30px;
+}
