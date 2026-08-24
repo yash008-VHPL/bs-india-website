@@ -1,7 +1,7 @@
 /**
  * Berg+Schmidt Animal Nutrition logo
  * Source: extracted directly from official company PowerPoint deck
- * File: bs-logo.png (366x77px, RGBA)
+ * File: bs-logo.webp (lossless WebP of the 366x77 wordmark)
  */
 export default function Logo({ size = 'sm', white = false }) {
   const heights = { sm: 36, md: 48, lg: 60 };
@@ -16,7 +16,7 @@ export default function Logo({ size = 'sm', white = false }) {
 
   return (
     <img
-      src="/bs-logo.png"
+      src="/bs-logo.webp"
       alt="Berg+Schmidt Animal Nutrition"
       style={style}
       draggable={false}

@@ -1,1 +1,20 @@
-{"routes":[],"navigationFallback":{"rewrite":"/index.html","exclude":["/assets/*","/*.{css,js,ico,png,jpg,webp,svg,woff2}"]},"responseOverrides":{"404":{"rewrite":"/index.html","statusCode":200}},"globalHeaders":{"Cache-Control":"no-store","X-Frame-Options":"SAMEORIGIN","X-Content-Type-Options":"nosniff"}}
+{
+  "routes": [
+    { "route": "/assets/*", "headers": { "cache-control": "public, max-age=31536000, immutable" } },
+    { "route": "/fonts/*", "headers": { "cache-control": "public, max-age=31536000, immutable" } },
+    { "route": "/product-logos/*", "headers": { "cache-control": "public, max-age=2592000" } },
+    { "route": "/*.{webp,svg,ico,jpg,jpeg,png,woff2}", "headers": { "cache-control": "public, max-age=2592000" } }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/assets/*", "/fonts/*", "/product-logos/*", "/*.{css,js,ico,png,jpg,webp,svg,woff2,json}"]
+  },
+  "responseOverrides": {
+    "404": { "rewrite": "/index.html", "statusCode": 200 }
+  },
+  "globalHeaders": {
+    "Cache-Control": "no-cache",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff"
+  }
+}
