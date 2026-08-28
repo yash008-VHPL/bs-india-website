@@ -111,7 +111,7 @@ export const PRODUCTS = [
       'Heat-stable formulation maintains activity through pelleting',
       'Reduces feed cost',
     ],
-    applications:['100 g/ton of feed in poultry diet'],
+    applications:['250 g/ton of feed in poultry diet'],
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 kg bag' },
 
@@ -153,6 +153,15 @@ export const PRODUCTS = [
     ],
     applications:['Broiler starter, grower and finisher diets'],
     packaging:'200 L drums and bulk tanker delivery' },
+
+  { id:'hienfat-tg', name:'HiEnFat TG',
+    subtitle:'High-Energy Feed Fat', type:'Feed Fat',
+    species:[], vertical:'commodity',
+    tagline:'A high-energy feed fat for livestock rations — full technical details coming soon.',
+    description:`HiEnFat TG is a high-energy feed fat for livestock rations. Detailed product specifications, benefits and dosage will be published shortly.`,
+    benefits:[],
+    applications:[],
+    packaging:'Available on request.' },
 
   // ── DAIRY FEED SUPPLEMENT DIVISION ─────────────────────────────────────
 
@@ -331,7 +340,7 @@ export const PRODUCTS = [
 
   { id:'hienfat-sa-dairy', name:'HiEnFat SA',
     subtitle:'High-Energy Saturated Fat for Dairy', type:'Saturated Fat',
-    species:['dairy'], vertical:'dairy-supplement',
+    species:['dairy'], vertical:'dairy-supplement', verticals:['dairy-supplement','commodity'],
     tagline:'Concentrated saturated fat that improves energy density in dairy rations without compromising rumen function.',
     description:`HiEnFat SA is a saturated fat supplement formulated for dairy cow rations. Its predominantly saturated fatty acid profile minimises rumen disturbance while significantly increasing dietary energy density. Particularly valuable in heat stress conditions when dry matter intake is reduced.`,
     benefits:[
