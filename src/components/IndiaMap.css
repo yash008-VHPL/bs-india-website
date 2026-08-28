@@ -27,11 +27,6 @@
   stroke-linejoin: round;
 }
 
-.im-claim {
-  fill: #DBEDE6;
-  stroke: none;
-}
-
 .im-outline path {
   fill: none;
   stroke: var(--green-dark);

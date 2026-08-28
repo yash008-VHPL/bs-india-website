@@ -208,9 +208,6 @@ export default function IndiaMap() {
             <path key={'s' + i} d={d} />
           ))}
         </g>
-        {/* Claimed-territory fill — paints the full official J&K (incl. PoK and
-            Aksai Chin) as Indian, over any de-facto state edge. */}
-        {map.claim && <path className="im-claim" d={map.claim} />}
         {/* India — national outline */}
         <g className="im-outline">
           {map.outline.map((d, i) => (
