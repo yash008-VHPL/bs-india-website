@@ -5,6 +5,8 @@
  * an.berg-schmidt.com. Vector, so it stays crisp at any size.
  * viewBox 184.25 x 62.36  ->  aspect 2.955
  */
+import { asset } from '../asset';
+
 export default function Logo({ size = 'sm', white = false }) {
   const heights = { sm: 60, md: 72, lg: 88 };
   const h = heights[size] || 60;
@@ -18,7 +20,7 @@ export default function Logo({ size = 'sm', white = false }) {
 
   return (
     <img
-      src="/bs-logo.svg"
+      src={asset("/bs-logo.svg")}
       alt="Berg+Schmidt Animal Nutrition - For extra performance."
       style={style}
       draggable={false}

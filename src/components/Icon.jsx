@@ -3,12 +3,14 @@
  * (icons_bsan_*_stroke). Strokes were switched to currentColor so the icon
  * inherits the surrounding text colour in both light and dark sections.
  */
+import { asset } from '../asset';
+
 const SRC = {
-  poultry: '/icons/chicken.svg',
-  chicken: '/icons/chicken.svg',
-  cow:     '/icons/cow.svg',
-  dairy:   '/icons/cow.svg',
-  buffalo: '/icons/cow.svg',
+  poultry: asset('/icons/chicken.svg'),
+  chicken: asset('/icons/chicken.svg'),
+  cow:     asset('/icons/cow.svg'),
+  dairy:   asset('/icons/cow.svg'),
+  buffalo: asset('/icons/cow.svg'),
 };
 
 export default function Icon({ name, size = 28, className = '', style = {} }) {
