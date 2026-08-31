@@ -98,7 +98,7 @@ export default function Company() {
       <section className="co-sec co-sec--dark">
         <div className="co-sec-inner">
           <h2 className="bs-mark-green" style={{color:"#fff"}}>Our Team</h2>
-          <p style={{textAlign:'center',color:'rgba(255,255,255,.7)',marginBottom:'32px',fontSize:'.95rem'}}>A leadership team combining international exposure with deep, practical knowledge of Indian livestock production.</p>
+          <p className="co-team-intro">A leadership team combining international exposure with deep, practical knowledge of Indian livestock production.</p>
           <div className="pillars-grid">
             {CAPS.map(c=><div className="pillar-card" key={c.title}>
               <div className="pillar-ico"><CapIcon name={c.icon} size={30}/></div>
@@ -111,7 +111,7 @@ export default function Company() {
 
       <section className="co-cta">
         <div className="co-cta-inner">
-          <h2 className="bs-mark">Talk to Our Team</h2>
+          <h2 className="bs-mark bs-mark--center">Talk to Our Team</h2>
           <p>Whether you are a producer, nutritionist, or feed manufacturer - we are ready to help.</p>
           <Link to="/contact" className="btn-primary">Get In Touch</Link>
         </div>

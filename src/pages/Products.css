@@ -40,7 +40,7 @@
   background: var(--off-white);
   padding: 28px 20px 48px;
   border-right: 1px solid var(--border);
-  position: sticky; top: 108px;
+  position: sticky; top: 117px;
   height: fit-content;
   align-self: flex-start;
 }
@@ -94,14 +94,15 @@
   transition: all .15s;
 }
 .prod-row:hover { background: var(--off-white); padding-left: 10px; padding-right: 10px; margin: 0 -10px; border-radius: 6px; }
-.prod-row-hdr { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 3px; }
+.prod-row-hdr { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 4px; flex-wrap: wrap; }
+.prod-row-hdr h3 { min-width: 0; overflow-wrap: anywhere; }
 .prod-row h3 { font-size: var(--fs-sub); font-weight: 700; color: var(--green-dark); display: flex; align-items: baseline; }
-.prod-row-badges { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
+.prod-row-badges { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; flex-shrink: 1; min-width: 0; justify-content: flex-end; }
 .prod-row-type {
   font-size: var(--fs-label); font-weight: 700; letter-spacing: .08em;
   text-transform: uppercase; color: var(--text-light);
-  background: var(--off-white); padding: 2px 7px; border-radius: 3px;
-  border: 1px solid var(--border);
+  background: var(--off-white); padding: 3px 8px; border-radius: 3px;
+  border: 1px solid var(--border); white-space: normal; overflow-wrap: anywhere;
 }
 .prod-row-vert {
   font-size: var(--fs-label); font-weight: 700; letter-spacing: .08em;
@@ -126,7 +127,9 @@
 
 /* Product logo in list rows */
 .prod-row-logo {
-  height: 32px;
+  height: 26px;
+  opacity: .9;
+  margin: 6px 0 2px;
   width: auto;
   max-width: 200px;
   object-fit: contain;

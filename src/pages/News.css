@@ -2,7 +2,7 @@
 .pg-hero{background:var(--mint-bg);padding:40px 24px 32px}.pg-hero-inner{max-width:1200px;margin:0 auto}.pg-hero h1{color:var(--green-dark);margin-bottom:8px}
 .pg-hero p{color:var(--text-mid)}
 .news-body{padding:72px 24px}.news-inner{max-width:560px;margin:0 auto;text-align:center}
-.news-icon{font-size:var(--fs-h1);margin-bottom:18px}
+.news-icon{color:var(--green);display:flex;justify-content:center;margin-bottom:18px}
 .news-inner h2{margin-bottom:14px;color:var(--green-dark)}
 .news-inner p{color:var(--text-mid);line-height:var(--lh-body);margin-bottom:12px}
 .news-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:28px}

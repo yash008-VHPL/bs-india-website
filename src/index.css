@@ -83,10 +83,15 @@ p, li, td, input, textarea, select, label {
 .bs-mark,
 .bs-mark-green {
   position: relative;
-  display: block;
+  /* inline-block shrink-wraps the box to the text, so on a CENTRED heading
+     the mark travels with the words instead of parking at the container's
+     left edge. margin-left is 0 so the text itself still starts flush with
+     the body copy beneath it. */
+  display: inline-block;
   margin-left: 0;
   padding-top: 0;
   margin-top: 30px;
+  max-width: 100%;
 }
 .bs-mark::before,
 .bs-mark-green::before {
@@ -107,8 +112,24 @@ p, li, td, input, textarea, select, label {
 .bs-mark::before { background-image: url("/bs-mark.svg"); }
 .bs-mark-green::before { background-image: url("/bs-mark-green.svg"); }
 
-/* Centred headings (CTA bands) keep the mark tucked against the text */
-.bs-mark--center { text-align: center; }
+/*
+  Centred headings (the CTA bands). A hanging mark would sit at the box's
+  left edge while the words sit in the middle - and the gap grows the moment
+  the headline wraps. Here the mark flows inline with the text instead, so
+  it stays glued to the first word wherever the line centres. Indentation
+  is not a concern in these blocks: the copy under them is centred too.
+*/
+.bs-mark--center::before {
+  position: static;
+  display: inline-block;
+  margin-right: 0.3em;
+  vertical-align: 0.34em;
+}
+
+/* Masks: if a browser cannot mask, hide the icon rather than show a block */
+@supports not ((-webkit-mask-image: url("/icons/cow.svg")) or (mask-image: url("/icons/cow.svg"))) {
+  .bs-icon { display: none !important; }
+}
 
 /* --- The red product mark that replaces the old "+" ----------------
    Chairman: "Use of the red icon instead of the '+' next to product name." */

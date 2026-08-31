@@ -98,7 +98,7 @@ export default function Home() {
 
       <section className="home-cta">
         <div className="home-cta-inner">
-          <h2 className="bs-mark">Partner with Berg+Schmidt India</h2>
+          <h2 className="bs-mark bs-mark--center">Partner with Berg+Schmidt India</h2>
           <p>Get expert guidance on the right nutritional solution for your operation.</p>
           <Link to="/contact" className="btn-white">Contact Our Team</Link>
         </div>

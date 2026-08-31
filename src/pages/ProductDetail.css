@@ -20,7 +20,8 @@
 .app-list li { color: var(--text-mid); padding-left: 12px; border-left: 2px solid var(--green); line-height: 1.6; }
 .pd-pack { color: var(--text-mid); }
 .pd-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
-.pd-cta .btn-primary, .pd-cta .pd-sb-card { background: var(--off-white); border-radius: 8px; padding: 20px; margin-bottom: 18px; }
+.pd-cta .btn-primary, .pd-cta .btn-outline { flex: 1 1 260px; }
+.pd-sb-card { background: var(--off-white); border-radius: 8px; padding: 20px; margin-bottom: 18px; }
 .pd-sb-card h3 { font-size: var(--fs-label); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--green-dark); margin-bottom: 14px; }
 .pd-sp-link { display: flex; align-items: flex-start; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
 .pd-sp-link:last-child { border-bottom: none; }

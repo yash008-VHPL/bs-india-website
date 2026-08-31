@@ -12,8 +12,7 @@ export default function Footer() {
           <Logo size="sm" white />
           <div className="footer-entity">
             <p>Berg+Schmidt India Pvt. Ltd.</p>
-            <p>A subsidiary of Berg+Schmidt</p>
-            <p>Animal Nutrition Group</p>
+            <p>A subsidiary of Berg+Schmidt Animal&nbsp;Nutrition&nbsp;Group</p>
             <p>Pune, Maharashtra, India</p>
           </div>
         </div>

@@ -21,6 +21,7 @@ export default function ProductDetail() {
               engines cannot read a logo. The name is the H1 on every
               product, whether or not product artwork exists. */}
           <h1><span className="sol-plus" aria-hidden="true" />{p.name}</h1>
+          {p.logo && <img src={p.logo} alt="" aria-hidden="true" className="pd-product-logo" />}
           <p className="pd-sub">{p.subtitle}</p>
           <p className="pd-tgl">{p.tagline}</p>
           <div className="pd-body">

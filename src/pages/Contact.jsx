@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
+import CapIcon from '../components/CapIcon';
 import './Contact.css';
 
 const SEGMENT_LABEL = {
@@ -62,8 +63,8 @@ export default function Contact() {
         <div className="ct-info">
           <div className="ct-card">
             <h3>Get in Touch</h3>
-            <div className="ct-detail"><span>📧</span><div><strong>Email</strong><a href="mailto:info@berg-schmidt.co.in">info@berg-schmidt.co.in</a></div></div>
-            <div className="ct-detail"><span>🌐</span><div><strong>Website</strong><a href="https://www.berg-schmidt.co.in">www.berg-schmidt.co.in</a></div></div>
+            <div className="ct-detail"><span><CapIcon name="mail" size={20}/></span><div><strong>Email</strong><a href="mailto:info@berg-schmidt.co.in">info@berg-schmidt.co.in</a></div></div>
+            <div className="ct-detail"><span><CapIcon name="web" size={20}/></span><div><strong>Website</strong><a href="https://www.berg-schmidt.co.in">www.berg-schmidt.co.in</a></div></div>
           </div>
           <div className="ct-card ct-card--green">
             <h3>Technical Support</h3>
@@ -72,13 +73,13 @@ export default function Contact() {
           </div>
           <div className="ct-card" style={{background:'var(--mint-light)'}}>
             <h3 style={{color:'var(--green-dark)'}}>About Berg+Schmidt India</h3>
-            <p style={{fontSize:'.82rem',color:'var(--text-mid)',lineHeight:'1.7'}}>Berg+Schmidt India Pvt. Ltd. has been serving India's poultry and dairy industries since 2002, bringing world-class animal nutrition science to Indian producers.</p>
+            <p style={{fontSize:'var(--fs-body)',color:'var(--text-mid)',lineHeight:'1.7'}}>Berg+Schmidt India Pvt. Ltd. has been serving India's poultry and dairy industries since 2002, bringing world-class animal nutrition science to Indian producers.</p>
           </div>
         </div>
         <div className="ct-form-wrap">
           {submitted?(
             <div className="ct-success">
-              <div className="ct-success-icon">✓</div>
+              <div className="ct-success-icon"><CapIcon name="check" size={26}/></div>
               <h2>Thank you for reaching out!</h2>
               <p>Your email client should have opened with your message pre-filled. We will be in touch shortly.</p>
             </div>
@@ -120,7 +121,7 @@ export default function Contact() {
               <div className="fg"><label>Message *</label>
                 <textarea name="message" rows={5} required value={form.message} onChange={handleChange} placeholder="Tell us about your operation, species, flock/herd size, and what you are looking to achieve..."/>
               </div>
-              <button type="submit" className="btn-submit">Send Message →</button>
+              <button type="submit" className="btn-submit">Send Message</button>
             </form>
           )}
         </div>

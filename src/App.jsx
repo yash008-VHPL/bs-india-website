@@ -25,9 +25,9 @@ function ScrollToTop() {
 function NotFound() {
   return (
     <div style={{ textAlign: 'center', padding: '100px 24px' }}>
-      <h1 style={{ fontSize: '3.5rem', fontWeight: 800, color: 'var(--green)' }}>404</h1>
+      <h1 style={{ color: 'var(--green-dark)' }}>404</h1>
       <p style={{ color: 'var(--text-mid)', marginBottom: '20px' }}>Page not found.</p>
-      <a href="/" style={{ color: 'var(--green)', fontWeight: 600 }}>Return to Home</a>
+      <a href="/" className="btn-primary">Return to Home</a>
     </div>
   );
 }

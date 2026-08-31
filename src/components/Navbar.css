@@ -112,7 +112,7 @@
   .sticky-nav-links {
     display: none;
     position: absolute;
-    top: 100px;
+    top: 117px;
     left: 0; right: 0;
     background: var(--white);
     flex-direction: column;

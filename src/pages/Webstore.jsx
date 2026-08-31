@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
+import Icon from '../components/Icon';
 import './Webstore.css';
 export default function Webstore() {
   return (
@@ -12,8 +13,8 @@ export default function Webstore() {
         <div className="ws-inner">
           <div className="ws-card">
             <div className="ws-badge">Coming Soon</div>
-            <div className="ws-chips"><div className="ws-chip">🐓 Poultry</div><div className="ws-chip">🐄🦬 Dairy</div></div>
-            <h2 className="bs-mark">Our Online Store is Being Built</h2>
+            <div className="ws-chips"><div className="ws-chip"><Icon name="poultry" size={22}/> Poultry</div><div className="ws-chip"><Icon name="cow" size={22}/> Dairy</div></div>
+            <h2 className="bs-mark bs-mark--center">Our Online Store is Being Built</h2>
             <p>We are setting up a direct online purchasing channel for Indian poultry and dairy producers. Once live, you will be able to browse our full product range, place orders, and arrange delivery directly from Berg+Schmidt India.</p>
             <div className="ws-prod-preview">
               <h3>Products That Will Be Available</h3>

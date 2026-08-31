@@ -16,7 +16,7 @@ const C_HEAD_OFFICE = '#5769A9'; // Accent 1 - Berg+Schmidt India HQ (not HEF)
 const C_HEF = '#004c3e';         // --green-dark - Hightech Energy Feeds plants
 const C_DAIRY = '#4cb496';       // --green
 const C_POULTRY = '#E32653';     // --accent-red
-const C_COMMODITY = '#630A20';   // Red 2 - Commodity Business Division
+const C_COMMODITY = '#630A20';   // Red 2 - feed fats and oils representatives
 
 /* Final on-map marker positions. A few coincident / clustered cities are
    nudged a couple of px so every pin stays legible; the number keys the
@@ -223,9 +223,9 @@ export default function IndiaMap() {
       </svg>
 
       <div className="india-map-legend">
-        <LegendBlock title="Dairy Feed Supplement Representatives" color={C_DAIRY} items={dairy} active={active} setActive={setActive} onEnquire={handleEnquire} />
-        <LegendBlock title="Poultry Feed Supplement Representatives" color={C_POULTRY} items={poultry} active={active} setActive={setActive} onEnquire={handleEnquire} />
-        <LegendBlock title="Commodity Business Division Representatives" color={C_COMMODITY} items={commodity} active={active} setActive={setActive} onEnquire={handleEnquire} />
+        <LegendBlock title="Dairy Representatives" color={C_DAIRY} items={dairy} active={active} setActive={setActive} onEnquire={handleEnquire} />
+        <LegendBlock title="Poultry Representatives" color={C_POULTRY} items={poultry} active={active} setActive={setActive} onEnquire={handleEnquire} />
+        <LegendBlock title="Feed Fats & Oils Representatives" color={C_COMMODITY} items={commodity} active={active} setActive={setActive} onEnquire={handleEnquire} />
         <LegendBlock title="Offices & Manufacturing" color={C_HEF} items={company} active={active} setActive={setActive} onEnquire={handleEnquire} />
       </div>
     </div>
