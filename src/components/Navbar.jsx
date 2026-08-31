@@ -21,7 +21,7 @@ export default function Navbar() {
       {/* Top utility bar */}
       <div className="topbar">
         <div className="topbar-inner">
-          <span className="topbar-entity">Berg + Schmidt India Pvt. Ltd.</span>
+          <span className="topbar-entity">Berg+Schmidt India Pvt. Ltd.</span>
           <div className="topbar-links">
             <a href="https://an.berg-schmidt.com" target="_blank" rel="noreferrer">Global Site</a>
             <span className="topbar-sep">|</span>
@@ -30,7 +30,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Main nav — always solid white, always visible */}
+      {/* Main nav - always solid white, always visible */}
       <nav className="sticky-nav">
         <div className="sticky-nav-logo">
           <Link to="/"><Logo size="sm" /></Link>

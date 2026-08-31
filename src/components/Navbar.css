@@ -1,4 +1,4 @@
-/* Sticky wrapper — topbar AND nav scroll together and stay pinned at top */
+/* Sticky wrapper - topbar AND nav scroll together and stay pinned at top */
 .site-header {
   position: sticky;
   top: 0;
@@ -10,7 +10,7 @@
 .topbar {
   background: var(--green);
   color: rgba(255,255,255,.95);
-  font-size: .72rem;
+  font-size:var(--fs-label);
   height: 32px;
   display: flex;
   align-items: center;
@@ -30,11 +30,11 @@
 .topbar-links a:hover { color: #fff; }
 .topbar-sep { opacity: .4; }
 
-/* ── STICKY NAV — matches global site #sticky-nav exactly ── */
+/* ── STICKY NAV - matches global site #sticky-nav exactly ── */
 .sticky-nav {
   position: relative;
   z-index: 1;
-  height: 68px;
+  height: 84px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,7 +52,7 @@
 /* Nav links */
 .sticky-nav-links {
   display: flex;
-  height: 68px;
+  height: 84px;
   align-items: stretch;
   list-style: none;
   margin: 0;
@@ -63,7 +63,7 @@
   display: flex;
   align-items: center;
   padding: 0 16px;
-  font-size: .86rem;
+  font-size:var(--fs-body);
   font-weight: 500;
   color: var(--text-dark);
   border-bottom: 3px solid transparent;
@@ -80,7 +80,7 @@
   display: inline-block;
   margin-left: 5px;
   padding: 1px 6px;
-  font-size: .58rem;
+  font-size:var(--fs-label);
   font-weight: 700;
   letter-spacing: .06em;
   text-transform: uppercase;

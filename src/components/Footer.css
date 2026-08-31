@@ -24,14 +24,14 @@
   margin-top: 4px;
 }
 .footer-entity p {
-  font-size: .78rem;
+  font-size:var(--fs-label);
   color: rgba(255,255,255,.52);
   line-height: 1.8;
 }
 
-/* Column headers — ALL CAPS like global site */
+/* Column headers - ALL CAPS like global site */
 .footer-col h4 {
-  font-size: .68rem;
+  font-size:var(--fs-label);
   font-weight: 700;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -46,7 +46,7 @@
 }
 
 .footer-col ul li a {
-  font-size: .82rem;
+  font-size:var(--fs-body);
   color: rgba(255,255,255,.65);
   transition: color .2s;
 }
@@ -85,7 +85,7 @@
   border-top: 1px solid rgba(255,255,255,.1);
   padding: 16px 32px;
   text-align: center;
-  font-size: .72rem;
+  font-size:var(--fs-label);
   color: rgba(255,255,255,.38);
   max-width: 1280px;
   margin: 0 auto;

@@ -12,11 +12,11 @@ const SEGMENT_BY_KIND = {
 };
 
 /* Theme colours (mirrors CSS custom properties) */
-const C_HEAD_OFFICE = '#5769A9'; // Accent 1 — Berg + Schmidt India HQ (not HEF)
-const C_HEF = '#004c3e';         // --green-dark — Hightech Energy Feeds plants
+const C_HEAD_OFFICE = '#5769A9'; // Accent 1 - Berg+Schmidt India HQ (not HEF)
+const C_HEF = '#004c3e';         // --green-dark - Hightech Energy Feeds plants
 const C_DAIRY = '#4cb496';       // --green
 const C_POULTRY = '#E32653';     // --accent-red
-const C_COMMODITY = '#630A20';   // Red 2 — Commodity Business Division
+const C_COMMODITY = '#630A20';   // Red 2 - Commodity Business Division
 
 /* Final on-map marker positions. A few coincident / clustered cities are
    nudged a couple of px so every pin stays legible; the number keys the
@@ -194,21 +194,21 @@ export default function IndiaMap() {
         className="india-map-svg"
         viewBox={map.viewBox}
         role="img"
-        aria-label="Berg+Schmidt India — locations and distribution network"
+        aria-label="Berg+Schmidt India - locations and distribution network"
       >
-        {/* Neighbouring countries — faint context outlines */}
+        {/* Neighbouring countries - faint context outlines */}
         <g className="im-neighbors">
           {Object.values(map.neighbors).flat().map((d, i) => (
             <path key={'n' + i} d={d} />
           ))}
         </g>
-        {/* India — state boundaries */}
+        {/* India - state boundaries */}
         <g className="im-states">
           {map.states.map((d, i) => (
             <path key={'s' + i} d={d} />
           ))}
         </g>
-        {/* India — national outline */}
+        {/* India - national outline */}
         <g className="im-outline">
           {map.outline.map((d, i) => (
             <path key={'o' + i} d={d} />

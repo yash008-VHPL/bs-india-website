@@ -17,12 +17,12 @@ export default function ProductDetail() {
             {p.species.map(s=><span key={s} className="stag">{SPECIES.find(x=>x.id===s)?.label}</span>)}
             <span className="pd-type-badge">{p.type}</span>
           </div>
-          {p.logo
-            ? <img src={p.logo} alt={p.name} className="pd-product-logo" />
-            : <h1><span className="sol-plus">+ </span>{p.name}</h1>
-          }
+          {/* Chairman: product names must be TEXT, not images - search
+              engines cannot read a logo. The name is the H1 on every
+              product, whether or not product artwork exists. */}
+          <h1><span className="sol-plus" aria-hidden="true" />{p.name}</h1>
           <p className="pd-sub">{p.subtitle}</p>
-          <p className="pd-tgl">"{p.tagline}"</p>
+          <p className="pd-tgl">{p.tagline}</p>
           <div className="pd-body">
             <h2>Overview</h2><p>{p.description}</p>
             <h2>Key Benefits</h2>
@@ -46,7 +46,7 @@ export default function ProductDetail() {
             <h3>Other Products</h3>
             {others.map(x=>(
               <Link to={`/products/${x.id}`} key={x.id} className="pd-sp-link">
-                <span className="sol-plus">+</span>
+                <span className="sol-plus" aria-hidden="true" />
                 <div><span className="pd-sp-name">{x.name}</span><span className="pd-sp-sub">{x.subtitle}</span></div>
               </Link>
             ))}
