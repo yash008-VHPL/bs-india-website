@@ -1,33 +1,72 @@
 name: Deploy to Azure Static Web Apps
+
 on:
   push:
     branches: [main]
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches: [main]
+
+# The review branch built and published at /beta. Change this to point the
+# review copy at a different branch. To RETIRE /beta: delete the
+# "Build the /beta review copy" step below and the /beta routes in
+# public/staticwebapp.config.json.
+env:
+  BETA_REF: chairman-corrections-aug2026
+
 jobs:
   build_and_deploy:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    # Never run for a pull request opened from a fork: a fork controls the
+    # workflow file it checks out, and must not reach the deploy credential.
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request'
+       && github.event.action != 'closed'
+       && github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '20', cache: 'npm' }
       - run: npm ci
-      - run: npm run build
+
+      - name: Build the production site
+        run: npm run build
+
+      # The review copy is built from BETA_REF, NOT from this branch, so the
+      # live site and the review copy can differ. It is built with base
+      # '/beta/' so it loads its own assets, marked noindex, and dropped into
+      # dist/beta. A failure here must never block a production deploy.
+      - name: Build the /beta review copy
+        continue-on-error: true
+        run: |
+          set -eux
+          git fetch --depth=1 origin "$BETA_REF"
+          rm -rf /tmp/beta-src
+          git worktree add --detach /tmp/beta-src FETCH_HEAD
+          cd /tmp/beta-src
+          npm ci
+          BASE_PATH=/beta/ VITE_ROBOTS=noindex,nofollow npx vite build
+          rm -rf "$GITHUB_WORKSPACE/dist/beta"
+          cp -r dist "$GITHUB_WORKSPACE/dist/beta"
+
       - uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: b65df892606c4c39853e7eed2532a828c715b5f99469a88d44d16e435f4403f507-6fdf0b4d-1b32-4d9e-a215-fe5f5ccfead4010171607031ee10
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
           app_location: /
           output_location: dist
           skip_api_build: true
+
   close_pull_request:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.action == 'closed'
+      && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: b65df892606c4c39853e7eed2532a828c715b5f99469a88d44d16e435f4403f507-6fdf0b4d-1b32-4d9e-a215-fe5f5ccfead4010171607031ee10
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: close
