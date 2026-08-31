@@ -1,3 +1,5 @@
+import { asset } from '../asset';
+
 /*
  * NOTE (chairman / Mr Wywiol, Aug 2026):
  * "Commodity Business Division", "Poultry Feed Supplement Division" and
@@ -24,7 +26,7 @@ export const PRODUCTS = [
 
   // ── POULTRY FEED SUPPLEMENT DIVISION ────────────────────────────────────
 
-  { id:'bergaapur', logo:'/product-logos/bergaapur.webp', name:'Bergaapur',
+  { id:'bergaapur', logo:asset('/product-logos/bergaapur.webp'), name:'Bergaapur',
     subtitle:'Natural Emulsifier with Superior Nutrition',
     type:'Phospholipid Concentrate', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Formulated from de-oiled soy lecithin using the latest processing technology to maximise broiler performance.',
@@ -45,7 +47,7 @@ export const PRODUCTS = [
     dosageNote:'The correct inclusion depends on the age of the bird and fat content in the diet. Higher fat content in the feed requires more phospholipids. Must be added to mash feed before pelleting.',
     packaging:'20 kg bag (1 kg plastic pouch × 20 kg bag)' },
 
-  { id:'bergaboost', logo:'/product-logos/bergaboost.webp', name:'BergaBoost',
+  { id:'bergaboost', logo:asset('/product-logos/bergaboost.webp'), name:'BergaBoost',
     subtitle:'Improves Consistency in Egg Production',
     type:'Phospholipid Concentrate', species:['poultry'], vertical:'poultry-supplement',
     tagline:'A specially designed nutritional package of pure phospholipids to help laying hens and breeders sustain peak production.',
@@ -67,7 +69,7 @@ export const PRODUCTS = [
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 kg bag (1 kg plastic pouch × 20 kg bag)' },
 
-  { id:'lipovital-gl90', logo:'/product-logos/lipovital-gl90.webp', name:'LipoVital GL90',
+  { id:'lipovital-gl90', logo:asset('/product-logos/lipovital-gl90.webp'), name:'LipoVital GL90',
     subtitle:'The Efficient Nutritional & Physiological MCFA Solution',
     type:'Gut Health', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Minimum 90% glycerol monolaurate - the highest-potency MCFA solution available for poultry gut health.',
@@ -86,7 +88,7 @@ export const PRODUCTS = [
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 kg bag in corrugated box' },
 
-  { id:'poulscoby', logo:'/product-logos/poulscoby.webp', name:'PoulScoBy',
+  { id:'poulscoby', logo:asset('/product-logos/poulscoby.webp'), name:'PoulScoBy',
     subtitle:'Unique Combination of Monogastric Specific Yeast & Spore-Forming Bacteria',
     type:'Probiotic', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Saccharomyces boulardii, three Bacillus strains and Seaweed Extract - a complete, science-backed antibiotic alternative.',
@@ -106,7 +108,7 @@ export const PRODUCTS = [
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 kg bag (1 kg plastic pouch × 20 kg bag)' },
 
-  { id:'hienzym', logo:'/product-logos/hienzym.webp', name:'HiEnZym',
+  { id:'hienzym', logo:asset('/product-logos/hienzym.webp'), name:'HiEnZym',
     subtitle:'Synergistic Multi Enzyme Performance Enhancer',
     type:'Enzyme Supplement', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Multi-strain, multi-enzyme preparation using the latest liquid fermentation technology to unlock hidden energy and boost performance.',
@@ -176,7 +178,7 @@ export const PRODUCTS = [
 
   // ── DAIRY FEED SUPPLEMENT DIVISION ─────────────────────────────────────
 
-  { id:'floravive', logo:'/product-logos/floravive.webp', name:'FloraVive',
+  { id:'floravive', logo:asset('/product-logos/floravive.webp'), name:'FloraVive',
     subtitle:'Rumen Specific Yeast and Bacteria', type:'Rumen Modifier',
     species:['dairy'], vertical:'dairy-supplement',
     tagline:'A unique combination of rumen-specific yeast and bacteria - stabilises rumen pH, increases VFA production, and lifts milk yield.',
@@ -196,7 +198,7 @@ export const PRODUCTS = [
     ],
     packaging:'25 kg bag' },
 
-  { id:'bp-glu', logo:'/product-logos/bp-glu.webp', name:'BP-GLU',
+  { id:'bp-glu', logo:asset('/product-logos/bp-glu.webp'), name:'BP-GLU',
     subtitle:'Rumen Protected Bypass Glucose', type:'Bypass Glucose',
     species:['dairy'], vertical:'dairy-supplement',
     tagline:'Fluid-bed coated bypass glucose-fructose - the undisputed energy answer for transition cows and heat-stressed herds.',
@@ -219,7 +221,7 @@ export const PRODUCTS = [
     ],
     packaging:'25 kg bag' },
 
-  { id:'bergamin-premium', logo:'/product-logos/bergamin-premium.webp', name:'BergaMin Premium',
+  { id:'bergamin-premium', logo:asset('/product-logos/bergamin-premium.webp'), name:'BergaMin Premium',
     subtitle:'Chelated Mineral Mixture for Reproduction, Production and Overall Health',
     type:'Chelated Mineral & Vitamin Premix',
     species:['dairy'], vertical:'dairy-supplement',
@@ -243,7 +245,7 @@ export const PRODUCTS = [
     ],
     packaging:'25 kg bag' },
 
-  { id:'bergafat-t300', logo:'/product-logos/bergafat-t300.webp', name:'BergaFat-T 300',
+  { id:'bergafat-t300', logo:asset('/product-logos/bergafat-t300.webp'), name:'BergaFat-T 300',
     subtitle:'Rumen Protected Bypass Fat (Fractionated Palm Fat)', type:'Rumen-Protected Fat',
     species:['dairy'], vertical:'dairy-supplement', verticals:['dairy-supplement','commodity'],
     tagline:'Pure palm origin, fractionated bypass fat with high palmitic acid content - proven energy for transition and lactating cows.',
@@ -268,7 +270,7 @@ export const PRODUCTS = [
     ],
     packaging:'25 kg bag' },
 
-  { id:'lipoaktiv-l-met-60', logo:'/product-logos/lipoaktiv-l-met-60.webp', name:'LipoAktiv L-Met 60',
+  { id:'lipoaktiv-l-met-60', logo:asset('/product-logos/lipoaktiv-l-met-60.webp'), name:'LipoAktiv L-Met 60',
     subtitle:'Rumen Protected L-Methionine', type:'Rumen-Protected Amino Acid',
     species:['dairy'], vertical:'dairy-supplement',
     tagline:'60% bypass L-methionine plus 40% bypass fat - supports milk protein, fertility and liver health.',
@@ -288,7 +290,7 @@ export const PRODUCTS = [
     ],
     packaging:'25 kg bag' },
 
-  { id:'fat-o-lip-ls', logo:'/product-logos/fat-o-lip-ls.webp', name:'FAT-O-LIP LS',
+  { id:'fat-o-lip-ls', logo:asset('/product-logos/fat-o-lip-ls.webp'), name:'FAT-O-LIP LS',
     subtitle:'Rumen Protected Fat and Phosphatidyl Choline',
     type:'Rumen-Protected Fat + Choline (Microencapsulated)',
     species:['dairy'], vertical:'dairy-supplement',
@@ -312,7 +314,7 @@ export const PRODUCTS = [
     ],
     packaging:'25 kg bag' },
 
-  { id:'lipoaktiv-lys-40', logo:'/product-logos/lipoaktiv-lys-40.webp', name:'LipoAktiv Lys 40',
+  { id:'lipoaktiv-lys-40', logo:asset('/product-logos/lipoaktiv-lys-40.webp'), name:'LipoAktiv Lys 40',
     subtitle:'Rumen-Protected L-Lysine', type:'Rumen-Protected Amino Acid',
     species:['dairy'], vertical:'dairy-supplement',
     tagline:'Fluid-bed coated L-lysine delivering precise amino acid balance to the small intestine.',
@@ -333,7 +335,7 @@ export const PRODUCTS = [
     ],
     packaging:'25 kg bag' },
 
-  { id:'hiendmast', logo:'/product-logos/hiendmast.webp', name:'HiEndMast',
+  { id:'hiendmast', logo:asset('/product-logos/hiendmast.webp'), name:'HiEndMast',
     subtitle:'A Complete Supplement for Mastitis Management', type:'Udder Health / Mastitis Support',
     species:['dairy'], vertical:'dairy-supplement',
     tagline:'Anti-inflammatory, immunomodulatory udder support - restores milk production and udder integrity.',

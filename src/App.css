@@ -2,3 +2,14 @@
 .app-content { flex: 1; }
 /* Homepage hero section needs to be a positioning context for the floating logo */
 .app-content > main.home { position: relative; }
+
+/* Review-build banner - never rendered on the production build */
+.beta-banner {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px;
+  background: var(--accent-red); color: #fff;
+  padding: 9px 24px; font-size: var(--fs-label); letter-spacing: .02em;
+}
+.beta-banner strong { text-transform: uppercase; letter-spacing: .1em; }
+.beta-banner span { opacity: .88; }
+.beta-banner a { margin-left: auto; color: #fff; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+@media (max-width: 600px) { .beta-banner { padding: 8px 16px; } .beta-banner a { margin-left: 0; } }

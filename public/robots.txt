@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /beta/
+
+Sitemap: https://www.berg-schmidt.co.in/sitemap.xml
