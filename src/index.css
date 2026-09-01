@@ -127,8 +127,13 @@ p, li, td, input, textarea, select, label {
 .bs-mark--center::before {
   position: static;
   display: inline-block;
-  margin-right: 0.30em;
-  margin-left: -0.72em;
+  /* The two margins sum with the 0.42em box to exactly zero advance, so the
+     browser centres the WORDS and not the words-plus-mark. The split is not
+     arbitrary: -0.34em puts the mark's right edge 0.08em past the first
+     glyph's left edge - the identical overlap the hanging mark has, so the
+     two read as one accent rather than two.                              */
+  margin-left: -0.34em;
+  margin-right: -0.08em;
   vertical-align: 0.86em;
 }
 
