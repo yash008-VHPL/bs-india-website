@@ -113,17 +113,23 @@ p, li, td, input, textarea, select, label {
 .bs-mark-green::before { background-image: url("/bs-mark-green.svg"); }
 
 /*
-  Centred headings (the CTA bands). A hanging mark would sit at the box's
-  left edge while the words sit in the middle - and the gap grows the moment
-  the headline wraps. Here the mark flows inline with the text instead, so
-  it stays glued to the first word wherever the line centres. Indentation
-  is not a concern in these blocks: the copy under them is centred too.
+  Centred headings (the CTA bands). A hanging mark cannot work here: the box
+  does not shrink-wrap once the headline wraps, so the mark would strand
+  itself at the box's left edge while the words sit in the middle. The mark
+  flows inline instead, so it stays glued to the first word.
+
+  margin-left cancels the mark's own inline advance (its width plus its
+  right margin), so the browser centres the WORDS and not the words-plus-mark.
+  Without it every centred headline sits half the mark's width to the right.
+  vertical-align lifts it clear of the cap band so it reads as the same
+  hanging mark used on the left-aligned headings, not a bullet on the line.
 */
 .bs-mark--center::before {
   position: static;
   display: inline-block;
-  margin-right: 0.3em;
-  vertical-align: 0.34em;
+  margin-right: 0.30em;
+  margin-left: -0.72em;
+  vertical-align: 0.86em;
 }
 
 /* Masks: if a browser cannot mask, hide the icon rather than show a block */
@@ -132,15 +138,40 @@ p, li, td, input, textarea, select, label {
 }
 
 /* --- The red product mark that replaces the old "+" ----------------
-   Chairman: "Use of the red icon instead of the '+' next to product name." */
+   Chairman: "Use of the red icon instead of the '+' next to product name."
+
+   On a product NAME the mark hangs in the margin, exactly like .bs-mark on a
+   section heading. It has to: an inline mark pushes the product name to the
+   right of the subtitle beneath it, which is precisely the misalignment the
+   chairman flagged. Out of flow, the name starts at the container edge and
+   lines up with its own body copy.                                        */
+.sol-card h3,
+.prod-row h3,
+.pd-main h1 { position: relative; }
+
 .sol-plus {
+  position: absolute;
+  top: -0.35em;
+  left: -0.34em;
+  width: 0.42em;
+  height: 0.42em;
+  background: url("/bs-mark.svg") no-repeat center / contain;
+  pointer-events: none;
+}
+
+/* In the two sidebar/product LISTS the mark is a bullet, not a hanging
+   heading mark - there is no body column for the name to line up with. It
+   stays in flow, sized and positioned to sit on the name's cap line.
+   (vertical-align is useless here: every host is a flex container, so
+   position comes from align-items.)                                      */
+.sol-bullet {
   display: inline-block;
   width: 0.46em;
   height: 0.46em;
-  margin-right: 0.4em;
-  vertical-align: 0.04em;
+  margin-top: 0.34em;
   background: url("/bs-mark.svg") no-repeat center / contain;
   flex-shrink: 0;
+  pointer-events: none;
 }
 
 /* --- Buttons -------------------------------------------------------

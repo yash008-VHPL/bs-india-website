@@ -47,7 +47,7 @@ export default function ProductDetail() {
             <h3>Other Products</h3>
             {others.map(x=>(
               <Link to={`/products/${x.id}`} key={x.id} className="pd-sp-link">
-                <span className="sol-plus" aria-hidden="true" />
+                <span className="sol-bullet" aria-hidden="true" />
                 <div><span className="pd-sp-name">{x.name}</span><span className="pd-sp-sub">{x.subtitle}</span></div>
               </Link>
             ))}

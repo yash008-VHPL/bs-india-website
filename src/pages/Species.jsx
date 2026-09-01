@@ -38,7 +38,7 @@ export default function Species() {
                 <ul className="ch-list">{d.ch.map((c,i)=><li key={i}><span className="ch-dot"/>{c}</li>)}</ul>
                 <div className="sp-prods">
                   <h3>Our Products for {d.label}</h3>
-                  {prods.map(p=><Link to={`/products/${p.id}`} key={p.id} className="sp-pl"><span className="sol-plus" aria-hidden="true" /><div><span className="spn">{p.name}</span><span className="sps">{p.subtitle}</span></div></Link>)}
+                  {prods.map(p=><Link to={`/products/${p.id}`} key={p.id} className="sp-pl"><span className="sol-bullet" aria-hidden="true" /><div><span className="spn">{p.name}</span><span className="sps">{p.subtitle}</span></div></Link>)}
                 </div>
               </div>
             </div>
