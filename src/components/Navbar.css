@@ -16,8 +16,12 @@
   align-items: center;
 }
 .topbar-inner {
+  /* The header is one block: this bar must share the nav's horizontal rhythm,
+     not its own. It used to be a 1400px centred container sitting above a
+     full-bleed nav, so on a 1920px screen its text started 260px inside the
+     logo directly beneath it. */
   width: 100%;
-  max-width: 1400px;
+  max-width: 1248px;   /* 1200 content + 2 x 24 gutter */
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
@@ -25,7 +29,10 @@
   align-items: center;
 }
 .topbar-entity { font-weight: 500; letter-spacing: .03em; }
-.topbar-links { display: flex; gap: 12px; align-items: center; }
+/* margin-left:auto, not space-between: the entity beside it is hidden on
+   mobile, and space-between then pins these links to the LEFT edge while the
+   burger sits on the right. */
+.topbar-links { display: flex; gap: 12px; align-items: center; margin-left: auto; }
 .topbar-links a { color: rgba(255,255,255,.85); transition: color .2s; }
 .topbar-links a:hover { color: #fff; }
 .topbar-sep { opacity: .4; }
@@ -38,6 +45,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* Same container as the topbar above and the page content below, so the
+     logo, the utility bar and every page headline share one left edge at
+     every width. The bar itself still spans the full window - only its
+     contents are constrained. */
+  max-width: 1248px;
+  margin: 0 auto;
   padding: 0 24px;
   background: var(--white);
   border-bottom: 1px solid var(--border);
