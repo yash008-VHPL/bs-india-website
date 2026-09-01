@@ -125,7 +125,14 @@ p, li, td, input, textarea, select, label {
   hanging mark used on the left-aligned headings, not a bullet on the line.
 */
 .bs-mark--center::before {
-  position: static;
+  /* relative, not static: a raised inline-block grows the LINE BOX, which
+     pushed the four CTA headlines 13px down their bands and broke the
+     vertical rhythm they shared with the left-aligned headings. A relative
+     offset paints in the same place but is ignored for line-box sizing. */
+  position: relative;
+  top: -0.86em;
+  left: 0;
+  vertical-align: baseline;
   display: inline-block;
   /* The two margins sum with the 0.42em box to exactly zero advance, so the
      browser centres the WORDS and not the words-plus-mark. The split is not
@@ -134,7 +141,6 @@ p, li, td, input, textarea, select, label {
      two read as one accent rather than two.                              */
   margin-left: -0.34em;
   margin-right: -0.08em;
-  vertical-align: 0.86em;
 }
 
 /* Masks: if a browser cannot mask, hide the icon rather than show a block */
@@ -156,13 +162,19 @@ p, li, td, input, textarea, select, label {
 
 .sol-plus {
   position: absolute;
-  top: -0.35em;
+  top: -0.35em;   /* see the line-height note below */
   left: -0.34em;
   width: 0.42em;
   height: 0.42em;
   background: url("/bs-mark.svg") no-repeat center / contain;
   pointer-events: none;
 }
+/* The offset is measured from the heading's BOX top, so a looser line-height
+   drops the text further from it and the mark appears to float. The product
+   card titles use --lh-sub (1.30) against the headings' --lh-h1 (1.18), so
+   they need a tighter offset to hang at the same visual distance.        */
+.sol-card h3 > .sol-plus,
+.prod-row h3 > .sol-plus { top: -0.29em; }
 
 /* In the two sidebar/product LISTS the mark is a bullet, not a hanging
    heading mark - there is no body column for the name to line up with. It
