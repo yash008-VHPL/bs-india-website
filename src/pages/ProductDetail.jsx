@@ -1,9 +1,11 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { PRODUCTS, SPECIES } from '../data/products';
 import './ProductDetail.css';
+import usePageMeta from '../usePageMeta';
 export default function ProductDetail() {
   const {id}=useParams();
   const p=PRODUCTS.find(x=>x.id===id);
+  usePageMeta(p?p.name:null, p?`${p.name} - ${p.subtitle}. ${p.tagline}`:null);
   if(!p) return <Navigate to="/products" replace/>;
   const others=PRODUCTS.filter(x=>x.id!==id);
   return (
@@ -32,15 +34,19 @@ export default function ProductDetail() {
           <p className="pd-tgl">{p.tagline}</p>
           <div className="pd-body">
             <h2>Overview</h2><p>{p.description}</p>
-            <h2>Key Benefits</h2>
-            <ul className="ben-list">{p.benefits.map((b,i)=><li key={i}><span className="ben-dot"/>{b}</li>)}</ul>
+            {p.benefits.length > 0 && <>
+              <h2>Key Benefits</h2>
+              <ul className="ben-list">{p.benefits.map((b,i)=><li key={i}><span className="ben-dot"/>{b}</li>)}</ul>
+            </>}
             <div className="pd-grid">
-              <div>
-                <h2>Applications & Dosage</h2>
+              {/* A heading with nothing under it reads as a broken page, so
+                  each section only appears when it has content. */}
+              {p.applications.length > 0 && <div>
+                <h2>Applications &amp; Dosage</h2>
                 <ul className="app-list">{p.applications.map((a,i)=><li key={i}>{a}</li>)}</ul>
                 {p.dosageNote && <p className="pd-dose-note">{p.dosageNote}</p>}
-              </div>
-              <div><h2>Packaging</h2><p className="pd-pack">{p.packaging}</p></div>
+              </div>}
+              {p.packaging && <div><h2>Packaging</h2><p className="pd-pack">{p.packaging}</p></div>}
             </div>
             <div className="pd-cta">
               <Link to="/contact" className="btn-primary">Request Technical Data Sheet</Link>

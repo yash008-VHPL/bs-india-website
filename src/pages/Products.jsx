@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { PRODUCTS, GROUPS, SPECIES } from '../data/products';
 import Icon from '../components/Icon';
 import './Products.css';
+import usePageMeta from '../usePageMeta';
 
 /*
  * Products are grouped by SPECIES, not by internal business division.
  * Mr Wywiol: the division names are internal and must not appear publicly.
  */
 export default function Products() {
+  usePageMeta('Products', "Feed fats, phospholipid concentrates, enzymes, probiotics, rumen-protected fats and bypass nutrients for Indian poultry and dairy.");
   const [activeGroup, setActiveGroup] = useState('all');
   const [search, setSearch] = useState('');
 
@@ -100,7 +102,7 @@ export default function Products() {
                       <div className="prod-group-header">
                         <Icon name={g.icon} size={34} />
                         <div>
-                          <div className="prod-group-title">{g.label}</div>
+                          <h2 className="prod-group-title">{g.label}</h2>
                           <div className="prod-group-desc">{g.desc}</div>
                         </div>
                       </div>
@@ -112,7 +114,7 @@ export default function Products() {
                   <div className="prod-group">
                     <div className="prod-group-header">
                       <div>
-                        <div className="prod-group-title">Other Products</div>
+                        <h2 className="prod-group-title">Other Products</h2>
                         <div className="prod-group-desc">Feed fats and ingredients supplied across livestock species.</div>
                       </div>
                     </div>

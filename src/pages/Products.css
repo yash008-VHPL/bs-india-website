@@ -2,7 +2,7 @@
 
 /* Page hero */
 .pg-hero { background: var(--mint-bg); padding: 40px 24px 32px; }
-.pg-hero-inner { max-width: 1300px; margin: 0 auto; }
+.pg-hero-inner { max-width: 1200px; margin: 0 auto; }
 .pg-hero h1 { color: var(--green-dark); margin-bottom: 8px; }
 .pg-hero p { color: var(--text-mid); }
 
@@ -63,11 +63,14 @@
 }
 .sb-opt input { accent-color: var(--green); }
 .sb-reset {
-  padding: 10px 20px; background: var(--accent-red); color: #fff;
-  border-radius: 4px; font-size: var(--fs-label); font-weight: 700;
-  border: none; cursor: pointer; transition: background .2s; width: 100%;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 46px; padding: 0 20px;
+  background: var(--accent-red); color: #fff;
+  border: 2px solid var(--accent-red); border-radius: 4px;
+  font-size: var(--fs-label); font-weight: 700; letter-spacing: .02em;
+  cursor: pointer; transition: background .2s, border-color .2s; width: 100%;
 }
-.sb-reset:hover { background: var(--accent-red-dark); }
+.sb-reset:hover { background: var(--accent-red-dark); border-color: var(--accent-red-dark); }
 
 /* Product list */
 .prod-list { flex: 1; padding: 28px 32px; }
@@ -84,7 +87,7 @@
   padding: 18px 0 12px;
   border-bottom: 2px solid var(--accent-red);
 }
-.prod-group-title { font-size: var(--fs-sub); font-weight: 700; color: var(--green-dark); line-height: var(--lh-sub); }
+.prod-group-title { font-size: var(--fs-sub); font-weight: 700; color: var(--green-dark); line-height: var(--lh-sub); margin: 0; }
 .prod-group-desc  { font-size: var(--fs-body); color: var(--text-mid); margin-top: 4px; line-height: 1.6; }
 
 /* Product rows */
@@ -112,7 +115,7 @@
 .prod-row-sub { font-size: var(--fs-body); font-weight: 600; color: var(--green-dark); margin-bottom: 4px; }
 .prod-row-desc { color: var(--text-mid); line-height: 1.65; margin-bottom: 10px; }
 .prod-row-tags { display: flex; gap: 5px; flex-wrap: wrap; }
-.stag {
+.prod-row .stag {
   font-size: var(--fs-label); font-weight: 600; padding: 3px 10px;
   border: 1.5px solid var(--green); border-radius: 20px; color: var(--green);
 }

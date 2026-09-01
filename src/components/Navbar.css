@@ -92,7 +92,7 @@
 }
 
 /* Burger */
-.burger {
+.burger { font-size: 0;
   display: none;
   flex-direction: column;
   gap: 5px;
@@ -112,7 +112,7 @@
   .sticky-nav-links {
     display: none;
     position: absolute;
-    top: 117px;
+    top: 100%;
     left: 0; right: 0;
     background: var(--white);
     flex-direction: column;

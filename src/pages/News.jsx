@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
 import CapIcon from '../components/CapIcon';
 import './News.css';
+import usePageMeta from '../usePageMeta';
 export default function News() {
+  usePageMeta('News', "News and updates from Berg+Schmidt India and the global Berg+Schmidt Animal Nutrition team.");
   return (
     <main className="news-page">
       <div className="pg-hero"><div className="pg-hero-inner">
         <h1 className="bs-mark">News & Updates</h1>
-        <p>The latest from Berg+Schmidt India and the global Animal Nutrition division.</p>
+        <p>The latest from Berg+Schmidt India and the global Animal Nutrition team.</p>
       </div></div>
       <section className="news-body">
         <div className="news-inner">

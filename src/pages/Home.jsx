@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
 import Icon from '../components/Icon';
 import './Home.css';
+import usePageMeta from '../usePageMeta';
 
 const HERO_IMAGES = [
   { id:'poultry', label:'Poultry',  url:'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500&q=70', link:'/species#poultry' },
@@ -10,6 +11,7 @@ const HERO_IMAGES = [
 ];
 
 export default function Home() {
+  usePageMeta("Animal Nutrition for India's Poultry and Dairy", "Berg+Schmidt India Pvt. Ltd. - science-backed feed additives for India's poultry and dairy producers. Present in India since 2002.");
   return (
     <main className="home" style={{position:"relative"}}>
       <section className="hero">

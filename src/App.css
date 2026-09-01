@@ -13,3 +13,13 @@
 .beta-banner span { opacity: .88; }
 .beta-banner a { margin-left: auto; color: #fff; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
 @media (max-width: 600px) { .beta-banner { padding: 8px 16px; } .beta-banner a { margin-left: 0; } }
+
+/* 404 - same page furniture as every other inner page */
+.notfound-page .pg-hero { background: var(--mint-bg); padding: 40px 24px 32px; }
+.notfound-page .pg-hero-inner { max-width: 1200px; margin: 0 auto; }
+.notfound-page .pg-hero h1 { color: var(--green-dark); margin-bottom: 8px; }
+.notfound-page .pg-hero p { color: var(--text-mid); }
+.notfound-inner { max-width: 760px; margin: 0 auto; padding: 56px 24px 90px; }
+.notfound-inner p { color: var(--text-mid); margin-bottom: 26px; }
+.notfound-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 600px) { .notfound-inner { padding: 36px 16px 60px; } }

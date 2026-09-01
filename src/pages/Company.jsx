@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import IndiaMap from '../components/IndiaMap';
 import CapIcon from '../components/CapIcon';
 import './Company.css';
+import usePageMeta from '../usePageMeta';
 
 const CAPS = [
   {icon:'regulatory',title:'Regulatory & Industry Leadership',text:"Decades of engagement with India's animal husbandry regulatory landscape, with sustained relationships across government ministries and national industry bodies - including leadership roles in national feed industry associations."},
@@ -13,6 +14,7 @@ const CAPS = [
 ];
 
 export default function Company() {
+  usePageMeta('About Us', "Berg+Schmidt India Pvt. Ltd., Pune - a subsidiary of Berg+Schmidt Animal Nutrition, part of the Stern-Wywiol Gruppe. Operating in India since 2002.");
   return (
     <main className="company-page">
       <div className="pg-hero">
@@ -34,7 +36,7 @@ export default function Company() {
               <p>
                 Berg+Schmidt India Pvt. Ltd. is a subsidiary of{' '}
                 <a href="https://an.berg-schmidt.com" target="_blank" rel="noreferrer">Berg+Schmidt Animal Nutrition</a>,
-                the animal nutrition division of the Stern-Wywiol Gruppe (SWG) - a
+                the animal nutrition business of the Stern-Wywiol Gruppe (SWG) - a
                 privately held group of specialist ingredient companies headquartered
                 in Hamburg, Germany.
               </p>

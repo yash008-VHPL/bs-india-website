@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import './Legal.css';
+import usePageMeta from '../usePageMeta';
 
 /**
  * Imprint and Privacy Policy.
@@ -22,6 +23,7 @@ const PAGES = {
 
 export default function Legal({ page }) {
   const p = PAGES[page];
+  usePageMeta(p.title, p.intro);
   return (
     <main className="legal-page">
       <div className="pg-hero">

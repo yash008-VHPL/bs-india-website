@@ -49,6 +49,19 @@
 }
 
 html { scroll-behavior: smooth; }
+
+/* A visible focus ring on everything keyboard-reachable. The form fields set
+   outline:none and signalled focus with a mint border at 2.56:1 against white,
+   under the 3:1 a non-text indicator needs. */
+:focus-visible {
+  outline: 3px solid var(--accent-red);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--accent-red);
+  outline-offset: 0;
+}
 body {
   font-family: var(--font);
   color: var(--text-dark);

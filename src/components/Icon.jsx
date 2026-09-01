@@ -19,8 +19,7 @@ export default function Icon({ name, size = 28, className = '', style = {} }) {
   return (
     <span
       className={`bs-icon ${className}`}
-      role="img"
-      aria-label={name}
+      aria-hidden="true"
       style={{
         width: size,
         height: size,

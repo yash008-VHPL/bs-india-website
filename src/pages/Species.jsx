@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { PRODUCTS, SPECIES } from '../data/products';
 import Icon from '../components/Icon';
 import './Species.css';
+import usePageMeta from '../usePageMeta';
 const SD = {
   poultry:{label:'Poultry',img:'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500&q=65',headline:'Optimal Nutrition for Broilers & Layers',
     intro:"India's broiler and layer industries are among the fastest-growing in the world. Our liquid feed fats and phospholipid concentrates address the most critical performance parameters - energy density, feed conversion, weight gain, egg production and gut health.",
@@ -12,6 +13,7 @@ const SD = {
     ch:['Negative energy balance (NEB) in early lactation','Body condition score loss post-calving','Milk fat depression in high-producing animals','Reproductive performance and conception rates','Maximising milk solids output in peak production']},
 };
 export default function Species() {
+  usePageMeta('Species', "Nutritional solutions for poultry, dairy cows and buffalo in India - feed fats, phospholipids, rumen-protected nutrients and gut health.");
   const loc=useLocation();
   useEffect(()=>{
     if(loc.hash){const el=document.getElementById(loc.hash.slice(1));if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),100);}

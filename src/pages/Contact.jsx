@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
 import CapIcon from '../components/CapIcon';
 import './Contact.css';
+import usePageMeta from '../usePageMeta';
 
 const SEGMENT_LABEL = {
   dairy: 'dairy feed supplements',
@@ -24,6 +25,7 @@ function buildPrefillMessage({ segment, city, detail }) {
 }
 
 export default function Contact() {
+  usePageMeta('Contact', "Talk to the Berg+Schmidt India team in Pune about poultry and dairy nutrition for your operation.");
   const [params] = useSearchParams();
   const segment = params.get('segment');
   const city = params.get('city') || '';
@@ -69,7 +71,7 @@ export default function Contact() {
           <div className="ct-card ct-card--green">
             <h3>Technical Support</h3>
             <p>Our nutrition specialists can assist with product selection, inclusion rates, formulation support, and field-level technical queries.</p>
-            <p style={{marginTop:'8px',fontSize:'.78rem',color:'rgba(255,255,255,.6)'}}>We respond to all enquiries within 1 business day.</p>
+            <p style={{marginTop:'8px',fontSize:'var(--fs-body)',color:'rgba(255,255,255,.6)'}}>We respond to all enquiries within 1 business day.</p>
           </div>
           <div className="ct-card" style={{background:'var(--mint-light)'}}>
             <h3 style={{color:'var(--green-dark)'}}>About Berg+Schmidt India</h3>

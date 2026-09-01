@@ -43,7 +43,7 @@
 .pillar-card p { font-size:var(--fs-body); color: rgba(255,255,255,.72); line-height: 1.65; }
 .co-cta { background: var(--mint-bg); padding: 64px 24px; text-align: center; }
 .co-cta-inner { max-width: 560px; margin: 0 auto; }
-.co-cta-inner h2 { font-size:var(--fs-h1); font-weight: 800; margin-bottom: 8px;    }
+.co-cta-inner h2 { margin-bottom: 8px; color: var(--green-dark); }
 .co-cta-inner p { color: var(--text-mid); margin-bottom: 22px; }
 @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; gap: 32px; } .co-stats { grid-template-columns: repeat(4,1fr); } .gl-grid { grid-template-columns: 1fr; } .pillars-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .co-stats { grid-template-columns: 1fr 1fr; } .pillars-grid { grid-template-columns: 1fr; } .co-sec { padding: 44px 16px; } }

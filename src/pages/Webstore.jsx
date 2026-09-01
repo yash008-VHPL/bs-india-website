@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
 import Icon from '../components/Icon';
 import './Webstore.css';
+import usePageMeta from '../usePageMeta';
 export default function Webstore() {
+  usePageMeta('Shop', "A direct online purchasing channel for Berg+Schmidt India products is being built for Indian poultry and dairy producers.");
   return (
     <main className="ws-page">
       <div className="pg-hero"><div className="pg-hero-inner">

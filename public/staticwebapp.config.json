@@ -19,7 +19,7 @@
     "rewrite": "/index.html",
     "exclude": [
       "/assets/*", "/fonts/*", "/product-logos/*", "/icons/*",
-      "/*.{css,js,ico,png,jpg,webp,svg,woff2,json,txt}",
+      "/*.{css,js,ico,png,jpg,webp,svg,woff2,json,txt,xml}",
       "/beta/*", "/beta/assets/*", "/beta/fonts/*", "/beta/icons/*", "/beta/product-logos/*"
     ]
   },
