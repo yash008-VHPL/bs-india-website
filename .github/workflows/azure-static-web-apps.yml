@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20', cache: 'npm' }
+        with: { node-version: '22', cache: 'npm' }
       - run: npm ci
 
       - name: Build the production site
@@ -36,9 +36,10 @@ jobs:
       # The review copy is built from BETA_REF, NOT from this branch, so the
       # live site and the review copy can differ. It is built with base
       # '/beta/' so it loads its own assets, marked noindex, and dropped into
-      # dist/beta. A failure here must never block a production deploy.
+      # dist/beta. This step now FAILS the run rather than continuing quietly:
+      # the first attempt reported success while shipping nothing, and a green
+      # tick on an empty /beta is worse than a red one.
       - name: Build the /beta review copy
-        continue-on-error: true
         run: |
           set -eux
           git fetch --depth=1 origin "$BETA_REF"
@@ -49,14 +50,42 @@ jobs:
           BASE_PATH=/beta/ VITE_ROBOTS=noindex,nofollow npx vite build
           rm -rf "$GITHUB_WORKSPACE/dist/beta"
           cp -r dist "$GITHUB_WORKSPACE/dist/beta"
+          # The beta branch ships its own staticwebapp.config.json. Two config
+          # files inside app_location is undefined behaviour, and the beta
+          # branch could drift and silently re-route the live site. One config,
+          # at the artifact root, always production's.
+          rm -f "$GITHUB_WORKSPACE/dist/beta/staticwebapp.config.json"
 
+      - name: Refuse to deploy an incomplete artifact
+        run: |
+          set -eu
+          # app_location is now the artifact itself, so an empty or partial
+          # dist would blank the live site instead of just breaking /beta.
+          test -f "$GITHUB_WORKSPACE/dist/index.html"
+          test -f "$GITHUB_WORKSPACE/dist/staticwebapp.config.json"
+          test -d "$GITHUB_WORKSPACE/dist/assets"
+          test -f "$GITHUB_WORKSPACE/dist/beta/index.html"
+          test -d "$GITHUB_WORKSPACE/dist/beta/assets"
+          test ! -f "$GITHUB_WORKSPACE/dist/beta/staticwebapp.config.json"
+          echo "artifact OK:"
+          echo "  production : $(ls "$GITHUB_WORKSPACE/dist" | tr '\n' ' ')"
+          echo "  beta       : $(ls "$GITHUB_WORKSPACE/dist/beta" | tr '\n' ' ')"
+
+      # skip_app_build is NOT optional here. Without it the action runs its own
+      # Oryx build from source, which re-runs `vite build`; Vite empties dist,
+      # and the /beta folder assembled above is destroyed before upload. The
+      # first deploy of /beta failed for exactly this reason. With it, the
+      # action uploads the dist we just built, as-is. app_location then names
+      # the FOLDER TO UPLOAD and output_location must be empty.
       - uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: /
-          output_location: dist
+          app_location: dist
+          api_location: ""
+          output_location: ""
+          skip_app_build: true
           skip_api_build: true
 
   close_pull_request:
