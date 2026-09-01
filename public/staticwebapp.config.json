@@ -11,7 +11,7 @@
     { "route": "/beta/fonts/*" },
     { "route": "/beta/icons/*" },
     { "route": "/beta/product-logos/*" },
-    { "route": "/beta/*.{webp,svg,ico,jpg,jpeg,png,woff2,json,txt}" },
+    { "route": "/beta/*.{webp,svg,ico,jpg,jpeg,png,woff2,json,txt,css,js}" },
     { "route": "/beta",  "rewrite": "/beta/index.html" },
     { "route": "/beta/*","rewrite": "/beta/index.html" }
   ],
