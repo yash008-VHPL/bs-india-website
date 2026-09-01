@@ -23,7 +23,7 @@
 .map-intro { max-width: 880px; margin: 0 auto 36px; }
 .map-intro p { color: var(--text-mid); margin-bottom: 14px; }
 .map-intro .pres-stats { justify-content: center; }
-.india-map-center { max-width: 780px; margin: 0 auto; }
+.india-map-center { max-width: 1200px; margin: 0 auto; }
 .gl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .gl-card { border-radius: 10px; padding: 24px 22px; border: 1px solid var(--border); }
 .gl-card--g { background: var(--mint-light); border-color: var(--green); }

@@ -188,9 +188,21 @@ export default function IndiaMap() {
     navigate(`/contact?${params.toString()}#contact-form`);
   };
 
+  /*
+   * showMap is OFF until we have an India outline that depicts the official
+   * boundary. The geometry this component ships is Natural Earth derived: it
+   * draws the de-facto Line of Control, so Gilgit-Baltistan / PoK and Aksai
+   * Chin fall outside India. Publishing that on an Indian company's site is a
+   * legal exposure, and hand-editing the coordinates is what produced the
+   * boundary that had to be reverted in e72e1f7. The representative network -
+   * which is the information people actually come here for - renders exactly
+   * as before. Flip this back on once correct geometry is in indiaMapData.json.
+   */
+  const showMap = false;
+
   return (
-    <div className="india-map-wrap">
-      <svg
+    <div className={`india-map-wrap${showMap ? '' : ' india-map-wrap--nomap'}`}>
+      {showMap && <svg
         className="india-map-svg"
         viewBox={map.viewBox}
         role="img"
@@ -220,7 +232,7 @@ export default function IndiaMap() {
             <Marker key={m.n} m={m} active={active} setActive={setActive} />
           ))}
         </g>
-      </svg>
+      </svg>}
 
       <div className="india-map-legend">
         <LegendBlock title="Dairy Representatives" color={C_DAIRY} items={dairy} active={active} setActive={setActive} onEnquire={handleEnquire} />

@@ -136,3 +136,8 @@
   font-size:var(--fs-label);
   color: var(--text-light);
 }
+
+/* Network list without the map: give it the full content width and a
+   four-across grid, so it reads as a directory rather than a map legend. */
+.india-map-wrap--nomap { display: block; }
+.india-map-wrap--nomap .india-map-legend { margin-top: 0; }
