@@ -44,3 +44,14 @@
   border-radius: 0 4px 4px 0;
 }
 
+
+/* The product's stylized logo, standing in for the H1 text */
+.pd-product-logo {
+  height: 68px;
+  width: auto;
+  max-width: 340px;
+  object-fit: contain;
+  object-position: left center;
+  display: block;
+}
+@media (max-width: 600px) { .pd-product-logo { height: 46px; max-width: 100%; } }

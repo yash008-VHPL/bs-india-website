@@ -15,9 +15,17 @@
     <meta property="og:description" content="Science-backed feed additives for poultry and dairy production in India."/>
     <meta property="og:url" content="https://www.berg-schmidt.co.in"/>
     <title>Berg+Schmidt India | Animal Nutrition</title>
-    <!-- Favicon: the official Berg+Schmidt Animal Nutrition mark -->
+    <!-- Favicon: the official Berg+Schmidt Animal Nutrition mark, the same
+         files the group site serves. The 32px is declared because browsers
+         pick the nearest size and downscaling the 192 to tab size turns the
+         mark to mush. favicon.ico is here because Safari and older browsers
+         still request /favicon.ico from the site root regardless of these
+         tags, and a 404 there leaves a blank tab icon. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png"/>
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png"/>
-    <link rel="apple-touch-icon" href="/favicon.png"/>
+    <link rel="icon" href="/favicon.ico" sizes="any"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
   </head>
   <body>
     <div id="root"></div>

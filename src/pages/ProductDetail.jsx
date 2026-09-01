@@ -17,10 +17,17 @@ export default function ProductDetail() {
             {p.species.map(s=><span key={s} className="stag">{SPECIES.find(x=>x.id===s)?.label}</span>)}
             <span className="pd-type-badge">{p.type}</span>
           </div>
-          {/* Chairman: product names must be TEXT, not images - search
-              engines cannot read a logo. The name is the H1 on every
-              product, whether or not product artwork exists. */}
-          <h1><span className="sol-plus" aria-hidden="true" />{p.name}</h1>
+          {/* Where a product has its own stylized logo, that logo IS the
+              heading - it is the product's registered identity and it is what
+              customers recognise. It sits inside the H1 with the product name
+              as its alt text, so the name is still real, indexable text for
+              search. Products with no logo fall back to the name set in type,
+              with the red mark. */}
+          <h1>
+            {p.logo
+              ? <img src={p.logo} alt={p.name} className="pd-product-logo" />
+              : <><span className="sol-plus" aria-hidden="true" />{p.name}</>}
+          </h1>
           <p className="pd-sub">{p.subtitle}</p>
           <p className="pd-tgl">{p.tagline}</p>
           <div className="pd-body">

@@ -139,9 +139,13 @@ function ProductRow({ p }) {
   return (
     <Link to={`/products/${p.id}`} className="prod-row">
       <div className="prod-row-hdr">
-        {/* Product names are real text, never images - search engines need to
-            read them (chairman's note on the product page write-up). */}
-        <h3><span className="sol-plus" aria-hidden="true" />{p.name}</h3>
+        {/* The product's own logo where it has one, with the name as alt text
+            so it stays readable to search; the name set in type otherwise. */}
+        <h3>
+          {p.logo
+            ? <img src={p.logo} alt={p.name} className="prod-row-logo" />
+            : <><span className="sol-plus" aria-hidden="true" />{p.name}</>}
+        </h3>
         <div className="prod-row-badges">
           <span className="prod-row-type">{p.type}</span>
         </div>

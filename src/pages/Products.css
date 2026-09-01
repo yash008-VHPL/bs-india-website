@@ -125,3 +125,13 @@
   .vert-tab { padding: 12px 12px; }
 }
 
+
+/* The product's stylized logo, standing in for the row's H3 text */
+.prod-row-logo {
+  height: 32px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  object-position: left center;
+  display: block;
+}
