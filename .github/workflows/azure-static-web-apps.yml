@@ -6,6 +6,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches: [main]
+  # Lets the site be redeployed from the Actions tab without a commit. Needed
+  # because /beta is built from another branch: pushing only that branch
+  # changes nothing until this workflow runs again.
+  workflow_dispatch:
 
 # The review branch built and published at /beta. Change this to point the
 # review copy at a different branch. To RETIRE /beta: delete the
