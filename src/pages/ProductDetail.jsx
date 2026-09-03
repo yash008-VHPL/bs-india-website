@@ -1,9 +1,11 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { PRODUCTS, SPECIES } from '../data/products';
 import './ProductDetail.css';
+import usePageMeta from '../usePageMeta';
 export default function ProductDetail() {
   const {id}=useParams();
   const p=PRODUCTS.find(x=>x.id===id);
+  usePageMeta(p?p.name:null, p?`${p.name} - ${p.subtitle}. ${p.tagline}`:null);
   if(!p) return <Navigate to="/products" replace/>;
   const others=PRODUCTS.filter(x=>x.id!==id);
   return (
@@ -17,23 +19,34 @@ export default function ProductDetail() {
             {p.species.map(s=><span key={s} className="stag">{SPECIES.find(x=>x.id===s)?.label}</span>)}
             <span className="pd-type-badge">{p.type}</span>
           </div>
-          {p.logo
-            ? <img src={p.logo} alt={p.name} className="pd-product-logo" />
-            : <h1><span className="sol-plus">+ </span>{p.name}</h1>
-          }
+          {/* Where a product has its own stylized logo, that logo IS the
+              heading - it is the product's registered identity and it is what
+              customers recognise. It sits inside the H1 with the product name
+              as its alt text, so the name is still real, indexable text for
+              search. Products with no logo fall back to the name set in type,
+              with the red mark. */}
+          <h1>
+            {p.logo
+              ? <img src={p.logo} alt={p.name} className="pd-product-logo" />
+              : <><span className="sol-plus" aria-hidden="true" />{p.name}</>}
+          </h1>
           <p className="pd-sub">{p.subtitle}</p>
-          <p className="pd-tgl">"{p.tagline}"</p>
+          <p className="pd-tgl">{p.tagline}</p>
           <div className="pd-body">
             <h2>Overview</h2><p>{p.description}</p>
-            <h2>Key Benefits</h2>
-            <ul className="ben-list">{p.benefits.map((b,i)=><li key={i}><span className="ben-dot"/>{b}</li>)}</ul>
+            {p.benefits.length > 0 && <>
+              <h2>Key Benefits</h2>
+              <ul className="ben-list">{p.benefits.map((b,i)=><li key={i}><span className="ben-dot"/>{b}</li>)}</ul>
+            </>}
             <div className="pd-grid">
-              <div>
-                <h2>Applications & Dosage</h2>
+              {/* A heading with nothing under it reads as a broken page, so
+                  each section only appears when it has content. */}
+              {p.applications.length > 0 && <div>
+                <h2>Applications &amp; Dosage</h2>
                 <ul className="app-list">{p.applications.map((a,i)=><li key={i}>{a}</li>)}</ul>
                 {p.dosageNote && <p className="pd-dose-note">{p.dosageNote}</p>}
-              </div>
-              <div><h2>Packaging</h2><p className="pd-pack">{p.packaging}</p></div>
+              </div>}
+              {p.packaging && <div><h2>Packaging</h2><p className="pd-pack">{p.packaging}</p></div>}
             </div>
             <div className="pd-cta">
               <Link to="/contact" className="btn-primary">Request Technical Data Sheet</Link>
@@ -46,7 +59,7 @@ export default function ProductDetail() {
             <h3>Other Products</h3>
             {others.map(x=>(
               <Link to={`/products/${x.id}`} key={x.id} className="pd-sp-link">
-                <span className="sol-plus">+</span>
+                <span className="sol-bullet" aria-hidden="true" />
                 <div><span className="pd-sp-name">{x.name}</span><span className="pd-sp-sub">{x.subtitle}</span></div>
               </Link>
             ))}

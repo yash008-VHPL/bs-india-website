@@ -1,7 +1,20 @@
-export const VERTICALS = [
-  { id:'commodity',         label:'Commodity Business Division',       icon:'🏭', desc:'High-quality processed oils and fats for the Indian livestock industry, covering both poultry and dairy commodity needs.' },
-  { id:'poultry-supplement',label:'Poultry Feed Supplement Division',  icon:'🐓', desc:'Science-backed nutritional supplements to maximise broiler and layer performance.' },
-  { id:'dairy-supplement',  label:'Dairy Feed Supplement Division',    icon:'🐄', desc:'Rumen-protected and bypass nutrients engineered for high-producing dairy cows and buffalo.' },
+import { asset } from '../asset';
+
+/*
+ * NOTE (chairman / Mr Wywiol, Aug 2026):
+ * "Commodity Business Division", "Poultry Feed Supplement Division" and
+ * "Dairy Feed Supplement Division" are INTERNAL names and must not appear
+ * on the website. The `vertical` / `verticals` keys are kept on each
+ * product because they carry internal meaning, but nothing in the UI
+ * renders them. The product page groups by species instead.
+ */
+export const VERTICALS = [];
+
+export const GROUPS = [
+  { id:'poultry', label:'Poultry', icon:'poultry',
+    desc:'Feed fats, phospholipid concentrates, enzymes and gut-health solutions for broilers, layers and breeders.' },
+  { id:'dairy',   label:'Dairy - Cow & Buffalo', icon:'cow',
+    desc:'Rumen-protected fats, bypass nutrients, chelated minerals and rumen modifiers for high-producing cows and buffalo.' },
 ];
 
 export const SPECIES = [
@@ -13,7 +26,7 @@ export const PRODUCTS = [
 
   // ── POULTRY FEED SUPPLEMENT DIVISION ────────────────────────────────────
 
-  { id:'bergaapur', logo:'/product-logos/bergaapur.webp', name:'Bergaapur',
+  { id:'bergaapur', logo:asset('/product-logos/bergaapur.webp'), name:'Bergaapur',
     subtitle:'Natural Emulsifier with Superior Nutrition',
     type:'Phospholipid Concentrate', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Formulated from de-oiled soy lecithin using the latest processing technology to maximise broiler performance.',
@@ -27,18 +40,18 @@ export const PRODUCTS = [
       'Stimulates immune system, thereby reducing morbidity and mortality',
     ],
     applications:[
-      'Broiler prestarter/starter feed: 0.5–1.0 kg/MT',
-      'Broiler grower feed: 0.3–0.5 kg/MT',
-      'Broiler finisher feed: 0.3–0.5 kg/MT',
+      'Broiler prestarter/starter feed: 0.5-1.0 kg/MT',
+      'Broiler grower feed: 0.3-0.5 kg/MT',
+      'Broiler finisher feed: 0.3-0.5 kg/MT',
     ],
     dosageNote:'The correct inclusion depends on the age of the bird and fat content in the diet. Higher fat content in the feed requires more phospholipids. Must be added to mash feed before pelleting.',
     packaging:'20 kg bag (1 kg plastic pouch × 20 kg bag)' },
 
-  { id:'bergaboost', logo:'/product-logos/bergaboost.webp', name:'BergaBoost',
+  { id:'bergaboost', logo:asset('/product-logos/bergaboost.webp'), name:'BergaBoost',
     subtitle:'Improves Consistency in Egg Production',
     type:'Phospholipid Concentrate', species:['poultry'], vertical:'poultry-supplement',
     tagline:'A specially designed nutritional package of pure phospholipids to help laying hens and breeders sustain peak production.',
-    description:`BergaBoost is a specially designed nutritional package comprising pure phospholipids for laying hens and breeders — helping them recharge on a day-to-day basis to cope with production-related stress. During peak production, layers and breeders have an extraordinarily high demand for phospholipids to support the continuous synthesis of yolk lipoproteins — the building blocks of egg yolk. BergaBoost delivers a sustained supply of bioavailable phospholipids that maintain peak production longer, improve yolk quality, strengthen shell integrity, maintain liver cell integrity, and support overall hen health.`,
+    description:`BergaBoost is a specially designed nutritional package comprising pure phospholipids for laying hens and breeders - helping them recharge on a day-to-day basis to cope with production-related stress. During peak production, layers and breeders have an extraordinarily high demand for phospholipids to support the continuous synthesis of yolk lipoproteins - the building blocks of egg yolk. BergaBoost delivers a sustained supply of bioavailable phospholipids that maintain peak production longer, improve yolk quality, strengthen shell integrity, maintain liver cell integrity, and support overall hen health.`,
     benefits:[
       'Improves consistency in egg production and sustains peak production for longer',
       'Improves egg weight, yolk size, yolk colour and shell strength',
@@ -49,53 +62,53 @@ export const PRODUCTS = [
       'Reduces mortality',
     ],
     applications:[
-      'Layers: 300–500 g/ton of feed from start of lay through entire lifecycle',
+      'Layers: 300-500 g/ton of feed from start of lay through entire lifecycle',
       'Breeders: 1 kg/ton of feed throughout the lifecycle',
-      'Fatty liver syndrome: 1 kg/ton for 30 days, followed by 300–500 g/ton',
+      'Fatty liver syndrome: 1 kg/ton for 30 days, followed by 300-500 g/ton',
     ],
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 kg bag (1 kg plastic pouch × 20 kg bag)' },
 
-  { id:'lipovital-gl90', logo:'/product-logos/lipovital-gl90.webp', name:'LipoVital GL90',
+  { id:'lipovital-gl90', logo:asset('/product-logos/lipovital-gl90.webp'), name:'LipoVital GL90',
     subtitle:'The Efficient Nutritional & Physiological MCFA Solution',
     type:'Gut Health', species:['poultry'], vertical:'poultry-supplement',
-    tagline:'Minimum 90% glycerol monolaurate — the highest-potency MCFA solution available for poultry gut health.',
-    description:`LipoVital GL90 is a monoglyceride supplement with a minimum of 90% glycerol monolaurate (monolaurin) — the most biologically active form of medium-chain fatty acids. Monolaurin has well-documented antibacterial, antiviral, antifungal and anti-inflammatory properties. Medium-chain fatty acids are also a rapid energy source for intestinal epithelial cells, supporting gut wall integrity and nutrient absorptive capacity, and acting as a natural immune modulator.`,
+    tagline:'Minimum 90% glycerol monolaurate - the highest-potency MCFA solution available for poultry gut health.',
+    description:`LipoVital GL90 is a monoglyceride supplement with a minimum of 90% glycerol monolaurate (monolaurin) - the most biologically active form of medium-chain fatty acids. Monolaurin has well-documented antibacterial, antiviral, antifungal and anti-inflammatory properties. Medium-chain fatty acids are also a rapid energy source for intestinal epithelial cells, supporting gut wall integrity and nutrient absorptive capacity, and acting as a natural immune modulator.`,
     benefits:[
-      'Minimum 90% glycerol monolaurate — highest potency available',
+      'Minimum 90% glycerol monolaurate - highest potency available',
       'Effective against G(+ve) bacteria and several G(-ve) bacteria',
       'Reduces the infectivity of lipid-enveloped viruses',
       'Rapid energy source for intestinal epithelial cells',
       'Improves gut wall integrity and barrier function',
-      'Alternative to AGP — active throughout the whole digestive tract',
+      'Alternative to AGP - active throughout the whole digestive tract',
       'Improves health status, thereby improving performance and reducing mortality',
       'Neutral taste and smell; free-flowing and easy to handle',
     ],
-    applications:['Poultry and Aqua: 500 g–1 kg/ton of feed'],
+    applications:['Poultry and Aqua: 500 g-1 kg/ton of feed'],
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 kg bag in corrugated box' },
 
-  { id:'poulscoby', logo:'/product-logos/poulscoby.webp', name:'PoulScoBy',
+  { id:'poulscoby', logo:asset('/product-logos/poulscoby.webp'), name:'PoulScoBy',
     subtitle:'Unique Combination of Monogastric Specific Yeast & Spore-Forming Bacteria',
     type:'Probiotic', species:['poultry'], vertical:'poultry-supplement',
-    tagline:'Saccharomyces boulardii, three Bacillus strains and Seaweed Extract — a complete, science-backed antibiotic alternative.',
-    description:`Poultry farmers are looking for an alternative to antibiotics or AGPs due to antibiotic resistance concerns. Probiotics are an easy choice as an alternative, given their well-established mode of action and efficacy in productivity and immune modulation — over and above the competitive exclusion phenomenon. PoulScoBy is a unique combination of monogastric specific yeast (Saccharomyces boulardii) and three strains of spore-forming bacteria (Bacillus subtilis natto, B. amyloliquefaciens, B. licheniformis) and Seaweed Extract.`,
+    tagline:'Saccharomyces boulardii, three Bacillus strains and Seaweed Extract - a complete, science-backed antibiotic alternative.',
+    description:`Poultry farmers are looking for an alternative to antibiotics or AGPs due to antibiotic resistance concerns. Probiotics are an easy choice as an alternative, given their well-established mode of action and efficacy in productivity and immune modulation - over and above the competitive exclusion phenomenon. PoulScoBy is a unique combination of monogastric specific yeast (Saccharomyces boulardii) and three strains of spore-forming bacteria (Bacillus subtilis natto, B. amyloliquefaciens, B. licheniformis) and Seaweed Extract.`,
     benefits:[
       'Reinforcement of GI tract microflora',
       'Improved fertility and hatchability',
       'Better immune response',
       'Decreases concentration of several microbes and their associated toxins (e.g. Clostridium)',
-      'Safe, pure and efficient — non-toxic with no residues and no withdrawal period',
+      'Safe, pure and efficient - non-toxic with no residues and no withdrawal period',
       'Tolerant to antibiotics; compatible with other feed components and additives',
       'Improves FCR and live weight gain',
       'Decreases mortality rate, especially in the early stage',
       'Reduces wet litter conditions',
     ],
-    applications:['250–500 g/ton of feed in poultry diet'],
+    applications:['250-500 g/ton of feed in poultry diet'],
     dosageNote:'Please consult the nutritionist/veterinarian for exact dosage or contact our local representative.',
     packaging:'20 kg bag (1 kg plastic pouch × 20 kg bag)' },
 
-  { id:'hienzym', logo:'/product-logos/hienzym.webp', name:'HiEnZym',
+  { id:'hienzym', logo:asset('/product-logos/hienzym.webp'), name:'HiEnZym',
     subtitle:'Synergistic Multi Enzyme Performance Enhancer',
     type:'Enzyme Supplement', species:['poultry'], vertical:'poultry-supplement',
     tagline:'Multi-strain, multi-enzyme preparation using the latest liquid fermentation technology to unlock hidden energy and boost performance.',
@@ -118,7 +131,7 @@ export const PRODUCTS = [
   { id:'bergafat-fg', name:'BergaFat FG',
     subtitle:'Phospholipid-Emulsified & Highly Digestible Feed Fat for Layers',
     type:'Liquid Fat', species:['poultry'], vertical:'poultry-supplement',
-    tagline:'Revolutionising layer energy supplementation — purpose-built fat with far more than just calorific value.',
+    tagline:'Revolutionising layer energy supplementation - purpose-built fat with far more than just calorific value.',
     description:`Bergafat FG revolutionises feed fat supplementation and introduces the concept of adding a layer-specific fat/oil to the ration, making energy supplementation more efficient. Natural/generic oils such as Rice Bran and Soybean oils are used in rations solely for their calorific values, but they lack the additional properties needed to bring further efficiencies to layer production.`,
     benefits:[
       'Supplements essential fatty acids',
@@ -131,7 +144,7 @@ export const PRODUCTS = [
       'Improves pellet mill performance through better moisture retention capacity',
     ],
     applications:[
-      'Dosage 1%–2% depending on layer breed, feedstuffs used and dietary energy level',
+      'Dosage 1%-2% depending on layer breed, feedstuffs used and dietary energy level',
       'Add to mixer and mix with other feed ingredients, or spray on pellet surface',
     ],
     dosageNote:'Dosage can be arrived at in consultation with the nutritionist/veterinarian.',
@@ -157,7 +170,7 @@ export const PRODUCTS = [
   { id:'hienfat-tg', name:'HiEnFat TG',
     subtitle:'High-Energy Feed Fat', type:'Feed Fat',
     species:[], vertical:'commodity',
-    tagline:'A high-energy feed fat for livestock rations — full technical details coming soon.',
+    tagline:'A high-energy feed fat for livestock rations - full technical details coming soon.',
     description:`HiEnFat TG is a high-energy feed fat for livestock rations. Detailed product specifications, benefits and dosage will be published shortly.`,
     benefits:[],
     applications:[],
@@ -165,11 +178,11 @@ export const PRODUCTS = [
 
   // ── DAIRY FEED SUPPLEMENT DIVISION ─────────────────────────────────────
 
-  { id:'floravive', logo:'/product-logos/floravive.webp', name:'FloraVive',
+  { id:'floravive', logo:asset('/product-logos/floravive.webp'), name:'FloraVive',
     subtitle:'Rumen Specific Yeast and Bacteria', type:'Rumen Modifier',
     species:['dairy'], vertical:'dairy-supplement',
-    tagline:'A unique combination of rumen-specific yeast and bacteria — stabilises rumen pH, increases VFA production, and lifts milk yield.',
-    description:`FloraVive is a unique combination of monogastric and rumen-specific yeasts and bacteria — Saccharomyces cerevisiae, Yarrowia lipolytica, Propionibacterium freudenrichii and Bacillus subtilis. Together they stimulate beneficial rumen microflora, improve fibre and starch digestion, stabilise ruminal pH, and reduce the risk of acidosis. The result: better feed intake, more volatile fatty acid (VFA) production, higher milk yield, and improved milk fat and protein.`,
+    tagline:'A unique combination of rumen-specific yeast and bacteria - stabilises rumen pH, increases VFA production, and lifts milk yield.',
+    description:`FloraVive is a unique combination of monogastric and rumen-specific yeasts and bacteria - Saccharomyces cerevisiae, Yarrowia lipolytica, Propionibacterium freudenrichii and Bacillus subtilis. Together they stimulate beneficial rumen microflora, improve fibre and starch digestion, stabilise ruminal pH, and reduce the risk of acidosis. The result: better feed intake, more volatile fatty acid (VFA) production, higher milk yield, and improved milk fat and protein.`,
     benefits:[
       'Stimulates the growth of beneficial bacteria in the rumen',
       'Improves feed intake, weight gain and FCR in calves',
@@ -180,16 +193,16 @@ export const PRODUCTS = [
       'Promotes a healthy rumen microbial environment',
     ],
     applications:[
-      'In feed: 500 g – 1 kg per ton of feed',
-      'Direct dosing: 10–20 g/animal/day, as directed by the dairy nutritionist',
+      'In feed: 500 g-1 kg per ton of feed',
+      'Direct dosing: 10-20 g/animal/day, as directed by the dairy nutritionist',
     ],
     packaging:'25 kg bag' },
 
-  { id:'bp-glu', logo:'/product-logos/bp-glu.webp', name:'BP-GLU',
+  { id:'bp-glu', logo:asset('/product-logos/bp-glu.webp'), name:'BP-GLU',
     subtitle:'Rumen Protected Bypass Glucose', type:'Bypass Glucose',
     species:['dairy'], vertical:'dairy-supplement',
-    tagline:'Fluid-bed coated bypass glucose-fructose — the undisputed energy answer for transition cows and heat-stressed herds.',
-    description:`BP-GLU is a rumen-protected bypass glucose supplement built on fluid-bed coating technology. The active ingredient is fully encapsulated to bypass the rumen and deliver glucose directly to the small intestine, where it is absorbed and used immediately. Glucose supplies fast-available energy while fructose extends the energy curve — supporting cows through negative energy balance, transition, heat stress and peak lactation.`,
+    tagline:'Fluid-bed coated bypass glucose-fructose - the undisputed energy answer for transition cows and heat-stressed herds.',
+    description:`BP-GLU is a rumen-protected bypass glucose supplement built on fluid-bed coating technology. The active ingredient is fully encapsulated to bypass the rumen and deliver glucose directly to the small intestine, where it is absorbed and used immediately. Glucose supplies fast-available energy while fructose extends the energy curve - supporting cows through negative energy balance, transition, heat stress and peak lactation.`,
     benefits:[
       'Fully encapsulated for maximum rumen bypass',
       'Protected by highly digestible fractionated palmitic acid coating',
@@ -197,23 +210,23 @@ export const PRODUCTS = [
       'Improves the health of transition dairy cows',
       'Improves reproductive performance and increases milk production',
       'Mitigates heat stress and negative energy balance',
-      'Harmless to rumen microbes — efficient use of the active ingredient',
+      'Harmless to rumen microbes - efficient use of the active ingredient',
     ],
     applications:[
-      'Lactating animals: 100–150 g/cow/day',
-      'Transition animals: 150–200 g/cow/day',
-      'During heat and other stress: 150–200 g/cow/day',
-      'Small ruminants: 25–30 g/animal/day',
-      'Mixing ratio in feed: 2%–4% in feed formulations',
+      'Lactating animals: 100-150 g/cow/day',
+      'Transition animals: 150-200 g/cow/day',
+      'During heat and other stress: 150-200 g/cow/day',
+      'Small ruminants: 25-30 g/animal/day',
+      'Mixing ratio in feed: 2%-4% in feed formulations',
     ],
     packaging:'25 kg bag' },
 
-  { id:'bergamin-premium', logo:'/product-logos/bergamin-premium.webp', name:'BergaMin Premium',
+  { id:'bergamin-premium', logo:asset('/product-logos/bergamin-premium.webp'), name:'BergaMin Premium',
     subtitle:'Chelated Mineral Mixture for Reproduction, Production and Overall Health',
     type:'Chelated Mineral & Vitamin Premix',
     species:['dairy'], vertical:'dairy-supplement',
-    tagline:"India's most advanced chelated mineral mixture (AVAILA-4) — built for fertility, milk yield and hoof health.",
-    description:`BergaMin Premium is India's most advanced chelated mineral mixture, combining AVAILA-4 chelated zinc, copper, manganese and cobalt with calcium, phosphorus, vitamin AD3E, vitamin H, selenium, lipotelin and Met-80 rumen-protected methionine. The chelated form ensures very high bioavailability — supporting conception rates, milk production, claw integrity and overall immune resilience.`,
+    tagline:"India's most advanced chelated mineral mixture (AVAILA-4) - built for fertility, milk yield and hoof health.",
+    description:`BergaMin Premium is India's most advanced chelated mineral mixture, combining AVAILA-4 chelated zinc, copper, manganese and cobalt with calcium, phosphorus, vitamin AD3E, vitamin H, selenium, lipotelin and Met-80 rumen-protected methionine. The chelated form ensures very high bioavailability - supporting conception rates, milk production, claw integrity and overall immune resilience.`,
     benefits:[
       'Improves conception rate and fights problems of infertility',
       'Rumen-protected methionine supports embryo development and survival rate',
@@ -227,22 +240,22 @@ export const PRODUCTS = [
     ],
     applications:[
       'Large ruminants: 50 g/animal/day',
-      'Small ruminants: 10–15 g/animal/day',
-      'Mixing ratio: 1%–2% of compound feed',
+      'Small ruminants: 10-15 g/animal/day',
+      'Mixing ratio: 1%-2% of compound feed',
     ],
     packaging:'25 kg bag' },
 
-  { id:'bergafat-t300', logo:'/product-logos/bergafat-t300.webp', name:'BergaFat-T 300',
+  { id:'bergafat-t300', logo:asset('/product-logos/bergafat-t300.webp'), name:'BergaFat-T 300',
     subtitle:'Rumen Protected Bypass Fat (Fractionated Palm Fat)', type:'Rumen-Protected Fat',
     species:['dairy'], vertical:'dairy-supplement', verticals:['dairy-supplement','commodity'],
-    tagline:'Pure palm origin, fractionated bypass fat with high palmitic acid content — proven energy for transition and lactating cows.',
+    tagline:'Pure palm origin, fractionated bypass fat with high palmitic acid content - proven energy for transition and lactating cows.',
     description:`BergaFat-T 300 is a 100% vegetable rumen-protected bypass fat made from fractionated palm oil. The high palmitic acid content delivers excellent metabolisable energy without hydrogenation or trans-fatty acids. Energy is released only in the small intestine, leaving rumen fermentation undisturbed. Made from renewable, food-grade raw materials with full traceability.`,
     benefits:[
-      'Pure palm origin — no hydrogenation, no trans fatty acids, clear traceability',
+      'Pure palm origin - no hydrogenation, no trans fatty acids, clear traceability',
       'Natural bypass fat with high palmitic acid content',
       'Excellent source of energy to combat negative energy balance',
       'Improves total milk yield and milk fat',
-      'Enhances reproductive performance — oestrus, conception and pregnancy rate',
+      'Enhances reproductive performance - oestrus, conception and pregnancy rate',
       'Reduces dry period and maximises peak milk yield',
       'Minimises risk of ketosis, including subclinical ketosis',
       'Alleviates the impact of heat stress',
@@ -253,14 +266,14 @@ export const PRODUCTS = [
       'For better results: 200 g/animal/day for the first 10 days of lactation',
       'Optimal efficiency window: 30 days before to 120 days after parturition',
       'Calves above 6 months: 50 g/animal/day',
-      'In compound feed: 5.5%–9% as per feed formulation requirements',
+      'In compound feed: 5.5%-9% as per feed formulation requirements',
     ],
     packaging:'25 kg bag' },
 
-  { id:'lipoaktiv-l-met-60', logo:'/product-logos/lipoaktiv-l-met-60.webp', name:'LipoAktiv L-Met 60',
+  { id:'lipoaktiv-l-met-60', logo:asset('/product-logos/lipoaktiv-l-met-60.webp'), name:'LipoAktiv L-Met 60',
     subtitle:'Rumen Protected L-Methionine', type:'Rumen-Protected Amino Acid',
     species:['dairy'], vertical:'dairy-supplement',
-    tagline:'60% bypass L-methionine plus 40% bypass fat — supports milk protein, fertility and liver health.',
+    tagline:'60% bypass L-methionine plus 40% bypass fat - supports milk protein, fertility and liver health.',
     description:`LipoAktiv L-Met 60 is a rumen-protected L-methionine supplement delivering 60% bypass methionine alongside 40% bypass fat. Methionine is the first-limiting amino acid in dairy cow nutrition. Supplementing methionine during the transition and lactation periods supports embryo pre-implantation, improves survival capacity, and lifts milk protein yield. Regular supplementation also improves liver function, antioxidant capacity and immunity via the glutathione pathway.`,
     benefits:[
       'Provides 60% bypass L-methionine and 40% bypass fat',
@@ -271,18 +284,18 @@ export const PRODUCTS = [
       'Strengthens immunity around calving',
     ],
     applications:[
-      'Cattle and Buffalo: 10–15 g/animal/day',
-      'Small ruminants: 2–5 g/animal/day',
-      'Mixing ratio: 0.1%–0.3% in feed formulations',
+      'Cattle and Buffalo: 10-15 g/animal/day',
+      'Small ruminants: 2-5 g/animal/day',
+      'Mixing ratio: 0.1%-0.3% in feed formulations',
     ],
     packaging:'25 kg bag' },
 
-  { id:'fat-o-lip-ls', logo:'/product-logos/fat-o-lip-ls.webp', name:'FAT-O-LIP LS',
+  { id:'fat-o-lip-ls', logo:asset('/product-logos/fat-o-lip-ls.webp'), name:'FAT-O-LIP LS',
     subtitle:'Rumen Protected Fat and Phosphatidyl Choline',
     type:'Rumen-Protected Fat + Choline (Microencapsulated)',
     species:['dairy'], vertical:'dairy-supplement',
     tagline:'4th-generation matrix-encapsulated bypass fat delivering phosphatidylcholine directly to the intestine.',
-    description:`FAT-O-LIP LS is a 4th-generation rumen-bypass fat delivering phosphatidylcholine straight to the intestinal level. The latest micro-encapsulation matrix technology removes all hurdles in supplementing this critical and delicate nutrient. The fractionated palmitic-acid carrier offers >95% rumen bypass with the highest energy concentration. Phosphatidylcholine is the main phospholipid in ruminants — critical for lipid absorption and transport, cell membrane structure, cell signalling and lipoprotein synthesis. Matrix technology keeps phosphatidylcholine intact until it reaches the intestine.`,
+    description:`FAT-O-LIP LS is a 4th-generation rumen-bypass fat delivering phosphatidylcholine straight to the intestinal level. The latest micro-encapsulation matrix technology removes all hurdles in supplementing this critical and delicate nutrient. The fractionated palmitic-acid carrier offers >95% rumen bypass with the highest energy concentration. Phosphatidylcholine is the main phospholipid in ruminants - critical for lipid absorption and transport, cell membrane structure, cell signalling and lipoprotein synthesis. Matrix technology keeps phosphatidylcholine intact until it reaches the intestine.`,
     benefits:[
       'Microencapsulation matrix delivers bypass fat and choline together',
       'Vegetable-origin natural soya phosphatidylcholine source',
@@ -297,36 +310,36 @@ export const PRODUCTS = [
       'Cattle: 10 g/litre of milk',
       'Buffalo: 15 g/litre of milk',
       'Small ruminants: 5 g/animal/day',
-      'Mixing ratio: 1.5%–4% in feed formulations',
+      'Mixing ratio: 1.5%-4% in feed formulations',
     ],
     packaging:'25 kg bag' },
 
-  { id:'lipoaktiv-lys-40', logo:'/product-logos/lipoaktiv-lys-40.webp', name:'LipoAktiv Lys 40',
+  { id:'lipoaktiv-lys-40', logo:asset('/product-logos/lipoaktiv-lys-40.webp'), name:'LipoAktiv Lys 40',
     subtitle:'Rumen-Protected L-Lysine', type:'Rumen-Protected Amino Acid',
     species:['dairy'], vertical:'dairy-supplement',
     tagline:'Fluid-bed coated L-lysine delivering precise amino acid balance to the small intestine.',
-    description:`LipoAktiv Lys 40 is a rumen-bypass amino acid containing 40% L-lysine as an encapsulated nutrient. Lysine — the second-limiting amino acid in ruminant diets — is encapsulated via fluid-bed technology that combines a high degree of rumen protection with strong small-intestinal digestibility. The result is precise post-ruminal amino acid delivery that balances the methionine-to-lysine ratio when fed alongside LipoAktiv L-Met 60.`,
+    description:`LipoAktiv Lys 40 is a rumen-bypass amino acid containing 40% L-lysine as an encapsulated nutrient. Lysine - the second-limiting amino acid in ruminant diets - is encapsulated via fluid-bed technology that combines a high degree of rumen protection with strong small-intestinal digestibility. The result is precise post-ruminal amino acid delivery that balances the methionine-to-lysine ratio when fed alongside LipoAktiv L-Met 60.`,
     benefits:[
       'Increases milk yield',
       'Improves nitrogen utilisation and reduces nitrogen excretion',
       'Promotes fertility',
       'Optimises amino acid supply',
       'Enhances methionine, antioxidant status and immunity',
-      'Free-flowing — easy handling and dosing',
+      'Free-flowing - easy handling and dosing',
       'Uniform particle size; stable in premixes',
     ],
     applications:[
-      'Cattle and Buffalo: 10–15 g/animal/day',
-      'Small ruminants: 5–10 g/animal/day',
-      'Mixing ratio: 0.1%–0.3% in feed formulations',
+      'Cattle and Buffalo: 10-15 g/animal/day',
+      'Small ruminants: 5-10 g/animal/day',
+      'Mixing ratio: 0.1%-0.3% in feed formulations',
     ],
     packaging:'25 kg bag' },
 
-  { id:'hiendmast', logo:'/product-logos/hiendmast.webp', name:'HiEndMast',
+  { id:'hiendmast', logo:asset('/product-logos/hiendmast.webp'), name:'HiEndMast',
     subtitle:'A Complete Supplement for Mastitis Management', type:'Udder Health / Mastitis Support',
     species:['dairy'], vertical:'dairy-supplement',
-    tagline:'Anti-inflammatory, immunomodulatory udder support — restores milk production and udder integrity.',
-    description:`HiEndMast is a complete supplement for mastitis management — anti-inflammatory, immunomodulatory, and supportive of udder repair and restoration of milk production. The formulation combines sodium citrate dihydrate, rumen-protected methionine 60% and L-lysine 40%, zinc, copper, selenium, calcium, phosphorus, biotin (vitamin H), vitamins AD3E, B12 and K, phospholipids, aloe vera, papain, serratiopeptidase and potassium iodide. Together these correct subclinical mastitis through udder pH maintenance, control inflammation, and accelerate recovery of damaged udder epithelium.`,
+    tagline:'Anti-inflammatory, immunomodulatory udder support - restores milk production and udder integrity.',
+    description:`HiEndMast is a complete supplement for mastitis management - anti-inflammatory, immunomodulatory, and supportive of udder repair and restoration of milk production. The formulation combines sodium citrate dihydrate, rumen-protected methionine 60% and L-lysine 40%, zinc, copper, selenium, calcium, phosphorus, biotin (vitamin H), vitamins AD3E, B12 and K, phospholipids, aloe vera, papain, serratiopeptidase and potassium iodide. Together these correct subclinical mastitis through udder pH maintenance, control inflammation, and accelerate recovery of damaged udder epithelium.`,
     benefits:[
       'Helps correct subclinical mastitis through pH maintenance of the udder',
       'Enzymes (papain, serratiopeptidase) help control inflammation',
@@ -344,7 +357,7 @@ export const PRODUCTS = [
     tagline:'Concentrated saturated fat that improves energy density in dairy rations without compromising rumen function.',
     description:`HiEnFat SA is a saturated fat supplement formulated for dairy cow rations. Its predominantly saturated fatty acid profile minimises rumen disturbance while significantly increasing dietary energy density. Particularly valuable in heat stress conditions when dry matter intake is reduced.`,
     benefits:[
-      'Saturated profile — safe for rumen health at recommended inclusions',
+      'Saturated profile - safe for rumen health at recommended inclusions',
       'Increases energy density without depressing DMI',
       'Valuable during heat stress when feed intake is reduced',
       'Supports milk production and body condition in peak lactation',

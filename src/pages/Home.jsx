@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
+import Icon from '../components/Icon';
 import './Home.css';
+import usePageMeta from '../usePageMeta';
 
 const HERO_IMAGES = [
   { id:'poultry', label:'Poultry',  url:'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500&q=70', link:'/species#poultry' },
@@ -9,6 +11,7 @@ const HERO_IMAGES = [
 ];
 
 export default function Home() {
+  usePageMeta("Animal Nutrition for India's Poultry and Dairy", "Berg+Schmidt India Pvt. Ltd. - science-backed feed additives for India's poultry and dairy producers. Present in India since 2002.");
   return (
     <main className="home" style={{position:"relative"}}>
       <section className="hero">
@@ -27,12 +30,12 @@ export default function Home() {
 
       <nav className="species-bar">
         {[
-          {id:'poultry',label:'Poultry',icon:'🐓',link:'/species#poultry'},
-          {id:'cow',label:'Cow',icon:'🐄',link:'/species#dairy'},
-          {id:'buffalo',label:'Buffalo',icon:'🦬',link:'/species#dairy'},
+          {id:'poultry',label:'Poultry',icon:'poultry',link:'/species#poultry'},
+          {id:'cow',label:'Cow',icon:'cow',link:'/species#dairy'},
+          {id:'buffalo',label:'Buffalo',icon:'buffalo',link:'/species#dairy'},
         ].map(s=>(
           <Link to={s.link} key={s.id} className="species-bar-item">
-            <span>{s.icon}</span><span>{s.label}</span>
+            <Icon name={s.icon} size={26}/><span>{s.label}</span>
           </Link>
         ))}
       </nav>
@@ -41,9 +44,9 @@ export default function Home() {
         <div className="home-about-inner">
           <div className="home-about-text">
             <h2 className="bs-mark">Our Story</h2>
-            <p>Berg + Schmidt India has been present in India since 2002, bringing world-class nutritional science to India's poultry and dairy sectors. With over two decades of domestic experience and the backing of a group with over 75 years of global expertise, we combine international knowledge with deep local understanding.</p>
-            <p>Our team knows Indian breeds, Indian raw materials, and Indian farming conditions — and we apply that knowledge every time we make a recommendation.</p>
-            <Link to="/company" className="btn-outline">Learn More →</Link>
+            <p>Berg+Schmidt India has been present in India since 2002, bringing world-class nutritional science to India's poultry and dairy sectors. With over two decades of domestic experience and the backing of a group with over 75 years of global expertise, we combine international knowledge with deep local understanding.</p>
+            <p>Our team knows Indian breeds, Indian raw materials, and Indian farming conditions - and we apply that knowledge every time we make a recommendation.</p>
+            <Link to="/company" className="btn-outline">Learn More</Link>
           </div>
           <div className="home-about-visual">
             <div className="about-badge"><span className="about-badge-num">2002</span><span className="about-badge-text">Operations commenced</span></div>
@@ -62,12 +65,12 @@ export default function Home() {
           <div className="solutions-half solutions-half--poultry">
             <img className="solutions-bg-img" src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=600&q=50" alt="" aria-hidden="true"/>
             <div className="solutions-half-content">
-              <div className="solutions-half-label"><span>🐓</span>Poultry</div>
+              <div className="solutions-half-label"><Icon name="poultry" size={24}/>Poultry</div>
               <div className="solutions-cards">
                 {PRODUCTS.filter(p=>p.species.includes('poultry')).map(p=>(
                   <Link to={`/products/${p.id}`} key={p.id} className="sol-card">
                     <div className="sol-card-type">{p.type}</div>
-                    <h3><span className="sol-plus">+</span> {p.name}</h3>
+                    <h3><span className="sol-plus" aria-hidden="true" />{p.name}</h3>
                     <p className="sol-card-sub">{p.subtitle}</p>
                   </Link>
                 ))}
@@ -77,12 +80,12 @@ export default function Home() {
           <div className="solutions-half solutions-half--dairy">
             <img className="solutions-bg-img" src="https://images.unsplash.com/photo-1741387863358-0421a7e5a085?w=600&q=50" alt="" aria-hidden="true"/>
             <div className="solutions-half-content">
-              <div className="solutions-half-label"><span>🐄🦬</span>Dairy — Cow & Buffalo</div>
+              <div className="solutions-half-label"><Icon name="cow" size={24}/>Dairy - Cow &amp; Buffalo</div>
               <div className="solutions-cards">
                 {PRODUCTS.filter(p=>p.species.includes('dairy')).map(p=>(
                   <Link to={`/products/${p.id}`} key={p.id} className="sol-card">
                     <div className="sol-card-type">{p.type}</div>
-                    <h3><span className="sol-plus">+</span> {p.name}</h3>
+                    <h3><span className="sol-plus" aria-hidden="true" />{p.name}</h3>
                     <p className="sol-card-sub">{p.subtitle}</p>
                   </Link>
                 ))}
@@ -91,15 +94,15 @@ export default function Home() {
           </div>
         </div>
         <div className="home-products-cta">
-          <Link to="/products" className="btn-primary">View All Products →</Link>
+          <Link to="/products" className="btn-primary">View All Products</Link>
         </div>
       </section>
 
       <section className="home-cta">
         <div className="home-cta-inner">
-          <h2 className="bs-mark">Partner with Berg + Schmidt India</h2>
+          <h2 className="bs-mark bs-mark--center">Partner with Berg+Schmidt India</h2>
           <p>Get expert guidance on the right nutritional solution for your operation.</p>
-          <Link to="/contact" className="btn-white">Contact Our Team →</Link>
+          <Link to="/contact" className="btn-white">Contact Our Team</Link>
         </div>
       </section>
     </main>

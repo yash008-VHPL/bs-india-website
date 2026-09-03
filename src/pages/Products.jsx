@@ -1,105 +1,133 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { PRODUCTS, VERTICALS, SPECIES } from '../data/products';
+import { PRODUCTS, GROUPS, SPECIES } from '../data/products';
+import Icon from '../components/Icon';
 import './Products.css';
+import usePageMeta from '../usePageMeta';
 
+/*
+ * Products are grouped by SPECIES, not by internal business division.
+ * Mr Wywiol: the division names are internal and must not appear publicly.
+ */
 export default function Products() {
-  const [activeVertical, setActiveVertical] = useState('all');
-  const [activeSp, setActiveSp] = useState('all');
+  usePageMeta('Products', "Feed fats, phospholipid concentrates, enzymes, probiotics, rumen-protected fats and bypass nutrients for Indian poultry and dairy.");
+  const [activeGroup, setActiveGroup] = useState('all');
   const [search, setSearch] = useState('');
 
   const filtered = PRODUCTS.filter(p => {
-    const q = search.toLowerCase();
-    const matchSearch = !q || p.name.toLowerCase().includes(q) || p.subtitle.toLowerCase().includes(q) || p.type.toLowerCase().includes(q);
-    const matchVertical = activeVertical === 'all' || (p.verticals || [p.vertical]).includes(activeVertical);
-    const matchSp = activeSp === 'all' || p.species.includes(activeSp);
-    return matchSearch && matchVertical && matchSp;
+    const q = search.trim().toLowerCase();
+    const matchSearch = !q
+      || p.name.toLowerCase().includes(q)
+      || p.subtitle.toLowerCase().includes(q)
+      || p.type.toLowerCase().includes(q);
+    const matchGroup = activeGroup === 'all' || p.species.includes(activeGroup);
+    return matchSearch && matchGroup;
   });
+
+  // Products with no species tag (e.g. general-purpose feed fats) would
+  // otherwise disappear from a species-grouped list.
+  const ungrouped = filtered.filter(p => !p.species.length);
 
   return (
     <main className="products-page">
-      {/* Page header */}
       <div className="pg-hero">
         <div className="pg-hero-inner">
           <h1 className="bs-mark">Our Products</h1>
-          <p>Advanced nutritional solutions across three business verticals.</p>
+          <p>Nutritional solutions for India&rsquo;s poultry and dairy producers.</p>
         </div>
       </div>
 
-      {/* Vertical tabs */}
+      {/* Species tabs */}
       <nav className="vert-tabs">
         <button
-          className={`vert-tab${activeVertical === 'all' ? ' vert-tab--active' : ''}`}
-          onClick={() => setActiveVertical('all')}
+          className={`vert-tab${activeGroup === 'all' ? ' vert-tab--active' : ''}`}
+          onClick={() => setActiveGroup('all')}
         >
-          All Divisions
+          All Products
         </button>
-        {VERTICALS.map(v => (
+        {GROUPS.map(g => (
           <button
-            key={v.id}
-            className={`vert-tab${activeVertical === v.id ? ' vert-tab--active' : ''}`}
-            onClick={() => setActiveVertical(v.id)}
+            key={g.id}
+            className={`vert-tab${activeGroup === g.id ? ' vert-tab--active' : ''}`}
+            onClick={() => setActiveGroup(g.id)}
           >
-            {v.icon} {v.label}
+            <Icon name={g.icon} size={18} /> {g.label}
           </button>
         ))}
       </nav>
 
       <div className="prod-layout">
-        {/* Sidebar filters */}
         <aside className="prod-sidebar">
           <input
             className="sb-search"
             type="text"
-            placeholder="Search products…"
+            placeholder="Search products"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
 
           <div className="sb-section">
             <div className="sb-section-label">Species</div>
-            {[{id:'all',label:'All Species'}, ...SPECIES].map(s => (
+            {[{ id: 'all', label: 'All Species' }, ...SPECIES].map(s => (
               <label key={s.id} className="sb-opt">
-                <input type="radio" name="species" checked={activeSp === s.id} onChange={() => setActiveSp(s.id)} />
+                <input
+                  type="radio"
+                  name="species"
+                  checked={activeGroup === s.id}
+                  onChange={() => setActiveGroup(s.id)}
+                />
                 {s.label}
               </label>
             ))}
           </div>
 
-          <button className="sb-reset" onClick={() => { setSearch(''); setActiveSp('all'); setActiveVertical('all'); }}>
+          <button className="sb-reset" onClick={() => { setSearch(''); setActiveGroup('all'); }}>
             Reset Filters
           </button>
         </aside>
 
-        {/* Product list */}
         <section className="prod-list">
           <div className="prod-count">
             Showing <strong>{filtered.length}</strong> of {PRODUCTS.length} products
           </div>
 
-          {/* Group by vertical if showing all */}
-          {activeVertical === 'all'
-            ? VERTICALS.map(v => {
-                const vProds = filtered.filter(p => (p.verticals || [p.vertical]).includes(v.id));
-                if (!vProds.length) return null;
-                return (
-                  <div key={v.id} className="prod-group">
+          {activeGroup === 'all'
+            ? (
+              <>
+                {GROUPS.map(g => {
+                  const gProds = filtered.filter(p => p.species.includes(g.id));
+                  if (!gProds.length) return null;
+                  return (
+                    <div key={g.id} className="prod-group">
+                      <div className="prod-group-header">
+                        <Icon name={g.icon} size={34} />
+                        <div>
+                          <h2 className="prod-group-title">{g.label}</h2>
+                          <div className="prod-group-desc">{g.desc}</div>
+                        </div>
+                      </div>
+                      {gProds.map(p => <ProductRow key={p.id} p={p} />)}
+                    </div>
+                  );
+                })}
+                {ungrouped.length > 0 && (
+                  <div className="prod-group">
                     <div className="prod-group-header">
-                      <span>{v.icon}</span>
                       <div>
-                        <div className="prod-group-title">{v.label}</div>
-                        <div className="prod-group-desc">{v.desc}</div>
+                        <h2 className="prod-group-title">Other Products</h2>
+                        <div className="prod-group-desc">Feed fats and ingredients supplied across livestock species.</div>
                       </div>
                     </div>
-                    {vProds.map(p => <ProductRow key={p.id} p={p} />)}
+                    {ungrouped.map(p => <ProductRow key={p.id} p={p} />)}
                   </div>
-                );
-              })
+                )}
+              </>
+            )
             : filtered.map(p => <ProductRow key={p.id} p={p} />)
           }
 
           {filtered.length === 0 && (
-            <div style={{padding:'48px 24px',textAlign:'center',color:'var(--text-light)'}}>
+            <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--text-light)' }}>
               No products match your filters.
             </div>
           )}
@@ -110,23 +138,28 @@ export default function Products() {
 }
 
 function ProductRow({ p }) {
-  const VERT = { commodity:'Commodity', 'poultry-supplement':'Feed Supplement', 'dairy-supplement':'Feed Supplement' };
   return (
     <Link to={`/products/${p.id}`} className="prod-row">
       <div className="prod-row-hdr">
-        {p.logo
-          ? <img src={p.logo} alt={p.name} className="prod-row-logo" />
-          : <h3><span className="sol-plus">+</span> {p.name}</h3>
-        }
+        {/* The product's own logo where it has one, with the name as alt text
+            so it stays readable to search; the name set in type otherwise. */}
+        <h3>
+          {p.logo
+            ? <img src={p.logo} alt={p.name} className="prod-row-logo" />
+            : <><span className="sol-plus" aria-hidden="true" />{p.name}</>}
+        </h3>
         <div className="prod-row-badges">
           <span className="prod-row-type">{p.type}</span>
-          <span className="prod-row-vert">{VERT[p.vertical]}</span>
         </div>
       </div>
       <p className="prod-row-sub">{p.subtitle}</p>
       <p className="prod-row-desc">{p.tagline}</p>
       <div className="prod-row-tags">
-        {p.species.map(s => <span key={s} className="stag">{s === 'poultry' ? '🐓 Poultry' : '🐄 Dairy'}</span>)}
+        {p.species.map(s => (
+          <span key={s} className="stag">
+            <Icon name={s} size={14} /> {s === 'poultry' ? 'Poultry' : 'Dairy'}
+          </span>
+        ))}
       </div>
     </Link>
   );

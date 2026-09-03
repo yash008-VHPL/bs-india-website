@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
+import CapIcon from '../components/CapIcon';
 import './Contact.css';
+import usePageMeta from '../usePageMeta';
 
 const SEGMENT_LABEL = {
   dairy: 'dairy feed supplements',
@@ -10,19 +12,20 @@ const SEGMENT_LABEL = {
 };
 
 function buildPrefillMessage({ segment, city, detail }) {
-  const context = city ? ` (referred via ${city}${detail ? ` — ${detail}` : ''})` : '';
+  const context = city ? ` (referred via ${city}${detail ? ` - ${detail}` : ''})` : '';
   if (segment === 'hq') {
-    return `Hello,\n\nI would like to get in touch with the Berg + Schmidt India team${context}. Please let me know the best point of contact.\n\nThank you.`;
+    return `Hello,\n\nI would like to get in touch with the Berg+Schmidt India team${context}. Please let me know the best point of contact.\n\nThank you.`;
   }
   if (segment === 'hef' || segment === 'company') {
     return `Hello,\n\nI would like to get in touch about Hightech Energy Feeds manufacturing${context}. Please let me know the best point of contact.\n\nThank you.`;
   }
   const topic = SEGMENT_LABEL[segment];
   if (!topic) return '';
-  return `Hello,\n\nI would like to know more about Berg + Schmidt's ${topic}${context}. Please share product details, pricing, and availability.\n\nThank you.`;
+  return `Hello,\n\nI would like to know more about Berg+Schmidt's ${topic}${context}. Please share product details, pricing, and availability.\n\nThank you.`;
 }
 
 export default function Contact() {
+  usePageMeta('Contact', "Talk to the Berg+Schmidt India team in Pune about poultry and dairy nutrition for your operation.");
   const [params] = useSearchParams();
   const segment = params.get('segment');
   const city = params.get('city') || '';
@@ -47,7 +50,7 @@ export default function Contact() {
   const handleChange=e=>setForm(f=>({...f,[e.target.name]:e.target.value}));
   const handleSubmit=e=>{
     e.preventDefault();
-    const sub=encodeURIComponent(`Enquiry — ${form.type} — ${form.name}`);
+    const sub=encodeURIComponent(`Enquiry - ${form.type} - ${form.name}`);
     const body=encodeURIComponent(`Name: ${form.name}\nCompany: ${form.company}\nEmail: ${form.email}\nPhone: ${form.phone}\nProduct of Interest: ${form.product}\nEnquiry Type: ${form.type}\n\nMessage:\n${form.message}`);
     window.location.href=`mailto:info@berg-schmidt.co.in?subject=${sub}&body=${body}`;
     setSubmitted(true);
@@ -56,29 +59,29 @@ export default function Contact() {
     <main className="contact-page">
       <div className="pg-hero"><div className="pg-hero-inner">
         <h1 className="bs-mark">Contact Us</h1>
-        <p>Our team is here to support you — from product selection to technical guidance.</p>
+        <p>Our team is here to support you - from product selection to technical guidance.</p>
       </div></div>
       <div className="ct-inner">
         <div className="ct-info">
           <div className="ct-card">
             <h3>Get in Touch</h3>
-            <div className="ct-detail"><span>📧</span><div><strong>Email</strong><a href="mailto:info@berg-schmidt.co.in">info@berg-schmidt.co.in</a></div></div>
-            <div className="ct-detail"><span>🌐</span><div><strong>Website</strong><a href="https://www.berg-schmidt.co.in">www.berg-schmidt.co.in</a></div></div>
+            <div className="ct-detail"><span><CapIcon name="mail" size={20}/></span><div><strong>Email</strong><a href="mailto:info@berg-schmidt.co.in">info@berg-schmidt.co.in</a></div></div>
+            <div className="ct-detail"><span><CapIcon name="web" size={20}/></span><div><strong>Website</strong><a href="https://www.berg-schmidt.co.in">www.berg-schmidt.co.in</a></div></div>
           </div>
           <div className="ct-card ct-card--green">
             <h3>Technical Support</h3>
             <p>Our nutrition specialists can assist with product selection, inclusion rates, formulation support, and field-level technical queries.</p>
-            <p style={{marginTop:'8px',fontSize:'.78rem',color:'rgba(255,255,255,.6)'}}>We respond to all enquiries within 1 business day.</p>
+            <p style={{marginTop:'8px',fontSize:'var(--fs-body)',color:'rgba(255,255,255,.6)'}}>We respond to all enquiries within 1 business day.</p>
           </div>
           <div className="ct-card" style={{background:'var(--mint-light)'}}>
-            <h3 style={{color:'var(--green-dark)'}}>About Berg + Schmidt India</h3>
-            <p style={{fontSize:'.82rem',color:'var(--text-mid)',lineHeight:'1.7'}}>Berg + Schmidt India Pvt. Ltd. has been serving India's poultry and dairy industries since 2002, bringing world-class animal nutrition science to Indian producers.</p>
+            <h3 style={{color:'var(--green-dark)'}}>About Berg+Schmidt India</h3>
+            <p style={{fontSize:'var(--fs-body)',color:'var(--text-mid)',lineHeight:'1.7'}}>Berg+Schmidt India Pvt. Ltd. has been serving India's poultry and dairy industries since 2002, bringing world-class animal nutrition science to Indian producers.</p>
           </div>
         </div>
         <div className="ct-form-wrap">
           {submitted?(
             <div className="ct-success">
-              <div className="ct-success-icon">✓</div>
+              <div className="ct-success-icon"><CapIcon name="check" size={26}/></div>
               <h2>Thank you for reaching out!</h2>
               <p>Your email client should have opened with your message pre-filled. We will be in touch shortly.</p>
             </div>
@@ -96,7 +99,7 @@ export default function Contact() {
               <div className="form-row">
                 <div className="fg"><label>Product of Interest</label>
                   <select name="product" value={form.product} onChange={handleChange}>
-                    <option value="">— Select a product —</option>
+                    <option value=""> - Select a product - </option>
                     <optgroup label="Poultry">
                       {PRODUCTS.filter(p=>p.species.includes('poultry')).map(p=><option key={p.id} value={p.name}>{p.name}</option>)}
                     </optgroup>
@@ -118,9 +121,9 @@ export default function Contact() {
                 </div>
               </div>
               <div className="fg"><label>Message *</label>
-                <textarea name="message" rows={5} required value={form.message} onChange={handleChange} placeholder="Tell us about your operation, species, flock/herd size, and what you are looking to achieve…"/>
+                <textarea name="message" rows={5} required value={form.message} onChange={handleChange} placeholder="Tell us about your operation, species, flock/herd size, and what you are looking to achieve..."/>
               </div>
-              <button type="submit" className="btn-submit">Send Message →</button>
+              <button type="submit" className="btn-submit">Send Message</button>
             </form>
           )}
         </div>

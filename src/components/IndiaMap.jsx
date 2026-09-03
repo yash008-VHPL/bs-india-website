@@ -12,11 +12,11 @@ const SEGMENT_BY_KIND = {
 };
 
 /* Theme colours (mirrors CSS custom properties) */
-const C_HEAD_OFFICE = '#5769A9'; // Accent 1 — Berg + Schmidt India HQ (not HEF)
-const C_HEF = '#004c3e';         // --green-dark — Hightech Energy Feeds plants
+const C_HEAD_OFFICE = '#5769A9'; // Accent 1 - Berg+Schmidt India HQ (not HEF)
+const C_HEF = '#004c3e';         // --green-dark - Hightech Energy Feeds plants
 const C_DAIRY = '#4cb496';       // --green
 const C_POULTRY = '#E32653';     // --accent-red
-const C_COMMODITY = '#630A20';   // Red 2 — Commodity Business Division
+const C_COMMODITY = '#630A20';   // Red 2 - feed fats and oils representatives
 
 /* Final on-map marker positions. A few coincident / clustered cities are
    nudged a couple of px so every pin stays legible; the number keys the
@@ -188,27 +188,39 @@ export default function IndiaMap() {
     navigate(`/contact?${params.toString()}#contact-form`);
   };
 
+  /*
+   * showMap is OFF until we have an India outline that depicts the official
+   * boundary. The geometry this component ships is Natural Earth derived: it
+   * draws the de-facto Line of Control, so Gilgit-Baltistan / PoK and Aksai
+   * Chin fall outside India. Publishing that on an Indian company's site is a
+   * legal exposure, and hand-editing the coordinates is what produced the
+   * boundary that had to be reverted in e72e1f7. The representative network -
+   * which is the information people actually come here for - renders exactly
+   * as before. Flip this back on once correct geometry is in indiaMapData.json.
+   */
+  const showMap = false;
+
   return (
-    <div className="india-map-wrap">
-      <svg
+    <div className={`india-map-wrap${showMap ? '' : ' india-map-wrap--nomap'}`}>
+      {showMap && <svg
         className="india-map-svg"
         viewBox={map.viewBox}
         role="img"
-        aria-label="Berg+Schmidt India — locations and distribution network"
+        aria-label="Berg+Schmidt India - locations and distribution network"
       >
-        {/* Neighbouring countries — faint context outlines */}
+        {/* Neighbouring countries - faint context outlines */}
         <g className="im-neighbors">
           {Object.values(map.neighbors).flat().map((d, i) => (
             <path key={'n' + i} d={d} />
           ))}
         </g>
-        {/* India — state boundaries */}
+        {/* India - state boundaries */}
         <g className="im-states">
           {map.states.map((d, i) => (
             <path key={'s' + i} d={d} />
           ))}
         </g>
-        {/* India — national outline */}
+        {/* India - national outline */}
         <g className="im-outline">
           {map.outline.map((d, i) => (
             <path key={'o' + i} d={d} />
@@ -220,12 +232,12 @@ export default function IndiaMap() {
             <Marker key={m.n} m={m} active={active} setActive={setActive} />
           ))}
         </g>
-      </svg>
+      </svg>}
 
       <div className="india-map-legend">
-        <LegendBlock title="Dairy Feed Supplement Representatives" color={C_DAIRY} items={dairy} active={active} setActive={setActive} onEnquire={handleEnquire} />
-        <LegendBlock title="Poultry Feed Supplement Representatives" color={C_POULTRY} items={poultry} active={active} setActive={setActive} onEnquire={handleEnquire} />
-        <LegendBlock title="Commodity Business Division Representatives" color={C_COMMODITY} items={commodity} active={active} setActive={setActive} onEnquire={handleEnquire} />
+        <LegendBlock title="Dairy Representatives" color={C_DAIRY} items={dairy} active={active} setActive={setActive} onEnquire={handleEnquire} />
+        <LegendBlock title="Poultry Representatives" color={C_POULTRY} items={poultry} active={active} setActive={setActive} onEnquire={handleEnquire} />
+        <LegendBlock title="Feed Fats & Oils Representatives" color={C_COMMODITY} items={commodity} active={active} setActive={setActive} onEnquire={handleEnquire} />
         <LegendBlock title="Offices & Manufacturing" color={C_HEF} items={company} active={active} setActive={setActive} onEnquire={handleEnquire} />
       </div>
     </div>

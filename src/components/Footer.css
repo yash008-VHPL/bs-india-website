@@ -4,9 +4,11 @@
 }
 
 .footer-inner {
-  max-width: 1280px;
+  /* Same 1248/24 container as the header and the page content, so the footer
+     logo sits on the same left edge as the nav logo above it. */
+  max-width: 1248px;
   margin: 0 auto;
-  padding: 52px 32px 40px;
+  padding: 52px 24px 40px;
   display: grid;
   grid-template-columns: 220px 1fr 1fr 1fr 1fr;
   gap: 40px;
@@ -24,14 +26,14 @@
   margin-top: 4px;
 }
 .footer-entity p {
-  font-size: .78rem;
+  font-size:var(--fs-label);
   color: rgba(255,255,255,.52);
   line-height: 1.8;
 }
 
-/* Column headers — ALL CAPS like global site */
+/* Column headers - ALL CAPS like global site */
 .footer-col h4 {
-  font-size: .68rem;
+  font-size:var(--fs-label);
   font-weight: 700;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -46,7 +48,7 @@
 }
 
 .footer-col ul li a {
-  font-size: .82rem;
+  font-size:var(--fs-body);
   color: rgba(255,255,255,.65);
   transition: color .2s;
 }
@@ -83,11 +85,11 @@
 /* Bottom bar */
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,.1);
-  padding: 16px 32px;
+  padding: 16px 24px;
   text-align: center;
-  font-size: .72rem;
+  font-size:var(--fs-label);
   color: rgba(255,255,255,.38);
-  max-width: 1280px;
+  max-width: 1248px;
   margin: 0 auto;
 }
 
@@ -101,7 +103,7 @@
 }
 
 @media (max-width: 600px) {
-  .footer-inner { grid-template-columns: 1fr 1fr; padding: 36px 20px 24px; }
+  .footer-inner { grid-template-columns: 1fr 1fr; padding: 36px 16px 24px; }
   .footer-brand { flex-direction: column; gap: 16px; grid-column: 1 / -1; }
-  .footer-bottom { padding: 14px 20px; }
+  .footer-bottom { padding: 14px 16px; }
 }

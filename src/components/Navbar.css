@@ -1,4 +1,4 @@
-/* Sticky wrapper — topbar AND nav scroll together and stay pinned at top */
+/* Sticky wrapper - topbar AND nav scroll together and stay pinned at top */
 .site-header {
   position: sticky;
   top: 0;
@@ -10,14 +10,18 @@
 .topbar {
   background: var(--green);
   color: rgba(255,255,255,.95);
-  font-size: .72rem;
+  font-size:var(--fs-label);
   height: 32px;
   display: flex;
   align-items: center;
 }
 .topbar-inner {
+  /* The header is one block: this bar must share the nav's horizontal rhythm,
+     not its own. It used to be a 1400px centred container sitting above a
+     full-bleed nav, so on a 1920px screen its text started 260px inside the
+     logo directly beneath it. */
   width: 100%;
-  max-width: 1400px;
+  max-width: 1248px;   /* 1200 content + 2 x 24 gutter */
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
@@ -25,19 +29,28 @@
   align-items: center;
 }
 .topbar-entity { font-weight: 500; letter-spacing: .03em; }
-.topbar-links { display: flex; gap: 12px; align-items: center; }
+/* margin-left:auto, not space-between: the entity beside it is hidden on
+   mobile, and space-between then pins these links to the LEFT edge while the
+   burger sits on the right. */
+.topbar-links { display: flex; gap: 12px; align-items: center; margin-left: auto; }
 .topbar-links a { color: rgba(255,255,255,.85); transition: color .2s; }
 .topbar-links a:hover { color: #fff; }
 .topbar-sep { opacity: .4; }
 
-/* ── STICKY NAV — matches global site #sticky-nav exactly ── */
+/* ── STICKY NAV - matches global site #sticky-nav exactly ── */
 .sticky-nav {
   position: relative;
   z-index: 1;
-  height: 68px;
+  height: 84px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* Same container as the topbar above and the page content below, so the
+     logo, the utility bar and every page headline share one left edge at
+     every width. The bar itself still spans the full window - only its
+     contents are constrained. */
+  max-width: 1248px;
+  margin: 0 auto;
   padding: 0 24px;
   background: var(--white);
   border-bottom: 1px solid var(--border);
@@ -52,7 +65,7 @@
 /* Nav links */
 .sticky-nav-links {
   display: flex;
-  height: 68px;
+  height: 84px;
   align-items: stretch;
   list-style: none;
   margin: 0;
@@ -63,7 +76,7 @@
   display: flex;
   align-items: center;
   padding: 0 16px;
-  font-size: .86rem;
+  font-size:var(--fs-body);
   font-weight: 500;
   color: var(--text-dark);
   border-bottom: 3px solid transparent;
@@ -80,7 +93,7 @@
   display: inline-block;
   margin-left: 5px;
   padding: 1px 6px;
-  font-size: .58rem;
+  font-size:var(--fs-label);
   font-weight: 700;
   letter-spacing: .06em;
   text-transform: uppercase;
@@ -92,7 +105,7 @@
 }
 
 /* Burger */
-.burger {
+.burger { font-size: 0;
   display: none;
   flex-direction: column;
   gap: 5px;
@@ -112,7 +125,7 @@
   .sticky-nav-links {
     display: none;
     position: absolute;
-    top: 100px;
+    top: 100%;
     left: 0; right: 0;
     background: var(--white);
     flex-direction: column;
@@ -125,4 +138,11 @@
   .sticky-nav-links a { height: auto; padding: 13px 24px; border-bottom: none; border-left: 3px solid transparent; color: var(--text-dark) !important; }
   .sticky-nav-links a.active { border-left-color: var(--green); }
   .topbar-entity { display: none; }
+}
+
+/* Below 600px the page content drops to a 16px gutter. The header follows it,
+   so the topbar and the nav keep the same left edge as the content under them. */
+@media (max-width: 600px) {
+  .topbar-inner { padding: 0 16px; }
+  .sticky-nav { padding: 0 16px; }
 }
