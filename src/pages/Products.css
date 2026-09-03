@@ -2,6 +2,8 @@
 
 /* Page hero */
 .pg-hero { background: var(--mint-bg); padding: 40px 24px 32px; }
+@media (max-width: 600px) { .pg-hero { padding-left: 16px; padding-right: 16px; } }
+
 .pg-hero-inner { max-width: 1200px; margin: 0 auto; }
 .pg-hero h1 { color: var(--green-dark); margin-bottom: 8px; }
 .pg-hero p { color: var(--text-mid); }
@@ -12,7 +14,11 @@
   gap: 0;
   overflow-x: auto;
   background: var(--green-dark);
-  padding: 0 24px;
+  /* Bar is full-bleed, but its TABS must line up with the 1248/24 site
+     container. 18px is the tab's own left padding, so the first tab's TEXT
+     lands on the container edge, not 18px inside it. */
+  padding-left: max(6px, calc((100% - 1248px) / 2 + 6px));
+  padding-right: max(24px, calc((100% - 1248px) / 2 + 24px));
   scrollbar-width: none;
 }
 .vert-tabs::-webkit-scrollbar { display: none; }
@@ -32,13 +38,13 @@
 .vert-tab--active { color: #fff; border-bottom-color: var(--accent-red); }
 
 /* Layout: sidebar + list */
-.prod-layout { display: flex; min-height: 70vh; max-width: 1300px; margin: 0 auto; padding: 0 0 48px; }
+.prod-layout { display: flex; min-height: 70vh; max-width: 1248px; margin: 0 auto; padding: 0 24px 48px; }
 
 /* Sidebar */
 .prod-sidebar {
   width: 240px; min-width: 220px;
   background: var(--off-white);
-  padding: 28px 20px 48px;
+  padding: 28px 20px 48px 0;
   border-right: 1px solid var(--border);
   position: sticky; top: 117px;
   height: fit-content;
@@ -73,7 +79,7 @@
 .sb-reset:hover { background: var(--accent-red-dark); border-color: var(--accent-red-dark); }
 
 /* Product list */
-.prod-list { flex: 1; padding: 28px 32px; }
+.prod-list { flex: 1; padding: 28px 0 28px 32px; }
 .prod-count {
   font-size: var(--fs-label); color: var(--text-light);
   padding-bottom: 12px; border-bottom: 2px solid var(--border);
@@ -123,7 +129,10 @@
 @media (max-width: 820px) {
   .prod-layout { flex-direction: column; }
   .prod-sidebar { width: 100%; position: static; border-right: none; border-bottom: 1px solid var(--border); }
-  .prod-list { padding: 20px 16px; }
+  .prod-list { padding: 20px 0; }
+  /* 12 + 12 = 24, the site gutter in this band. This shorthand REPLACES the
+     max() padding above, so these two numbers must keep summing to the
+     gutter or the tab bar drifts off the container edge. */
   .vert-tabs { padding: 0 12px; }
   .vert-tab { padding: 12px 12px; }
 }
@@ -137,4 +146,9 @@
   object-fit: contain;
   object-position: left center;
   display: block;
+}
+
+@media (max-width: 600px) {
+  .prod-layout { padding-left: 16px; padding-right: 16px; }
+  .vert-tabs { padding-left: 4px; padding-right: 16px; }
 }

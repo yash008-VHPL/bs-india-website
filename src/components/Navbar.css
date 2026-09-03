@@ -139,3 +139,10 @@
   .sticky-nav-links a.active { border-left-color: var(--green); }
   .topbar-entity { display: none; }
 }
+
+/* Below 600px the page content drops to a 16px gutter. The header follows it,
+   so the topbar and the nav keep the same left edge as the content under them. */
+@media (max-width: 600px) {
+  .topbar-inner { padding: 0 16px; }
+  .sticky-nav { padding: 0 16px; }
+}

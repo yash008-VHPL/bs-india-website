@@ -10,6 +10,8 @@
 .legal-notice p  { font-size: var(--fs-body); color: var(--text-mid); line-height: 1.8; margin-bottom: 20px; }
 @media (max-width: 600px) { .legal-inner { padding: 36px 16px 56px; } }
 .pg-hero { background: var(--mint-bg); padding: 40px 24px 32px; }
+@media (max-width: 600px) { .pg-hero { padding-left: 16px; padding-right: 16px; } }
+
 .pg-hero-inner { max-width: 1200px; margin: 0 auto; }
 .pg-hero h1 { color: var(--green-dark); margin-bottom: 8px; }
 .pg-hero p { color: var(--text-mid); }

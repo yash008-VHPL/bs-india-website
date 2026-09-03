@@ -1,5 +1,7 @@
 
-.pg-hero{background:var(--mint-bg);padding:40px 24px 32px}.pg-hero-inner{max-width:1200px;margin:0 auto}.pg-hero h1{color:var(--green-dark);margin-bottom:8px}
+.pg-hero{background:var(--mint-bg);padding:40px 24px 32px}
+@media (max-width: 600px) { .pg-hero { padding-left: 16px; padding-right: 16px; } }
+.pg-hero-inner{max-width:1200px;margin:0 auto}.pg-hero h1{color:var(--green-dark);margin-bottom:8px}
 .pg-hero p{color:var(--text-mid)}
 .ws-body{padding:56px 24px;background:var(--off-white);min-height:60vh}.ws-inner{max-width:720px;margin:0 auto}
 .ws-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:44px 40px;text-align:center;box-shadow:0 4px 24px rgba(0,76,62,.06)}

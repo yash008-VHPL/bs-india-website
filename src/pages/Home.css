@@ -30,7 +30,7 @@
 
 /* PRODUCTS SPLIT */
 .home-products { padding: 72px 0 0; }
-.home-products-header { max-width: 1200px; margin: 0 auto; padding: 0 24px 40px; }
+.home-products-header { max-width: 1248px; margin: 0 auto; padding: 0 24px 40px; }
 .home-products-header h2 { margin-bottom: 8px; }
 .home-products-header p { color: var(--text-mid); }
 .solutions-split { display: flex; min-height: 560px; }
