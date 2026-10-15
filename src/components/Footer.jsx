@@ -1,3 +1,4 @@
+/* global __BUILD_YEAR__ */
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import './Footer.css';
@@ -73,7 +74,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Berg+Schmidt India Pvt. Ltd. All rights reserved.</p>
+        <p>&copy; {__BUILD_YEAR__} Berg+Schmidt India Pvt. Ltd. All rights reserved.</p>
       </div>
     </footer>
   );

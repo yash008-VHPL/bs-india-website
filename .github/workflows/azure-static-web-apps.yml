@@ -34,11 +34,23 @@ jobs:
         with: { node-version: '22', cache: 'npm' }
       - run: npm ci
 
-      - name: Build the production site
-        # VITE_ROBOTS fills the %VITE_ROBOTS% placeholder in index.html. Without
-        # it Vite leaves the literal token in the shipped HTML and crawlers see
-        # a meaningless robots value. Production is indexable; /beta is not.
-        run: VITE_ROBOTS=index,follow npm run build
+      - name: Build the production site (prerendered)
+        # VITE_ROBOTS fills the %VITE_ROBOTS% placeholder in index.html and
+        # sets each page's robots tag. Production (push to main) is indexable.
+        # A pull request deploys to a public azurestaticapps.net staging URL,
+        # so it is built noindex, and with the News render-test fixture so the
+        # article template can be checked there.
+        # build:ssg prerenders every route and ends with check-dist, which
+        # FAILS the run on an empty page, an unresolved Suspense boundary, an
+        # internal division name, or a missing product page.
+        run: |
+          set -eu
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            export VITE_ROBOTS=noindex,nofollow INCLUDE_FIXTURES=1
+          else
+            export VITE_ROBOTS=index,follow
+          fi
+          npm run build:ssg
 
       # The review copy is built from BETA_REF, NOT from this branch, so the
       # live site and the review copy can differ. It is built with base
@@ -54,6 +66,8 @@ jobs:
           git worktree add --detach /tmp/beta-src FETCH_HEAD
           cd /tmp/beta-src
           npm ci
+          # Older review branches have no content step; newer ones need it.
+          if [ -f scripts/build-content.mjs ]; then node scripts/build-content.mjs; fi
           BASE_PATH=/beta/ VITE_ROBOTS=noindex,nofollow npx vite build
           rm -rf "$GITHUB_WORKSPACE/dist/beta"
           cp -r dist "$GITHUB_WORKSPACE/dist/beta"
@@ -69,6 +83,8 @@ jobs:
           # app_location is now the artifact itself, so an empty or partial
           # dist would blank the live site instead of just breaking /beta.
           test -f "$GITHUB_WORKSPACE/dist/index.html"
+          test -f "$GITHUB_WORKSPACE/dist/404.html"
+          grep -q '<main' "$GITHUB_WORKSPACE/dist/index.html"
           test -f "$GITHUB_WORKSPACE/dist/staticwebapp.config.json"
           test -d "$GITHUB_WORKSPACE/dist/assets"
           test -f "$GITHUB_WORKSPACE/dist/beta/index.html"

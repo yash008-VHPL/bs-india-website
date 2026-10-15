@@ -11,14 +11,14 @@ const HERO_IMAGES = [
 ];
 
 export default function Home() {
-  usePageMeta("Animal Nutrition for India's Poultry and Dairy", "Berg+Schmidt India Pvt. Ltd. - science-backed feed additives for India's poultry and dairy producers. Present in India since 2002.");
+  usePageMeta("Animal Nutrition for India's Poultry and Dairy", "Berg+Schmidt India Pvt. Ltd. - science-backed feed additives for India's poultry and dairy producers. Present in India since 2002.", { path: '/' });
   return (
     <main className="home" style={{position:"relative"}}>
       <section className="hero">
         <div className="hero-panels">
           {HERO_IMAGES.map(img=>(
             <Link to={img.link} key={img.id} className="hero-panel">
-              <img src={img.url} alt={img.label} loading="lazy"/>
+              <img src={img.url} alt={img.label} decoding="async"/>
               <div className="hero-panel-label">{img.label}</div>
             </Link>
           ))}

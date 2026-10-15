@@ -23,7 +23,7 @@ const PAGES = {
 
 export default function Legal({ page }) {
   const p = PAGES[page];
-  usePageMeta(p.title, p.intro);
+  usePageMeta(p.title, p.intro, { path: `/${page}`, noindex: true });
   return (
     <main className="legal-page">
       <div className="pg-hero">

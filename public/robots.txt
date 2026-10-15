@@ -1,5 +1,40 @@
+# Search engines and AI answer/search assistants may read the site.
+# Crawlers that collect content to train AI models may not.
+
 User-agent: *
 Allow: /
 Disallow: /beta/
+
+# AI model-training crawlers - blocked
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: cohere-training-data-crawler
+Disallow: /
+
+# AI search and answer assistants (OAI-SearchBot, ChatGPT-User,
+# Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User, Bingbot,
+# Googlebot) fall under "User-agent: *" above and are allowed.
 
 Sitemap: https://www.berg-schmidt.co.in/sitemap.xml

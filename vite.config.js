@@ -13,7 +13,13 @@ const base = process.env.BASE_PATH || '/'
 export default defineConfig({
   base,
   plugins: [react()],
+  // Footer copyright year, fixed at build time so the prerendered HTML and
+  // the hydrated page always agree.
+  define: { __BUILD_YEAR__: JSON.stringify(String(new Date().getUTCFullYear())) },
   build: {
+    // The prerender reads the manifest to give each static page the CSS and
+    // JS chunks of its own route, so it paints styled before any JS runs.
+    manifest: true,
     outDir: process.env.OUT_DIR || 'dist',
     sourcemap: false,
     rollupOptions: {

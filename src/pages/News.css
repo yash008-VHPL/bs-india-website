@@ -8,3 +8,64 @@
 .news-inner h2{margin-bottom:14px;color:var(--green-dark)}
 .news-inner p{color:var(--text-mid);line-height:var(--lh-body);margin-bottom:12px}
 .news-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+
+/* --- Listing ---------------------------------------------------------- */
+.news-page .vert-tabs a { text-decoration: none; }
+.nw-list { padding: 40px 24px 72px; }
+.nw-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.nw-card { border: 1px solid var(--border); border-radius: 8px; padding: 22px; display: flex; flex-direction: column; gap: 10px; background: var(--white); }
+.nw-card:hover { border-color: var(--green); }
+.nw-card-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: var(--fs-label); color: var(--text-light); }
+.nw-card-title { font-size: var(--fs-sub); line-height: var(--lh-sub); color: var(--green-dark); }
+.nw-card-title a:hover { color: var(--green); }
+.nw-card-sum { color: var(--text-mid); }
+.nw-card-by { margin-top: auto; font-size: var(--fs-label); color: var(--text-light); }
+.nw-author-intro { max-width: 760px; margin: 0 auto; padding: 32px 24px 0; color: var(--text-mid); }
+
+/* --- Article ---------------------------------------------------------- */
+.nw-article { max-width: 760px; margin: 0 auto; padding: 40px 24px 72px; }
+.nw-head h1 { color: var(--green-dark); margin: 12px 0 12px; }
+.nw-sum { font-size: var(--fs-sub); line-height: var(--lh-sub); color: var(--text-mid); margin-bottom: 14px; }
+.nw-byline { font-size: var(--fs-label); color: var(--text-light); padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.nw-byline a { color: var(--green-dark); font-weight: 600; }
+.nw-cover { width: 100%; border-radius: 8px; margin-top: 24px; }
+.nw-takeaways { background: var(--off-white); border-left: 3px solid var(--accent-red); border-radius: 0 8px 8px 0; padding: 18px 20px; margin: 28px 0 8px; }
+.nw-takeaways h2, .nw-faq h2, .nw-products h2 { font-size: var(--fs-sub); line-height: var(--lh-sub); color: var(--green-dark); margin-bottom: 12px; }
+.nw-takeaways ul { display: flex; flex-direction: column; gap: 8px; }
+.nw-takeaways li { display: flex; gap: 10px; align-items: flex-start; color: var(--text-mid); }
+
+.nw-body { color: var(--text-mid); }
+.nw-body > * + * { margin-top: 16px; }
+.nw-body h2 { font-size: var(--fs-sub); line-height: var(--lh-sub); color: var(--green-dark); margin-top: 36px; padding-bottom: 8px; border-bottom: 2px solid var(--mint-light); }
+.nw-body h3 { font-size: var(--fs-body); color: var(--text-dark); margin-top: 28px; }
+.nw-body a { color: var(--green-dark); text-decoration: underline; text-underline-offset: 2px; }
+.nw-body ul, .nw-body ol { padding-left: 22px; }
+.nw-body ul { list-style: disc; } .nw-body ol { list-style: decimal; }
+.nw-body li + li { margin-top: 6px; }
+.nw-body blockquote { border-left: 3px solid var(--green); padding: 4px 0 4px 16px; color: var(--green-dark); }
+.nw-body figure { margin: 28px 0; }
+.nw-body figure img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--border); }
+.nw-body figcaption { font-size: var(--fs-label); color: var(--text-light); margin-top: 8px; }
+.nw-table { overflow-x: auto; }
+.nw-body table { width: 100%; border-collapse: collapse; }
+.nw-body th { font-size: var(--fs-label); text-transform: uppercase; letter-spacing: .06em; color: var(--green-dark); text-align: left; border-bottom: 2px solid var(--green); padding: 8px 10px; }
+.nw-body td { border-bottom: 1px solid var(--border); padding: 8px 10px; }
+
+.nw-faq { margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--border); }
+.nw-faq-item + .nw-faq-item { margin-top: 18px; }
+.nw-faq-item h3 { font-size: var(--fs-body); color: var(--text-dark); margin-bottom: 4px; }
+.nw-faq-item p { color: var(--text-mid); }
+
+.nw-products { margin-top: 44px; }
+.nw-prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.nw-prod { background: var(--off-white); border-radius: 8px; padding: 14px 16px; }
+.nw-prod:hover .pd-sp-name { color: var(--green); }
+
+.nw-authors { margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--border); }
+.nw-author + .nw-author { margin-top: 16px; }
+.nw-author-bio { color: var(--text-mid); margin-top: 6px; }
+
+@media (max-width: 600px) {
+  .nw-list, .nw-article { padding-left: 16px; padding-right: 16px; }
+  .nw-grid { grid-template-columns: minmax(0, 1fr); }
+}

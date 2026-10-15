@@ -1,11 +1,15 @@
 {
+  "trailingSlash": "never",
   "routes": [
     { "route": "/assets/*",       "headers": { "cache-control": "public, max-age=31536000, immutable" } },
     { "route": "/fonts/*",        "headers": { "cache-control": "public, max-age=31536000, immutable" } },
     { "route": "/product-logos/*","headers": { "cache-control": "public, max-age=2592000" } },
     { "route": "/*.{webp,svg,ico,jpg,jpeg,png,woff2}", "headers": { "cache-control": "public, max-age=2592000" } },
 
-
+    { "route": "/products/poultry", "redirect": "/species#poultry", "statusCode": 301 },
+    { "route": "/products/dairy",   "redirect": "/species#dairy",   "statusCode": 301 },
+    { "route": "/news/feed.xml",    "headers": { "content-type": "application/rss+xml; charset=utf-8" } },
+    { "route": "/llms.txt",         "headers": { "content-type": "text/plain; charset=utf-8" } },
 
     { "route": "/beta/assets/*" },
     { "route": "/beta/fonts/*" },
@@ -15,13 +19,8 @@
     { "route": "/beta",  "rewrite": "/beta/index.html" },
     { "route": "/beta/*","rewrite": "/beta/index.html" }
   ],
-  "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": [
-      "/assets/*", "/fonts/*", "/product-logos/*", "/icons/*",
-      "/*.{css,js,ico,png,jpg,webp,svg,woff2,json,txt,xml}",
-      "/beta/*", "/beta/assets/*", "/beta/fonts/*", "/beta/icons/*", "/beta/product-logos/*"
-    ]
+  "responseOverrides": {
+    "404": { "rewrite": "/404.html" }
   },
   "globalHeaders": {
     "Cache-Control": "no-cache",
