@@ -1,12 +1,22 @@
-import { useParams, Link, Navigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { PRODUCTS, SPECIES } from '../data/products';
 import './ProductDetail.css';
 import usePageMeta from '../usePageMeta';
+import NotFound from '../components/NotFound';
+import { breadcrumbs } from '../seo';
+import NEWS from '../generated/news-index.json';
 export default function ProductDetail() {
   const {id}=useParams();
   const p=PRODUCTS.find(x=>x.id===id);
-  usePageMeta(p?p.name:null, p?`${p.name} - ${p.subtitle}. ${p.tagline}`:null);
-  if(!p) return <Navigate to="/products" replace/>;
+  // Unknown ids render the real 404 page (the server answers 404 for them
+  // too), instead of silently redirecting. Products still awaiting their
+  // technical copy are kept out of search until it exists.
+  const pending = !!p && p.benefits.length === 0 && p.applications.length === 0;
+  usePageMeta(p?p.name:null, p?`${p.name} - ${p.subtitle}. ${p.tagline}`:null,
+    p ? { path:`/products/${p.id}`, noindex: pending,
+          jsonLd:[breadcrumbs([['Home','/'],['Products','/products'],[p.name,`/products/${p.id}`]])] } : {});
+  if(!p) return <NotFound/>;
+  const related=NEWS.posts.filter(x=>x.products.includes(p.id)).slice(0,3);
   const others=PRODUCTS.filter(x=>x.id!==id);
   return (
     <main className="pd-page">
@@ -64,6 +74,15 @@ export default function ProductDetail() {
               </Link>
             ))}
           </div>
+          {related.length>0 && <div className="pd-sb-card">
+            <h3>From Our Technical Team</h3>
+            {related.map(x=>(
+              <Link to={`/news/${x.slug}`} key={x.slug} className="pd-sp-link">
+                <span className="sol-bullet" aria-hidden="true" />
+                <div><span className="pd-sp-name">{x.title}</span><span className="pd-sp-sub">{x.date}</span></div>
+              </Link>
+            ))}
+          </div>}
           <div className="pd-sb-card pd-sb-dark">
             <h3>Need Help?</h3>
             <p>Our technical team can help you choose the right product for your operation.</p>

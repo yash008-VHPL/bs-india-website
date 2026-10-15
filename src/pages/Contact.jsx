@@ -25,7 +25,7 @@ function buildPrefillMessage({ segment, city, detail }) {
 }
 
 export default function Contact() {
-  usePageMeta('Contact', "Talk to the Berg+Schmidt India team in Pune about poultry and dairy nutrition for your operation.");
+  usePageMeta('Contact', "Talk to the Berg+Schmidt India team in Pune about poultry and dairy nutrition for your operation.", { path: '/contact' });
   const [params] = useSearchParams();
   const segment = params.get('segment');
   const city = params.get('city') || '';
