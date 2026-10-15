@@ -8,8 +8,6 @@
 
     { "route": "/products/poultry", "redirect": "/species#poultry", "statusCode": 301 },
     { "route": "/products/dairy",   "redirect": "/species#dairy",   "statusCode": 301 },
-    { "route": "/index",            "redirect": "/",                "statusCode": 301 },
-    { "route": "/404",              "rewrite": "/404.html",         "statusCode": 404 },
 
     { "route": "/beta/assets/*" },
     { "route": "/beta/fonts/*" },
