@@ -29,9 +29,17 @@ export default function usePageMeta(title, description, opts = {}) {
 
   const { path, noindex } = opts;
   useEffect(() => {
+    // A page that has nothing to say yet (e.g. a product page about to render
+    // the 404) must not overwrite what its child set.
+    if (title == null) return;
+    const meta = (_attr, key) => () => Object.assign(document.createElement('meta'), { name: key });
     document.title = formatTitle(title);
-    if (description) setTag('meta[name="description"]', () => Object.assign(document.createElement('meta'), { name: 'description' }), 'content', description);
-    if (path) setTag('link[rel="canonical"]', () => Object.assign(document.createElement('link'), { rel: 'canonical' }), 'href', abs(path));
+    if (description) setTag('meta[name="description"]', meta('name', 'description'), 'content', description);
+    setTag('link[rel="canonical"]', () => Object.assign(document.createElement('link'), { rel: 'canonical' }), 'href', path ? abs(path) : null);
+    const og = (k, v) => setTag(`meta[property="og:${k}"]`, () => { const m = document.createElement('meta'); m.setAttribute('property', `og:${k}`); return m; }, 'content', v);
+    og('title', title);
+    og('description', description || null);
+    og('url', path ? abs(path) : null);
     // A noindex build (/beta, PR staging) keeps its blanket noindex.
     if (!String(import.meta.env.VITE_ROBOTS || '').startsWith('noindex')) {
       setTag('meta[name="robots"]', () => Object.assign(document.createElement('meta'), { name: 'robots' }), 'content', noindex ? 'noindex,follow' : 'index,follow');

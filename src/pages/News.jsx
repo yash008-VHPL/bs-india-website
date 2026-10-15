@@ -29,17 +29,22 @@ export default function News({ species }) {
   const path = species ? `/news/${species}` : '/news';
   const posts = species ? NEWS.posts.filter(p => p.species.includes(species)) : NEWS.posts;
   const crumbs = [['Home', '/'], ['News', '/news'], ...(species ? [[LABEL[species], path]] : [])];
+  // /news stays indexable even while empty (as it is today); the species
+  // filters are only indexable once they list something real.
+  const real = posts.filter(p => !p.fixture);
   usePageMeta(
     species ? `${LABEL[species]} News` : 'News',
-    "News and updates from Berg+Schmidt India and the global Berg+Schmidt Animal Nutrition team.",
-    { path, noindex: posts.length === 0, jsonLd: [breadcrumbs(crumbs)] },
+    species
+      ? `${LABEL[species]} nutrition articles from the Berg+Schmidt India technical team.`
+      : "News and updates from Berg+Schmidt India and the global Berg+Schmidt Animal Nutrition team.",
+    { path, noindex: !!species && real.length === 0, jsonLd: [breadcrumbs(crumbs)] },
   );
   const tabs = [['All', '/news'], ['Poultry', '/news/poultry'], ['Dairy', '/news/dairy']];
 
   return (
     <main className="news-page">
       <div className="pg-hero"><div className="pg-hero-inner">
-        <h1 className="bs-mark">News & Updates</h1>
+        <h1 className="bs-mark">{species ? `${LABEL[species]} News` : 'News & Updates'}</h1>
         <p>The latest from Berg+Schmidt India and the global Animal Nutrition team.</p>
       </div></div>
 

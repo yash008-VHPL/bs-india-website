@@ -114,7 +114,8 @@ for (const [route, pageName] of routes) {
 {
   const { html, head } = await render('/__not-found__');
   write('404.html', page(html, buildHead('/404', { ...head, path: null }, { css: [], js: [] }))
-    .replace(/\s*<link rel="canonical"[^>]*>/, ''));
+    .replace(/\s*<link rel="canonical"[^>]*>/, '')
+    .replace(/\s*<meta property="og:url"[^>]*>/, ''));
 }
 console.log(`prerender: ${routes.length} routes, ${indexable.length} indexable, + 404.html`);
 
