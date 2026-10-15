@@ -28,6 +28,10 @@ jobs:
        && github.event.action != 'closed'
        && github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -114,7 +118,14 @@ jobs:
       # Puts the deployed URL (the staging URL for a pull request) on the run's
       # summary page, where it can be read without access to the raw logs.
       - name: Record the deployed URL
-        run: echo "Deployed to ${{ steps.deploy.outputs.static_web_app_url }}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          URL: ${{ steps.deploy.outputs.static_web_app_url }}
+        run: |
+          echo "Deployed to $URL" >> "$GITHUB_STEP_SUMMARY"
+          # Also as a commit status, readable through the REST API.
+          gh api "repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha || github.sha }}" \
+            -f state=success -f context=deployed-url -f target_url="$URL" -f description="Deployed site" || true
 
   close_pull_request:
     if: >-
