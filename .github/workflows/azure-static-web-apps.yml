@@ -101,6 +101,7 @@ jobs:
       # action uploads the dist we just built, as-is. app_location then names
       # the FOLDER TO UPLOAD and output_location must be empty.
       - uses: Azure/static-web-apps-deploy@v1
+        id: deploy
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -109,7 +110,11 @@ jobs:
           api_location: ""
           output_location: ""
           skip_app_build: true
-          skip_api_build: true
+
+      # Puts the deployed URL (the staging URL for a pull request) on the run's
+      # summary page, where it can be read without access to the raw logs.
+      - name: Record the deployed URL
+        run: echo "Deployed to ${{ steps.deploy.outputs.static_web_app_url }}" >> "$GITHUB_STEP_SUMMARY"
 
   close_pull_request:
     if: >-
