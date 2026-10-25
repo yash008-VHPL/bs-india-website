@@ -46,7 +46,7 @@
 .nw-body blockquote { border-left: 3px solid var(--green); padding: 4px 0 4px 16px; color: var(--green-dark); }
 .nw-body figure { margin: 28px 0; }
 .nw-body figure img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--border); }
-.nw-body figcaption { font-size: var(--fs-label); color: var(--text-light); margin-top: 8px; }
+.nw-body figcaption { font-size: var(--fs-body); color: var(--text-light); margin-top: 8px; }
 .nw-table { overflow-x: auto; }
 .nw-body table { width: 100%; border-collapse: collapse; }
 .nw-body th { font-size: var(--fs-label); text-transform: uppercase; letter-spacing: .06em; color: var(--green-dark); text-align: left; border-bottom: 2px solid var(--green); padding: 8px 10px; }
@@ -74,7 +74,7 @@
 }
 
 /* Process steps: write <ol class="nw-steps"><li><b>Step</b><span>Text</span></li></ol> */
-.nw-body .nw-steps { list-style: none; padding: 0; margin: 28px 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; counter-reset: step; }
+.nw-body .nw-steps { list-style: none; padding: 0; margin: 28px 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; counter-reset: step; margin: 24px 0; }
 .nw-body .nw-steps li { counter-increment: step; position: relative; background: var(--mint-light); border-radius: 8px; padding: 14px 12px 14px; margin: 0; display: flex; flex-direction: column; gap: 6px; }
 .nw-body .nw-steps li::before { content: counter(step); width: 24px; height: 24px; border-radius: 50%; background: var(--green-dark); color: var(--white); font-size: var(--fs-label); font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .nw-body .nw-steps li:not(:last-child)::after { content: ''; position: absolute; right: -9px; top: 50%; width: 8px; height: 8px; border-top: 2px solid var(--accent-red); border-right: 2px solid var(--accent-red); transform: translateY(-50%) rotate(45deg); }
@@ -88,19 +88,19 @@
 }
 
 /* --- Article graphics ------------------------------------------------- */
-.nw-body .nw-figs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 28px 0; }
+.nw-body .nw-figs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
 .nw-body .nw-svg { margin: 0; background: var(--off-white); border-radius: 8px; padding: 16px 12px 12px; }
 .nw-body .nw-svg svg { width: 100%; height: auto; display: block; }
 .nw-svg .t { font: 600 15px var(--font); fill: var(--green-dark); }
 .nw-svg .s { font: 400 13px var(--font); fill: var(--text-light); }
 
 .nw-body .nw-chiprow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 24px 0; }
-.nw-body .nw-chiprow--wide { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.nw-body .nw-chiprow--wide { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .nw-chipcard { border: 1px solid var(--border); border-top: 3px solid var(--green); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
 .nw-chipcard b { color: var(--green-dark); }
 .nw-chipcard em { font-style: normal; color: var(--text-light); line-height: 1.5; order: 3; }
 .nw-body .nw-chipcard ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.nw-body .nw-chipcard li { margin: 0; background: var(--mint-light); color: var(--green-dark); border-radius: 20px; padding: 2px 12px; font-size: var(--fs-body); font-weight: 500; line-height: 1.6; }
+.nw-body .nw-chipcard li { margin: 0; background: var(--mint-light); color: var(--green-dark); border-radius: 8px; padding: 2px 10px; font-size: var(--fs-body); font-weight: 500; line-height: 1.6; }
 
 .nw-body .nw-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 24px 0; }
 .nw-card-i { background: var(--off-white); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
@@ -109,14 +109,15 @@
 .nw-card-i span { line-height: 1.5; }
 .nw-cards--plain .nw-card-i { background: var(--white); border: 1px solid var(--border); border-left: 3px solid var(--accent-red); }
 
-.nw-body .nw-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
-.nw-compare > div { background: var(--off-white); border-radius: 8px; padding: 16px; }
-.nw-compare > div > b { display: block; color: var(--green-dark); margin-bottom: 12px; }
-.nw-body .nw-compare ol { list-style: none; padding: 0; counter-reset: c; }
+.nw-body .nw-compare { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto repeat(4, auto); column-gap: 16px; margin: 24px 0; }
+/* Each panel spans the shared rows, so step N sits level with step N. */
+.nw-compare > div { background: var(--off-white); border-radius: 8px; padding: 16px; display: grid; grid-row: span 5; grid-template-rows: subgrid; row-gap: 18px; counter-reset: c; }
+.nw-compare > div > b { display: block; color: var(--green-dark); margin-bottom: -6px; }
+.nw-body .nw-compare ol { display: contents; list-style: none; padding: 0; }
 .nw-body .nw-compare li { counter-increment: c; position: relative; margin: 0; padding: 10px 12px 10px 40px; background: var(--white); border: 1px solid var(--border); border-radius: 6px; line-height: 1.5; }
-.nw-body .nw-compare li + li { margin-top: 18px; }
+.nw-body .nw-compare li + li { margin-top: 0; }
 .nw-compare li::before { content: counter(c); position: absolute; left: 10px; top: 10px; width: 22px; height: 22px; border-radius: 50%; background: var(--green-dark); color: var(--white); font-size: var(--fs-label); font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.nw-compare li + li::after { content: ''; position: absolute; left: 50%; top: -15px; width: 8px; height: 8px; border-right: 2px solid var(--accent-red); border-bottom: 2px solid var(--accent-red); transform: translateX(-50%) rotate(45deg); }
+.nw-compare li + li::after { content: ''; position: absolute; left: 50%; top: -14px; width: 8px; height: 8px; border-right: 2px solid var(--accent-red); border-bottom: 2px solid var(--accent-red); transform: translateX(-50%) rotate(45deg); }
 .nw-compare > div:last-child > b { color: var(--accent-red-dark); }
 
 .nw-body .nw-prods { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0; }
@@ -129,6 +130,8 @@
 
 @media (max-width: 820px) {
   .nw-body .nw-figs, .nw-body .nw-compare, .nw-body .nw-prods { grid-template-columns: minmax(0, 1fr); }
+  .nw-body .nw-compare { grid-template-rows: none; row-gap: 16px; }
+  .nw-compare > div { grid-row: auto; grid-template-rows: none; }
   .nw-body .nw-chiprow, .nw-body .nw-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 480px) {
