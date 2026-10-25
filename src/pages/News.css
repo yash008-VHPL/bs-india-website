@@ -72,3 +72,17 @@
   .nw-list, .nw-article { padding-left: 16px; padding-right: 16px; }
   .nw-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Process steps: write <ol class="nw-steps"><li><b>Step</b><span>Text</span></li></ol> */
+.nw-body .nw-steps { list-style: none; padding: 0; margin: 28px 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; counter-reset: step; }
+.nw-body .nw-steps li { counter-increment: step; position: relative; background: var(--mint-light); border-radius: 8px; padding: 14px 12px 14px; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.nw-body .nw-steps li::before { content: counter(step); width: 24px; height: 24px; border-radius: 50%; background: var(--green-dark); color: var(--white); font-size: var(--fs-label); font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.nw-body .nw-steps li:not(:last-child)::after { content: ''; position: absolute; right: -9px; top: 50%; width: 8px; height: 8px; border-top: 2px solid var(--accent-red); border-right: 2px solid var(--accent-red); transform: translateY(-50%) rotate(45deg); }
+.nw-body .nw-steps b { color: var(--green-dark); }
+.nw-body .nw-steps span { line-height: 1.5; }
+@media (max-width: 820px) {
+  .nw-body .nw-steps { grid-template-columns: minmax(0, 1fr); }
+  .nw-body .nw-steps li { flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 10px; }
+  .nw-body .nw-steps span { flex-basis: 100%; }
+  .nw-body .nw-steps li:not(:last-child)::after { right: auto; left: 50%; top: auto; bottom: -9px; transform: translateX(-50%) rotate(135deg); }
+}
