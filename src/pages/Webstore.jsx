@@ -4,7 +4,7 @@ import Icon from '../components/Icon';
 import './Webstore.css';
 import usePageMeta from '../usePageMeta';
 export default function Webstore() {
-  usePageMeta('Shop', "A direct online purchasing channel for Berg+Schmidt India products is being built for Indian poultry and dairy producers.");
+  usePageMeta('Shop', "A direct online purchasing channel for Berg+Schmidt India products is being built for Indian poultry and dairy producers.", { path: '/shop', noindex: true });
   return (
     <main className="ws-page">
       <div className="pg-hero"><div className="pg-hero-inner">
