@@ -13,11 +13,11 @@ takeaways:
   - "Measure digestibility, performance and economics together."
 faq:
   - q: "What are phospholipids?"
-    a: "Molecules with a water-loving head and fat-loving tails. The main ones in feed are phosphatidyl choline, phosphatidyl ethanolamine, phosphatidyl inositol and phosphatidic acid."
+    a: "Molecules with a water-loving head and fat-loving tails. Components include phosphatidyl choline, phosphatidyl ethanolamine, phosphatidyl inositol and phosphatidic acid."
   - q: "Where do feed phospholipids come from?"
     a: "Lecithin from oilseeds such as soybean, sunflower, rapeseed and groundnut, and from egg yolk. Soybean and sunflower are the main commercial sources."
   - q: "Do phospholipids work the same way in dairy cows as in poultry?"
-    a: "No. In ruminants dietary fat is first metabolised by rumen microbes. Phospholipids feed the rumen microflora and supply phosphatidyl choline, while rumen-bypass fats are needed to carry energy past the rumen."
+    a: "No. In ruminants dietary fat is first metabolised by rumen microbes. Phospholipids feed the rumen microflora and supply phosphatidyl choline, while saturated or rumen-bypass fats are needed to exit the rumen."
 ---
 
 > **Demo article for the technical team. Not for publication.** Built from the internal presentation *Phospholipids in Livestock Nutrition* to show how a technical article looks on the website.
@@ -28,7 +28,7 @@ Phospholipids are often treated as just an emulsifier. They do much more: they a
 
 A phospholipid has an **amphipathic** structure: a hydrophilic (water-loving) head and hydrophobic (fat-loving) tails. This dual affinity is what lets it organise cell membranes and stabilise fat in the watery environment of the intestine.
 
-The main phospholipids in feed are:
+Phospholipid components:
 
 - Phosphatidyl choline (PC)
 - Phosphatidyl ethanolamine (PE)
@@ -40,14 +40,14 @@ Commercially they come from lecithin, mainly from soybean and sunflower. Rapesee
 ## How phospholipids improve fat utilisation
 
 <ol class="nw-steps">
-<li><b>Fat droplet</b><span>A large oil or fat globule enters the intestine.</span></li>
-<li><b>Emulsification</b><span>Phospholipids break it into smaller, stabilised droplets.</span></li>
+<li><b>Fat droplet</b><span>A large oil or fat globule.</span></li>
+<li><b>Emulsification</b><span>Smaller, stabilised droplets.</span></li>
 <li><b>Lipase</b><span>More surface is exposed to the fat-digesting enzyme.</span></li>
 <li><b>Micelle</b><span>Digested fat is carried in micelles.</span></li>
 <li><b>Enterocyte</b><span>Intestinal cells take up the fat.</span></li>
 </ol>
 
-Phospholipids complement the animal's own bile by stabilising the boundary between fat and water. This matters most when the bird's own digestive capacity is limited: in young chicks, at high growth rates and when the diet contains harder-to-digest fats.
+Phospholipids complement the animal's own bile by stabilising the boundary between fat and water. This may be most useful in broilers at an early age and high growth rate, and its relevance depends on diet factors such as fat source, saturation, free fatty acids and inclusion level.
 
 ## Beyond digestion
 
@@ -58,7 +58,7 @@ Phospholipids complement the animal's own bile by stabilising the boundary betwe
 | Gut | Epithelial function and resilience |
 | Reproduction | Fertility and hatchability |
 | Immunity | Serum IgG levels, humoral immunity, uniform vaccine titres |
-| Meat quality | Lower drip loss, better dressing yield |
+| Meat quality | Drip loss, dressing yield |
 
 The intestinal wall relies on healthy cell membranes and tight junctions to control what crosses into the body. Phospholipids are fundamental to those membranes, and their effect on barrier function remains an active research area.
 
@@ -73,12 +73,12 @@ The intestinal wall relies on healthy cell membranes and tight junctions to cont
 
 ## Ruminants: a different digestive context
 
-In cattle and buffalo, dietary fat is extensively metabolised by rumen microbes before it is absorbed. Saturated or rumen-bypass fats are needed to get energy past the rumen. Phospholipids feed the rumen microflora and supply **phosphatidyl choline**, a key nutrient for:
+In ruminants, dietary fat is extensively metabolised by rumen microbes before it is absorbed. Saturated or rumen-bypass fats are needed to exit the rumen. Phospholipids feed the rumen microflora and supply **phosphatidyl choline**, a key nutrient for:
 
 - mobilising liver fat after calving, helping to prevent ketosis and fatty liver;
 - building the lipoproteins that carry fat from the liver to the mammary gland, improving milk and milk fat production.
 
-Because milk is itself an emulsion, choline leaves the cow continuously and needs regular replenishment through phospholipid supplementation.
+Milk is an emulsion, so choline is replenished through regular phospholipid supplementation.
 
 ## What to monitor
 
