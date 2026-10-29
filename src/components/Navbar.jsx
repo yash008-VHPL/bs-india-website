@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from './Logo';
+import { useCart } from '../shop/context';
+
+const SHOP_DEMO = import.meta.env.VITE_SHOP_DEMO === '1';
 import './Navbar.css';
 
 const NAV = [
@@ -8,13 +11,14 @@ const NAV = [
   { label:'Products', href:'/products' },
   { label:'Species', href:'/species' },
   { label:'News', href:'/news' },
-  { label:'Shop', href:'/shop', badge:'Soon' },
+  { label:'Shop', href:'/shop', badge: SHOP_DEMO ? 'Demo' : 'Soon' },
   { label:'Contact', href:'/contact' },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
+  const { count } = useCart();
 
   return (
     <header className="site-header">
@@ -26,6 +30,10 @@ export default function Navbar() {
             <a href="https://an.berg-schmidt.com" target="_blank" rel="noreferrer">Global Site</a>
             <span className="topbar-sep">|</span>
             <Link to="/contact">Enquire</Link>
+            {SHOP_DEMO && <>
+              <span className="topbar-sep">|</span>
+              <Link to="/shop/cart" aria-label={`Cart, ${count} items`}>Cart ({count})</Link>
+            </>}
           </div>
         </div>
       </div>

@@ -4,13 +4,14 @@ import { PRODUCTS, GROUPS, SPECIES } from '../data/products';
 import Icon from '../components/Icon';
 import './Products.css';
 import usePageMeta from '../usePageMeta';
+import { breadcrumbs } from '../seo';
 
 /*
  * Products are grouped by SPECIES, not by internal business division.
  * Mr Wywiol: the division names are internal and must not appear publicly.
  */
 export default function Products() {
-  usePageMeta('Products', "Feed fats, phospholipid concentrates, enzymes, probiotics, rumen-protected fats and bypass nutrients for Indian poultry and dairy.");
+  usePageMeta('Products', "Feed fats, phospholipid concentrates, enzymes, probiotics, rumen-protected fats and bypass nutrients for Indian poultry and dairy.", { path: '/products', jsonLd: [breadcrumbs([['Home','/'],['Products','/products']])] });
   const [activeGroup, setActiveGroup] = useState('all');
   const [search, setSearch] = useState('');
 
