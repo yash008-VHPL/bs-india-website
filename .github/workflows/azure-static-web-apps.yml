@@ -50,7 +50,8 @@ jobs:
         run: |
           set -eu
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            export VITE_ROBOTS=noindex,nofollow INCLUDE_FIXTURES=1
+            # VITE_SHOP_DEMO turns /shop into the demo storefront (staging only).
+            export VITE_ROBOTS=noindex,nofollow INCLUDE_FIXTURES=1 VITE_SHOP_DEMO=1
           else
             export VITE_ROBOTS=index,follow
           fi

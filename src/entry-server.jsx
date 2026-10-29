@@ -27,3 +27,4 @@ export async function render(url) {
 export { SITE, ORG, WEBSITE, abs } from './seo';
 export { formatTitle } from './usePageMeta';
 export { PRODUCTS } from './data/products';
+export { SHOP_PRODUCTS } from './shop/demo';

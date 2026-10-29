@@ -14,7 +14,7 @@ import { pathToFileURL } from 'node:url';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DIST = path.join(ROOT, 'dist');
-const { render, SITE, ORG, WEBSITE, abs, formatTitle, PRODUCTS } =
+const { render, SITE, ORG, WEBSITE, abs, formatTitle, PRODUCTS, SHOP_PRODUCTS } =
   await import(pathToFileURL(path.join(ROOT, 'dist-ssr/entry-server.js')).href);
 const NEWS = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/generated/news.json'), 'utf8'));
 
@@ -32,6 +32,13 @@ const routes = Object.keys(PAGE).map(r => [r, PAGE[r]]);
 PRODUCTS.forEach(p => routes.push([`/products/${p.id}`, 'ProductDetail']));
 NEWS.posts.forEach(p => routes.push([`/news/${p.slug}`, 'NewsPost']));
 Object.keys(NEWS.authors).forEach(id => routes.push([`/news/authors/${id}`, 'NewsAuthor']));
+// Demo storefront: staging builds only (VITE_SHOP_DEMO=1). Production keeps
+// the Coming Soon page at /shop and has no store routes.
+if (process.env.VITE_SHOP_DEMO === '1') {
+  routes.find(r => r[0] === '/shop')[1] = 'ShopHome';
+  routes.push(['/shop/cart', 'ShopCart'], ['/shop/checkout', 'ShopCheckout']);
+  SHOP_PRODUCTS.forEach(p => routes.push([`/shop/${p.id}`, 'ShopProduct']));
+}
 
 // ---------------------------------------------------- per-route assets --
 // Walk the manifest from a page's source file: its CSS, and every static JS

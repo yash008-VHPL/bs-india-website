@@ -4,6 +4,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import NotFound from './components/NotFound';
 import BetaBanner from './BetaBanner';
+import { CartProvider } from './shop/cart';
+import { SHOP_DEMO } from './shop/demo';
 import './index.css';
 import './App.css';
 
@@ -34,6 +36,10 @@ const PAGES = {
   NewsAuthor:    load(() => import('./pages/NewsAuthor')),
   Contact:       load(() => import('./pages/Contact')),
   Webstore:      load(() => import('./pages/Webstore')),
+  ShopHome:      load(() => import('./pages/ShopHome')),
+  ShopProduct:   load(() => import('./pages/ShopProduct')),
+  ShopCart:      load(() => import('./pages/ShopCart')),
+  ShopCheckout:  load(() => import('./pages/ShopCheckout')),
   Legal:         load(() => import('./pages/Legal')),
 };
 const P = PAGES;
@@ -54,6 +60,7 @@ const PageLoader = () => <div style={{ minHeight: '60vh' }} />;
 
 export function Layout() {
   return (
+    <CartProvider>
     <div className="app-layout">
       <ScrollToTop />
       <BetaBanner />
@@ -72,7 +79,12 @@ export function Layout() {
             <Route path="/news/authors/:id"  element={<P.NewsAuthor />} />
             <Route path="/news/:slug"        element={<P.NewsPost />} />
             <Route path="/contact"           element={<P.Contact />} />
-            <Route path="/shop"              element={<P.Webstore />} />
+            {SHOP_DEMO ? <>
+              <Route path="/shop"              element={<P.ShopHome />} />
+              <Route path="/shop/cart"         element={<P.ShopCart />} />
+              <Route path="/shop/checkout"     element={<P.ShopCheckout />} />
+              <Route path="/shop/:id"          element={<P.ShopProduct />} />
+            </> : <Route path="/shop"          element={<P.Webstore />} />}
             <Route path="/imprint"           element={<P.Legal page="imprint" />} />
             <Route path="/privacy"           element={<P.Legal page="privacy" />} />
             <Route path="*"                  element={<NotFound />} />
@@ -81,6 +93,7 @@ export function Layout() {
       </div>
       <Footer />
     </div>
+    </CartProvider>
   );
 }
 
