@@ -57,7 +57,7 @@
 }
 .shop-demo-note strong { text-transform: uppercase; letter-spacing: .1em; }
 
-.shop-body { padding: 40px 24px 96px; background: var(--off-white); min-height: 50vh; }
+.shop-body { padding: 40px 24px 56px; background: var(--off-white); min-height: 50vh; }
 .shop-body--white { background: #fff; }
 .shop-inner { max-width: 1200px; margin: 0 auto; }
 .shop-narrow { max-width: 640px; }
@@ -207,7 +207,7 @@
   .shop-summary { position: static; }
 }
 @media (max-width: 600px) {
-  .shop-body { padding: 24px 16px 96px; }
+  .shop-body { padding: 24px 16px 40px; }
   .shop-crumbs { padding: 10px 16px; }
   .shop-demo-note { padding: 10px 16px; }
   .shop-cartbar-inner { padding: 10px 16px; }
@@ -218,3 +218,6 @@
   .shop-buybox-btns { grid-template-columns: 1fr; }
   .shop-panel { padding: 18px; }
 }
+
+/* The fixed cart bar is about 66px tall; keep the footer clear of it. */
+body.has-cartbar { padding-bottom: 72px; }

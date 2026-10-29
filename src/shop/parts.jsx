@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from './cart';
+import { useCart } from './context';
 import { formatINR, DISTRIBUTOR_LINK } from './demo';
 
 export function DemoNote() {
@@ -12,12 +13,16 @@ export function DemoNote() {
 }
 
 export function QtyStepper({ value, onChange, label }) {
+  // The field may be empty while typing; it commits on a valid number and
+  // falls back to the current quantity when left empty.
+  const [draft, setDraft] = useState(null);
   return (
     <div className="shop-qty" role="group" aria-label={label || 'Quantity'}>
       <button type="button" onClick={() => onChange(value - 1)} aria-label="Decrease quantity" disabled={value <= 1}>-</button>
       <input
-        type="number" min="1" max="99" inputMode="numeric" value={value}
-        onChange={e => onChange(e.target.value === '' ? 1 : Number(e.target.value))}
+        type="number" min="1" max="99" inputMode="numeric" value={draft ?? value}
+        onChange={e => { const v = e.target.value; setDraft(v); if (v !== '' && Number(v) >= 1) onChange(Number(v)); }}
+        onBlur={() => setDraft(null)}
         aria-label="Quantity"
       />
       <button type="button" onClick={() => onChange(value + 1)} aria-label="Increase quantity" disabled={value >= 99}>+</button>
@@ -33,6 +38,12 @@ export function ProductName({ p, className = '' }) {
 
 export function CartBar() {
   const { count, subtotal } = useCart();
+  // Reserve room under the footer so the fixed bar never covers it.
+  useEffect(() => {
+    if (!count) return;
+    document.body.classList.add('has-cartbar');
+    return () => document.body.classList.remove('has-cartbar');
+  }, [count]);
   if (!count) return null;
   return (
     <div className="shop-cartbar">
@@ -57,9 +68,8 @@ export function Summary({ subtotal, children, lines }) {
         <div><dt>Subtotal</dt><dd>{formatINR(subtotal)}</dd></div>
         <div><dt>GST</dt><dd>To be confirmed</dd></div>
         <div><dt>Delivery</dt><dd>To be confirmed</dd></div>
-        <div className="shop-sum-total"><dt>Total</dt><dd>{formatINR(subtotal)}</dd></div>
+        <div className="shop-sum-total"><dt>Total before GST and delivery</dt><dd>{formatINR(subtotal)}</dd></div>
       </dl>
-      <p className="shop-fine">Total shown before GST and delivery.</p>
       {children}
     </aside>
   );

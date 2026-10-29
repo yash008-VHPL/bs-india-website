@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { retail, shopProduct } from './demo';
+import { CartCtx } from './context';
 
 /*
  * Cart state for the demo store. Kept in localStorage so it survives a page
@@ -8,7 +9,6 @@ import { retail, shopProduct } from './demo';
  * hydration matches; the saved cart is read after mount.
  */
 const KEY = 'bsi-demo-cart';
-const CartCtx = createContext(null);
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState({});   // { productId: qty }
@@ -17,9 +17,16 @@ export function CartProvider({ children }) {
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+      // Keep only launch-range ids with a whole quantity of 1-99.
+      const clean = {};
+      if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
+        for (const [id, q] of Object.entries(saved)) {
+          if (retail(id) && Number.isInteger(q) && q >= 1) clean[id] = Math.min(99, q);
+        }
+      }
       // Read after mount on purpose, so the hydrated markup matches the prerender.
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (saved && typeof saved === 'object') setItems(saved);
+      setItems(clean);
     } catch { /* storage blocked or corrupt: start empty */ }
     setReady(true);
   }, []);
@@ -52,6 +59,3 @@ export function CartProvider({ children }) {
     </CartCtx.Provider>
   );
 }
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useCart = () => useContext(CartCtx);

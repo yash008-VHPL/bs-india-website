@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { GROUPS } from '../data/products';
 import Icon from '../components/Icon';
 import usePageMeta from '../usePageMeta';
-import { useCart } from '../shop/cart';
+import { useCart } from '../shop/context';
 import { SHOP_PRODUCTS, retail, formatINR } from '../shop/demo';
 import { DemoNote, ProductName, CartBar, DistributorLink } from '../shop/parts';
 import './Shop.css';

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import usePageMeta from '../usePageMeta';
-import { useCart } from '../shop/cart';
+import { useCart } from '../shop/context';
 import { formatINR } from '../shop/demo';
 import { DemoNote, Summary } from '../shop/parts';
 import './Shop.css';
@@ -13,7 +13,7 @@ import './Shop.css';
  */
 const FIELDS = [
   { id: 'name',     label: 'Full name',               req: true,  auto: 'name' },
-  { id: 'mobile',   label: 'Mobile number',           req: true,  auto: 'tel', type: 'tel', pattern: /^[6-9]\d{9}$/, hint: '10-digit mobile number' },
+  { id: 'mobile',   label: 'Mobile number',           req: true,  auto: 'tel', type: 'tel', pattern: /^[6-9]\d{9}$/, hint: '10-digit mobile number starting 6, 7, 8 or 9' },
   { id: 'email',    label: 'Email',                   req: true,  auto: 'email', type: 'email', pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, hint: 'A valid email address' },
   { id: 'business', label: 'Farm or business name',   req: false, auto: 'organization' },
   { id: 'gstin',    label: 'GSTIN (optional)',        req: false, pattern: /^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/, hint: '15-character GSTIN', upper: true },
@@ -47,7 +47,7 @@ export default function ShopCheckout() {
     const first = FIELDS.find(f => e[f.id]);
     if (first) { document.getElementById(`co-${first.id}`)?.focus(); return; }
     const d = new Date();
-    const ymd = d.toISOString().slice(0, 10).replace(/-/g, '');
+    const ymd = [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
     setDone({ ref: `DEMO-${ymd}-${String(Math.floor(Math.random() * 9000) + 1000)}`, total: subtotal, name: form.name.trim() });
     clear();
     window.scrollTo(0, 0);
@@ -111,7 +111,7 @@ export default function ShopCheckout() {
                 <h2 className="shop-h shop-h--gap">Payment</h2>
                 <label className="shop-pay">
                   <input type="radio" name="pay" defaultChecked />
-                  <span><strong>Pay online with Razorpay</strong><br />UPI, cards and net banking</span>
+                  <span><strong>Pay online with Razorpay</strong></span>
                 </label>
                 <p className="shop-fine">In this demo the payment step is simulated. No payment window opens.</p>
               </div>

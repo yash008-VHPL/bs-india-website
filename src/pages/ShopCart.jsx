@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import usePageMeta from '../usePageMeta';
-import { useCart } from '../shop/cart';
+import { useCart } from '../shop/context';
 import { formatINR } from '../shop/demo';
 import { DemoNote, ProductName, QtyStepper, Summary } from '../shop/parts';
 import './Shop.css';

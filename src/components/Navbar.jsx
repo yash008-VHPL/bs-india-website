@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from './Logo';
-import { useCart } from '../shop/cart';
-import { SHOP_DEMO } from '../shop/demo';
+import { useCart } from '../shop/context';
+
+const SHOP_DEMO = import.meta.env.VITE_SHOP_DEMO === '1';
 import './Navbar.css';
 
 const NAV = [

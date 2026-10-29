@@ -4,8 +4,13 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import NotFound from './components/NotFound';
 import BetaBanner from './BetaBanner';
+import { Fragment } from 'react';
 import { CartProvider } from './shop/cart';
-import { SHOP_DEMO } from './shop/demo';
+
+/* Demo storefront: staging builds only (VITE_SHOP_DEMO=1). Written inline so
+   production builds drop the shop code entirely. Production keeps the
+   Coming Soon page at /shop. */
+const SHOP_DEMO = import.meta.env.VITE_SHOP_DEMO === '1';
 import './index.css';
 import './App.css';
 
@@ -36,10 +41,12 @@ const PAGES = {
   NewsAuthor:    load(() => import('./pages/NewsAuthor')),
   Contact:       load(() => import('./pages/Contact')),
   Webstore:      load(() => import('./pages/Webstore')),
-  ShopHome:      load(() => import('./pages/ShopHome')),
-  ShopProduct:   load(() => import('./pages/ShopProduct')),
-  ShopCart:      load(() => import('./pages/ShopCart')),
-  ShopCheckout:  load(() => import('./pages/ShopCheckout')),
+  ...(SHOP_DEMO ? {
+    ShopHome:     load(() => import('./pages/ShopHome')),
+    ShopProduct:  load(() => import('./pages/ShopProduct')),
+    ShopCart:     load(() => import('./pages/ShopCart')),
+    ShopCheckout: load(() => import('./pages/ShopCheckout')),
+  } : {}),
   Legal:         load(() => import('./pages/Legal')),
 };
 const P = PAGES;
@@ -47,20 +54,33 @@ const P = PAGES;
 // Scroll to top on navigation, but not on the first paint: with prerendered
 // HTML the reader may already be scrolling, or arrived on a #hash anchor.
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   const first = useRef(true);
   useEffect(() => {
     if (first.current) { first.current = false; return; }
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (!hash) { window.scrollTo(0, 0); return; }
+    // A link to /page#id: the lazy page may not be mounted yet, so look for
+    // the target for up to a second before falling back to the top.
+    let tries = 0, raf;
+    const seek = () => {
+      const el = document.getElementById(decodeURIComponent(hash.slice(1)));
+      if (el) el.scrollIntoView({ block: 'start' });
+      else if (++tries < 60) raf = requestAnimationFrame(seek);
+      else window.scrollTo(0, 0);
+    };
+    seek();
+    return () => cancelAnimationFrame(raf);
+  }, [pathname, hash]);
   return null;
 }
 
 const PageLoader = () => <div style={{ minHeight: '60vh' }} />;
 
+const CartWrap = SHOP_DEMO ? CartProvider : Fragment;
+
 export function Layout() {
   return (
-    <CartProvider>
+    <CartWrap>
     <div className="app-layout">
       <ScrollToTop />
       <BetaBanner />
@@ -93,7 +113,7 @@ export function Layout() {
       </div>
       <Footer />
     </div>
-    </CartProvider>
+    </CartWrap>
   );
 }
 

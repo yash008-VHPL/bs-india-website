@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import Icon from '../components/Icon';
 import NotFound from '../components/NotFound';
 import usePageMeta from '../usePageMeta';
-import { useCart } from '../shop/cart';
+import { useCart } from '../shop/context';
 import { shopProduct, retail, formatINR } from '../shop/demo';
 import { DemoNote, ProductName, QtyStepper, CartBar, DistributorLink } from '../shop/parts';
 import './Shop.css';
@@ -50,7 +50,7 @@ export default function ShopProduct() {
                   <QtyStepper value={qty} onChange={n => setQty(clamp(n))} />
                 </div>
                 <div className="shop-buybox-btns">
-                  <button type="button" className="btn-outline" onClick={() => { add(p.id, qty); setAdded(true); }}>
+                  <button type="button" className="btn-outline" onClick={() => { add(p.id, qty); setAdded(true); setTimeout(() => setAdded(false), 2500); }}>
                     {added ? 'Added to Cart' : 'Add to Cart'}
                   </button>
                   <button type="button" className="btn-primary" onClick={() => { add(p.id, qty); nav('/shop/checkout'); }}>Buy Now</button>
