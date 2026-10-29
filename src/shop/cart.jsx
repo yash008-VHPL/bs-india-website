@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { DEMO_PRICE, shopProduct } from './demo';
+import { retail, shopProduct } from './demo';
 
 /*
  * Cart state for the demo store. Kept in localStorage so it survives a page
@@ -35,13 +35,14 @@ export function CartProvider({ children }) {
     if (q === 0) delete next[id]; else next[id] = q;
     return next;
   }), []);
-  const add = useCallback((id, qty = 1) => setItems(prev => ({ ...prev, [id]: Math.min(99, (prev[id] || 0) + qty) })), []);
+  // Only the launch range can be bought online.
+  const add = useCallback((id, qty = 1) => retail(id) && setItems(prev => ({ ...prev, [id]: Math.min(99, (prev[id] || 0) + qty) })), []);
   const clear = useCallback(() => setItems({}), []);
 
   const lines = Object.entries(items)
     .map(([id, qty]) => ({ product: shopProduct(id), qty }))
-    .filter(l => l.product)
-    .map(l => ({ ...l, unit: DEMO_PRICE, total: DEMO_PRICE * l.qty }));
+    .filter(l => l.product && retail(l.product.id))
+    .map(l => ({ ...l, pack: retail(l.product.id).pack, unit: retail(l.product.id).price, total: retail(l.product.id).price * l.qty }));
   const count = lines.reduce((s, l) => s + l.qty, 0);
   const subtotal = lines.reduce((s, l) => s + l.total, 0);
 

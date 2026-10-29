@@ -4,8 +4,8 @@ import { GROUPS } from '../data/products';
 import Icon from '../components/Icon';
 import usePageMeta from '../usePageMeta';
 import { useCart } from '../shop/cart';
-import { SHOP_PRODUCTS, DEMO_PRICE, PACK_LABEL, formatINR } from '../shop/demo';
-import { DemoNote, ProductName, CartBar } from '../shop/parts';
+import { SHOP_PRODUCTS, retail, formatINR } from '../shop/demo';
+import { DemoNote, ProductName, CartBar, DistributorLink } from '../shop/parts';
 import './Shop.css';
 
 export default function ShopHome() {
@@ -17,12 +17,15 @@ export default function ShopHome() {
     (group === 'all' || p.species.includes(group)) &&
     (!q || [p.name, p.subtitle, p.type].some(s => (s || '').toLowerCase().includes(q))));
 
+  const online = list.filter(p => retail(p.id));
+  const viaDist = list.filter(p => !retail(p.id));
+
   return (
     <main className="shop-page">
       <DemoNote />
       <div className="pg-hero"><div className="pg-hero-inner">
         <h1 className="bs-mark">Shop Online</h1>
-        <p>Order Berg+Schmidt India products in retail packs, delivered to your farm.</p>
+        <p>Buy our launch range online, or find your regional distributor for the full range.</p>
       </div></div>
 
       <nav className="vert-tabs" aria-label="Species">
@@ -41,9 +44,18 @@ export default function ShopHome() {
               onChange={e => setSearch(e.target.value)} aria-label="Search products" />
             <span className="shop-count">Showing <strong>{list.length}</strong> of {SHOP_PRODUCTS.length} products</span>
           </div>
-          <div className="shop-grid">
-            {list.map(p => <ShopCard key={p.id} p={p} />)}
-          </div>
+          {online.length > 0 && <>
+            <h2 className="shop-h">Available Online</h2>
+            <div className="shop-grid">
+              {online.map(p => <ShopCard key={p.id} p={p} />)}
+            </div>
+          </>}
+          {viaDist.length > 0 && <>
+            <h2 className={`shop-h${online.length ? ' shop-h--section' : ''}`}>Available Through Our Distributors</h2>
+            <div className="shop-grid">
+              {viaDist.map(p => <ShopCard key={p.id} p={p} />)}
+            </div>
+          </>}
           {!list.length && <p className="shop-empty">No products match your search.</p>}
         </div>
       </section>
@@ -56,6 +68,7 @@ function ShopCard({ p }) {
   const { add, items } = useCart();
   const [added, setAdded] = useState(false);
   const inCart = items[p.id] || 0;
+  const r = retail(p.id);
   return (
     <article className="shop-card">
       <Link to={`/shop/${p.id}`} className="shop-card-top">
@@ -67,16 +80,20 @@ function ShopCard({ p }) {
       <div className="shop-card-tags">
         {p.species.map(s => <span key={s} className="shop-stag"><Icon name={s} size={14} /> {s === 'poultry' ? 'Poultry' : 'Dairy'}</span>)}
       </div>
-      <div className="shop-card-foot">
-        <div>
-          <div className="shop-price">{formatINR(DEMO_PRICE)}</div>
-          <div className="shop-pack">{PACK_LABEL}</div>
+      {r ? (
+        <div className="shop-card-foot">
+          <div>
+            <div className="shop-price">{formatINR(r.price)}</div>
+            <div className="shop-pack">{r.pack}</div>
+          </div>
+          <button type="button" className="btn-primary shop-add"
+            onClick={() => { add(p.id); setAdded(true); setTimeout(() => setAdded(false), 1400); }}>
+            {added ? 'Added' : inCart ? `Add another (${inCart})` : 'Add to Cart'}
+          </button>
         </div>
-        <button type="button" className="btn-primary shop-add"
-          onClick={() => { add(p.id); setAdded(true); setTimeout(() => setAdded(false), 1400); }}>
-          {added ? 'Added' : inCart ? `Add another (${inCart})` : 'Add to Cart'}
-        </button>
-      </div>
+      ) : (
+        <div className="shop-card-foot shop-card-foot--dist"><DistributorLink /></div>
+      )}
     </article>
   );
 }

@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useCart } from './cart';
-import { formatINR } from './demo';
+import { formatINR, DISTRIBUTOR_LINK } from './demo';
 
 export function DemoNote() {
   return (
     <div className="shop-demo-note" role="note">
       <strong>Demo store</strong>
-      <span>For internal review only. Product range, pack sizes and prices are placeholders. Nothing here takes payment or places an order.</span>
+      <span>For internal review only. Prices are dummy figures. Nothing here takes payment or places an order.</span>
     </div>
   );
 }
@@ -50,7 +50,7 @@ export function Summary({ subtotal, children, lines }) {
       <h2 className="shop-h">Order Summary</h2>
       {lines && (
         <ul className="shop-sum-lines">
-          {lines.map(l => <li key={l.product.id}><span>{l.product.name} × {l.qty}</span><span>{formatINR(l.total)}</span></li>)}
+          {lines.map(l => <li key={l.product.id}><span>{l.product.name}, {l.pack} × {l.qty}</span><span>{formatINR(l.total)}</span></li>)}
         </ul>
       )}
       <dl className="shop-sum">
@@ -63,4 +63,8 @@ export function Summary({ subtotal, children, lines }) {
       {children}
     </aside>
   );
+}
+
+export function DistributorLink({ className = '' }) {
+  return <Link to={DISTRIBUTOR_LINK} className={`shop-dist ${className}`}>Find your regional distributor →</Link>;
 }

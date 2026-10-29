@@ -4,8 +4,8 @@ import Icon from '../components/Icon';
 import NotFound from '../components/NotFound';
 import usePageMeta from '../usePageMeta';
 import { useCart } from '../shop/cart';
-import { shopProduct, DEMO_PRICE, PACK_LABEL, formatINR } from '../shop/demo';
-import { DemoNote, ProductName, QtyStepper, CartBar } from '../shop/parts';
+import { shopProduct, retail, formatINR } from '../shop/demo';
+import { DemoNote, ProductName, QtyStepper, CartBar, DistributorLink } from '../shop/parts';
 import './Shop.css';
 
 export default function ShopProduct() {
@@ -17,6 +17,7 @@ export default function ShopProduct() {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   if (!p) return <NotFound />;
+  const r = retail(p.id);
   const clamp = n => Math.max(1, Math.min(99, Math.floor(Number(n) || 1)));
 
   return (
@@ -39,22 +40,29 @@ export default function ShopProduct() {
             <p className="shop-pd-sub">{p.subtitle}</p>
             <p className="shop-pd-desc">{p.tagline}</p>
 
-            <div className="shop-buybox">
-              <div className="shop-buybox-row">
-                <div>
-                  <div className="shop-price">{formatINR(DEMO_PRICE)}</div>
-                  <div className="shop-pack">{PACK_LABEL}</div>
+            {r ? (
+              <div className="shop-buybox">
+                <div className="shop-buybox-row">
+                  <div>
+                    <div className="shop-price">{formatINR(r.price)}</div>
+                    <div className="shop-pack">{r.pack}</div>
+                  </div>
+                  <QtyStepper value={qty} onChange={n => setQty(clamp(n))} />
                 </div>
-                <QtyStepper value={qty} onChange={n => setQty(clamp(n))} />
+                <div className="shop-buybox-btns">
+                  <button type="button" className="btn-outline" onClick={() => { add(p.id, qty); setAdded(true); }}>
+                    {added ? 'Added to Cart' : 'Add to Cart'}
+                  </button>
+                  <button type="button" className="btn-primary" onClick={() => { add(p.id, qty); nav('/shop/checkout'); }}>Buy Now</button>
+                </div>
+                {added && <p className="shop-added">Added. <Link to="/shop/cart">View cart</Link></p>}
               </div>
-              <div className="shop-buybox-btns">
-                <button type="button" className="btn-outline" onClick={() => { add(p.id, qty); setAdded(true); }}>
-                  {added ? 'Added to Cart' : 'Add to Cart'}
-                </button>
-                <button type="button" className="btn-primary" onClick={() => { add(p.id, qty); nav('/shop/checkout'); }}>Buy Now</button>
+            ) : (
+              <div className="shop-buybox shop-buybox--dist">
+                <p>{p.name} is supplied through our regional distributors.</p>
+                <DistributorLink className="btn-primary" />
               </div>
-              {added && <p className="shop-added">Added. <Link to="/shop/cart">View cart</Link></p>}
-            </div>
+            )}
 
             {p.benefits?.length > 0 && (
               <div className="shop-benefits">

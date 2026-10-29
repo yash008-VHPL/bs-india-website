@@ -126,6 +126,13 @@
 .shop-added a { color: var(--accent-red); font-weight: 600; text-decoration: underline; }
 .shop-h { font-size: var(--fs-sub); line-height: var(--lh-sub); font-weight: 700; color: var(--green-dark); margin-bottom: 14px; }
 .shop-h--gap { margin-top: 32px; }
+.shop-h--section { margin-top: 48px; }
+.shop-card-foot--dist { justify-content: flex-start; min-height: 64px; }
+.shop-dist { color: var(--accent-red); font-weight: 600; }
+.shop-dist:hover { text-decoration: underline; }
+.shop-dist.btn-primary { color: #fff; }
+.shop-dist.btn-primary:hover { text-decoration: none; }
+.shop-buybox--dist p { color: var(--text-mid); margin-bottom: 16px; }
 .shop-benefits ul { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
 .shop-benefits li { color: var(--text-mid); padding-left: 14px; border-left: 2px solid var(--green); line-height: 1.6; }
 .shop-more { display: inline-block; margin-top: 16px; color: var(--accent-red); font-weight: 600; }

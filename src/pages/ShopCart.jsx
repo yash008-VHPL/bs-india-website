@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import usePageMeta from '../usePageMeta';
 import { useCart } from '../shop/cart';
-import { formatINR, PACK_LABEL } from '../shop/demo';
+import { formatINR } from '../shop/demo';
 import { DemoNote, ProductName, QtyStepper, Summary } from '../shop/parts';
 import './Shop.css';
 
@@ -28,12 +28,12 @@ export default function ShopCart() {
             <div className="shop-cols">
               <div className="shop-panel">
                 <div className="shop-lines">
-                  {lines.map(({ product: p, qty, unit, total }) => (
+                  {lines.map(({ product: p, qty, unit, total, pack }) => (
                     <div key={p.id} className="shop-line">
                       <Link to={`/shop/${p.id}`} className="shop-line-name">
                         <ProductName p={p} />
                         <span className="shop-pack">{p.subtitle}</span>
-                        <span className="shop-pack">{PACK_LABEL} · {formatINR(unit)} each</span>
+                        <span className="shop-pack">{pack} · {formatINR(unit)} each</span>
                       </Link>
                       <QtyStepper value={qty} onChange={n => setQty(p.id, Math.max(1, n))} label={`Quantity of ${p.name}`} />
                       <div className="shop-line-total">{formatINR(total)}</div>
