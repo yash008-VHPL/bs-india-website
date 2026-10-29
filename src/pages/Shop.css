@@ -1,6 +1,54 @@
 /* Demo storefront. Three type sizes only (--fs-h1 / --fs-sub / --fs-body),
    --fs-label for UI chrome. */
 .shop-page { display: block; }
+
+/* Shared with Products.css: page hero and species tab bar (each page loads
+   only its own CSS, so these are repeated here). */
+/* Page hero */
+.pg-hero { background: var(--mint-bg); padding: 40px 24px 32px; }
+@media (max-width: 600px) { .pg-hero { padding-left: 16px; padding-right: 16px; } }
+
+.pg-hero-inner { max-width: 1200px; margin: 0 auto; }
+.pg-hero h1 { color: var(--green-dark); margin-bottom: 8px; }
+.pg-hero p { color: var(--text-mid); }
+
+/* Vertical tab bar */
+.vert-tabs {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  background: var(--green-dark);
+  /* Bar is full-bleed, but its TABS must line up with the 1248/24 site
+     container. 18px is the tab's own left padding, so the first tab's TEXT
+     lands on the container edge, not 18px inside it. */
+  padding-left: max(6px, calc((100% - 1248px) / 2 + 6px));
+  padding-right: max(24px, calc((100% - 1248px) / 2 + 24px));
+  scrollbar-width: none;
+}
+.vert-tabs::-webkit-scrollbar { display: none; }
+.vert-tab {
+  padding: 14px 18px;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: rgba(255,255,255,.68);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .2s, border-color .2s;
+}
+.vert-tab:hover { color: #fff; }
+.vert-tab--active { color: #fff; border-bottom-color: var(--accent-red); }
+
+@media (max-width: 820px) {
+  .vert-tabs { padding: 0 12px; }
+  .vert-tab { padding: 12px 12px; }
+}
+@media (max-width: 600px) {
+  .vert-tabs { padding-left: 4px; padding-right: 16px; }
+}
+
 .shop-demo-note {
   display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap;
   background: #FFF4D6; border-bottom: 1px solid #F0D58A; color: #5A4500;
