@@ -28,7 +28,9 @@ import json
 import logging
 import os
 import re
+import smtplib
 import sqlite3
+import ssl
 import subprocess
 import sys
 import time
@@ -73,7 +75,7 @@ class Transient(Exception):
 # Configuration
 # --------------------------------------------------------------------------
 DEFAULTS = {
-    "IG_HOST": "graph.instagram.com",
+    "IG_HOST": "graph.facebook.com",
     "SITE_URL": "https://www.berg-schmidt.co.in",
     "REPO_URL": "https://github.com/yash008-VHPL/bs-india-website.git",
     "DATA_DIR": "/var/lib/bsi-post",
@@ -86,7 +88,14 @@ DEFAULTS = {
     "POLL_MAX_MIN": "15",
     "MISSED_AFTER_MIN": "360",
     "IG_REFRESH_DAYS": "20",
+    "ALERT_TO": "",
+    "SMTP_HOST": "",
+    "SMTP_PORT": "587",
+    "SMTP_USER": "",
+    "SMTP_FROM": "",
+    "ALERTS_PER_DAY": "6",
 }
+NOTES: list[str] = []  # problems found this run that are not post states (batch errors, git)
 REQUIRED = ["GRAPH_VERSION", "APPROVERS"]
 
 
@@ -857,6 +866,7 @@ def collect(cfg, repo: Path, log, deep=True, skip_old=True):
             log.warning("batch %s: %s", name, w)
         if E:
             log.error("batch %s skipped, %d error(s): %s", name, len(E), "; ".join(E[:5]))
+            NOTES.append(f"Batch {name} skipped, nothing from it will post:\n  - " + "\n  - ".join(E[:15]))
             continue
         if not (doc.get("approval") or {}).get("approved_by"):
             log.info("batch %s not approved; nothing from it will post", name)
@@ -921,7 +931,11 @@ def cmd_run(cfg, args):
         except BlockingIOError:
             log.info("another run is in progress")
             return 0
-        return _run_locked(cfg, args, log, live, halt)
+        NOTES.clear()
+        try:
+            return _run_locked(cfg, args, log, live, halt)
+        finally:
+            send_alerts(cfg, State(data(cfg, "state.db")), log)
 
 
 def _run_locked(cfg, args, log, live, halt):
@@ -939,6 +953,7 @@ def _run_locked(cfg, args, log, live, halt):
         repo = sync_repo(cfg, log)
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError) as e:
         log.error("git sync failed, nothing posted: %s", e)
+        NOTES.append(f"git sync failed, nothing posted: {redact(e)}")
         return 1
 
     enabled = [p.strip() for p in cfg["ENABLED_PLATFORMS"].split(",") if p.strip()]
@@ -1045,6 +1060,77 @@ def maybe_refresh_ig(cfg, state, meta, tokens, log, enabled):
     log.info("Instagram token refreshed")
 
 
+# --------------------------------------------------------------------------
+# Email alerts: one digest per run, only for problems not reported before
+# --------------------------------------------------------------------------
+def _send_mail(cfg, subject, body):
+    pw = load_tokens(cfg).get("smtp", "")
+    msg = (f"From: {cfg['SMTP_FROM'] or cfg['SMTP_USER']}\r\nTo: {cfg['ALERT_TO']}\r\n"
+           f"Subject: {subject}\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n{body}")
+    port = int(cfg["SMTP_PORT"])
+    ctx = ssl.create_default_context()
+    if port == 465:
+        srv = smtplib.SMTP_SSL(cfg["SMTP_HOST"], port, context=ctx, timeout=30)
+    else:
+        srv = smtplib.SMTP(cfg["SMTP_HOST"], port, timeout=30)
+        srv.starttls(context=ctx)
+    with srv:
+        if cfg["SMTP_USER"]:
+            srv.login(cfg["SMTP_USER"], pw)
+        srv.sendmail(cfg["SMTP_FROM"] or cfg["SMTP_USER"],
+                     [a.strip() for a in cfg["ALERT_TO"].split(",") if a.strip()], msg.encode("utf-8"))
+
+
+def send_alerts(cfg, state, log):
+    if not (cfg.get("ALERT_TO") and cfg.get("SMTP_HOST")):
+        return
+    lines, marks = [], []
+    halt = data(cfg, "HALT")
+    if halt.exists():
+        txt = halt.read_text().strip()
+        if state.meta_get("alerted:halt") != txt:
+            lines.append(f"HALT: all posting stopped.\n  {txt}\n  After checking: bsi-post clear-halt")
+            marks.append(("alerted:halt", txt))
+    for r in state.all():
+        if r["status"] in ("needs_check", "failed", "missed") and state.meta_get(f"alerted:{r['key']}") != r["status"]:
+            lines.append(f"{r['status'].upper()}: {r['key']}\n  {r['error'] or ''}")
+            marks.append((f"alerted:{r['key']}", r["status"]))
+    for n in NOTES:
+        h = hashlib.sha256(n.encode()).hexdigest()[:16]
+        if state.meta_get(f"alerted:note:{h}") is None:
+            lines.append(n)
+            marks.append((f"alerted:note:{h}", "1"))
+    if not lines:
+        return
+    today = dt.datetime.now(IST).strftime("%Y-%m-%d")
+    sent = int(state.meta_get(f"alerts_sent:{today}", 0) or 0)
+    if sent >= int(cfg["ALERTS_PER_DAY"]):
+        log.warning("alert cap reached for %s; not emailing", today)
+        return
+    body = "bsi-post on the GX-10 needs attention.\n\n" + "\n\n".join(lines) + \
+           "\n\nDetails: bsi-post status   |   journalctl -u bsi-post\n"
+    try:
+        _send_mail(cfg, f"[bsi-post] {len(lines)} problem(s) {today}", body)
+    except (OSError, smtplib.SMTPException) as e:
+        log.error("alert email failed: %s", redact(e))
+        return
+    state.meta_set(f"alerts_sent:{today}", str(sent + 1))
+    for k, v in marks:
+        state.meta_set(k, v)
+    log.info("alert email sent (%d item(s))", len(lines))
+
+
+def cmd_test_alert(cfg, args):
+    need(cfg, "ALERT_TO", "SMTP_HOST")
+    try:
+        _send_mail(cfg, "[bsi-post] test alert", "Test alert from bsi-post on the GX-10. Alerts are working.\n")
+    except (OSError, smtplib.SMTPException) as e:
+        print("failed:", redact(e))
+        return 1
+    print("sent to", cfg["ALERT_TO"])
+    return 0
+
+
 def cmd_approval_hash(cfg, args):
     repo = repo_dir(cfg, args)
     for name, doc, err in load_batches(repo):
@@ -1093,6 +1179,8 @@ def cmd_check_quota(cfg, args):
 
 def cmd_set_token(cfg, args):
     tok = sys.stdin.readline().strip()
+    if args.platform == "smtp":
+        tok = tok.replace(" ", "")  # app passwords are often shown in groups of four
     if not tok or " " in tok:
         print("paste the token on stdin")
         return 1
@@ -1103,6 +1191,9 @@ def cmd_set_token(cfg, args):
     save_tokens(cfg, t)
     if args.platform == "instagram":
         State(data(cfg, "state.db")).meta_set("ig_refreshed_at", str(time.time()))
+    if args.platform == "smtp":
+        print("smtp password saved")
+        return 0
     print(f"{args.platform} token saved to {tokens_path(cfg)} (mode 600)")
     return 0
 
@@ -1150,7 +1241,8 @@ def main(argv=None):
     ah.add_argument("--repo")
     sub.add_parser("check-quota", help="one call: Instagram publishing quota")
     st = sub.add_parser("set-token", help="store a token read from stdin")
-    st.add_argument("platform", choices=PLATFORMS)
+    st.add_argument("platform", choices=PLATFORMS + ("smtp",))
+    sub.add_parser("test-alert", help="send one test alert email")
     sub.add_parser("clear-halt")
     rs = sub.add_parser("resolve", help="close a needs_check/failed/missed post by hand")
     rs.add_argument("key", help="batch/item/platform, as shown by status")
@@ -1160,7 +1252,7 @@ def main(argv=None):
     cfg = load_config(args.config)
     fn = {"validate": cmd_validate, "plan": cmd_plan, "run": cmd_run, "status": cmd_status,
           "check-quota": cmd_check_quota, "set-token": cmd_set_token, "clear-halt": cmd_clear_halt,
-          "resolve": cmd_resolve, "approval-hash": cmd_approval_hash}[args.cmd]
+          "resolve": cmd_resolve, "approval-hash": cmd_approval_hash, "test-alert": cmd_test_alert}[args.cmd]
     return fn(cfg, args)
 
 

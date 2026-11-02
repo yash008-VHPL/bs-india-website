@@ -86,7 +86,7 @@ class Base(unittest.TestCase):
                         "-pix_fmt", "yuv420p", "-c:a", "aac", str(self.dd / "media/2026-W46/r.mp4")], check=True)
         self.vhash = hashlib.sha256((self.dd / "media/2026-W46/r.mp4").read_bytes()).hexdigest()
         self.cfg = dict(B.DEFAULTS)
-        self.cfg.update(GRAPH_VERSION="v0", APPROVERS="Approver One", DATA_DIR=str(self.dd), LIVE="1",
+        self.cfg.update(IG_HOST="graph.instagram.com", GRAPH_VERSION="v0", APPROVERS="Approver One", DATA_DIR=str(self.dd), LIVE="1",
                         IG_USER_ID="IG1", FB_PAGE_ID="PG1", POST_GAP_SEC="0", CALL_GAP_SEC="0",
                         POLL_EVERY_SEC="0", POLL_MAX_MIN="0.02", MAX_POSTS_PER_RUN="10", _path="test")
         B.save_tokens(self.cfg, {"instagram": "IGTOKEN", "facebook": "FBTOKEN",
@@ -433,6 +433,47 @@ class T3(Base):
         self.fake.fail["content_publishing_limit"] = (503, {"error": {"code": 2, "message": "x"}})
         self.run_()
         self.assertNotIn(self.st("2026-W46/i1/instagram"), B.FINAL)
+
+
+class T4(Base):
+    def setUp(self):
+        super().setUp()
+        self.mails = []
+        B._send_mail = lambda cfg, subj, body: self.mails.append((subj, body))
+        self.cfg.update(ALERT_TO="a@example.com", SMTP_HOST="smtp.example.com")
+
+    def test_alert_once_per_problem(self):
+        self.batch([self.img(when=-8 * 60, plats=("instagram",))])
+        self.run_()
+        self.assertEqual(len(self.mails), 1)
+        self.assertIn("MISSED", self.mails[0][1])
+        self.run_()
+        self.assertEqual(len(self.mails), 1, "not repeated")
+
+    def test_halt_and_batch_error_alerted(self):
+        self.batch([self.img(plats=("instagram",))])
+        self.fake.fail["/IG1/media"] = (429, {"error": {"code": 4, "message": "limit"}})
+        self.run_()
+        self.assertIn("HALT", self.mails[-1][1])
+        f = self.repo / "content/social/2026-W46/batch.json"
+        d = json.loads(f.read_text()); d["items"][0]["caption"] += " x"; f.write_text(json.dumps(d))
+        (self.dd / "HALT").unlink()
+        self.run_()
+        self.assertIn("changed after approval", self.mails[-1][1])
+
+    def test_daily_cap(self):
+        self.cfg["ALERTS_PER_DAY"] = "1"
+        self.batch([self.img("i1", when=-8 * 60, plats=("instagram",))])
+        self.run_()
+        self.batch([self.img("i1", when=-8 * 60, plats=("instagram",)), self.img("i2", when=-8 * 60, plats=("instagram",))])
+        self.run_()
+        self.assertEqual(len(self.mails), 1)
+
+    def test_no_config_no_mail(self):
+        self.cfg["ALERT_TO"] = ""
+        self.batch([self.img(when=-8 * 60, plats=("instagram",))])
+        self.run_()
+        self.assertEqual(self.mails, [])
 
 
 if __name__ == "__main__":

@@ -28,9 +28,13 @@ Approved blog articles follow the same route: `content/blog/YYYY-MM-DD_slug.md` 
 | Crash or network loss during the publish call | Marked `needs_check`; never retried by itself |
 | Any other API error | Marked `failed`; the run stops |
 
-Pacing: one call at a time, 3 s apart; at most 2 posts per run, 120 s apart. Instagram quota is read from Meta before any Instagram work. The Instagram token (Instagram Login) is refreshed at most once a day; two failed days in a row halt.
+Pacing: one call at a time, 3 s apart; at most 2 posts per run, 120 s apart. Instagram quota is read from Meta before any Instagram work.
 
-Logs: `journalctl -u bsi-post`. No alerts are sent yet: check `bsi-post status`.
+Route: `IG_HOST=graph.facebook.com` (Instagram API with Facebook Login). One long-lived Page token, stored with `bsi-post set-token facebook`, serves both Instagram and the Page. If `IG_HOST=graph.instagram.com` is ever used instead, Instagram is limited to images and carousels and its token is refreshed at most once a day; two failed days in a row halt.
+
+Public credit: each post or article names the subject-matter expert. `approved_by` is the internal approval record.
+
+Logs: `journalctl -u bsi-post`. Alerts: one email digest per run for new problems (HALT, failed, needs_check, missed, skipped batch, git failure), capped per day; set `ALERT_TO` and `SMTP_*` in the config, store the password with `bsi-post set-token smtp`, test with `bsi-post test-alert`.
 
 Meta app: posts made while the app is in Development mode are visible only to people with a role on the app. Switch it to Live before `LIVE=1` and check the first post from a logged-out browser.
 
@@ -48,7 +52,8 @@ bsi-post plan                    approved posts and their state
 bsi-post status                  HALT, tokens, failed / needs_check / missed
 bsi-post approval-hash 2026-W46 --repo <checkout>
 bsi-post check-quota             one call: Instagram publishing quota
-bsi-post set-token instagram     paste token, then Enter (also: facebook)
+bsi-post set-token facebook      paste token, then Enter (also: smtp, instagram)
+bsi-post test-alert              send one test email
 bsi-post clear-halt
 bsi-post resolve <batch/item/platform> posted|skip|retry
 ```
