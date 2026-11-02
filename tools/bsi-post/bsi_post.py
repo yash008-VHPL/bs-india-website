@@ -31,6 +31,8 @@ import re
 import smtplib
 import sqlite3
 import ssl
+from email.message import EmailMessage
+from email.utils import formatdate, make_msgid
 import subprocess
 import sys
 import time
@@ -197,8 +199,9 @@ def save_tokens(cfg, t: dict) -> None:
     os.replace(tmp, p)
 
 
-def redact(s: str) -> str:
-    return re.sub(r"(access_token=|OAuth )[A-Za-z0-9._\-|%]+", r"\1[redacted]", str(s))
+def redact(s) -> str:
+    s = re.sub(r"(access_token=|OAuth )[A-Za-z0-9._\-|%]+", r"\1[redacted]", str(s))
+    return re.sub(r"(https?://)[^/@\s]+@", r"\1[redacted]@", s)
 
 
 # --------------------------------------------------------------------------
@@ -526,7 +529,7 @@ class Meta:
         # With Facebook Login (IG_HOST=graph.facebook.com) Instagram calls use
         # the same Facebook token as the Page, unless one is set separately.
         if self.cfg["IG_HOST"] == "graph.facebook.com":
-            return self.tokens.get("instagram") or self.tokens.get("facebook") or ""
+            return self.tokens.get("facebook") or ""
         return self.tokens.get("instagram") or ""
 
     @property
@@ -923,6 +926,7 @@ def cmd_run(cfg, args):
     halt = data(cfg, "HALT")
     if halt.exists():
         log.error("HALTED: %s  (clear with: bsi-post clear-halt)", halt.read_text().strip())
+        send_alerts_safe(cfg, log)  # retries a HALT alert that failed to send
         return 2
     data(cfg).mkdir(parents=True, exist_ok=True)
     with open(data(cfg, "run.lock"), "w") as lock:
@@ -935,7 +939,7 @@ def cmd_run(cfg, args):
         try:
             return _run_locked(cfg, args, log, live, halt)
         finally:
-            send_alerts(cfg, State(data(cfg, "state.db")), log)
+            send_alerts_safe(cfg, log)
 
 
 def _run_locked(cfg, args, log, live, halt):
@@ -952,7 +956,7 @@ def _run_locked(cfg, args, log, live, halt):
     try:
         repo = sync_repo(cfg, log)
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError) as e:
-        log.error("git sync failed, nothing posted: %s", e)
+        log.error("git sync failed, nothing posted: %s", redact(e))
         NOTES.append(f"git sync failed, nothing posted: {redact(e)}")
         return 1
 
@@ -993,7 +997,8 @@ def _run_locked(cfg, args, log, live, halt):
     if live:
         need(cfg, *(["IG_USER_ID"] if "instagram" in enabled else []), *(["FB_PAGE_ID"] if "facebook" in enabled else []))
         for p in {d[3] for d in due}:
-            if not (tokens.get(p) or (p == "instagram" and cfg["IG_HOST"] == "graph.facebook.com" and tokens.get("facebook"))):
+            have = tokens.get("facebook") if (p == "instagram" and cfg["IG_HOST"] == "graph.facebook.com") else tokens.get(p)
+            if not have:
                 log.error("no %s token; run: bsi-post set-token %s", p, p)
                 return 1
     meta = Meta(cfg, tokens, log)
@@ -1065,20 +1070,32 @@ def maybe_refresh_ig(cfg, state, meta, tokens, log, enabled):
 # --------------------------------------------------------------------------
 def _send_mail(cfg, subject, body):
     pw = load_tokens(cfg).get("smtp", "")
-    msg = (f"From: {cfg['SMTP_FROM'] or cfg['SMTP_USER']}\r\nTo: {cfg['ALERT_TO']}\r\n"
-           f"Subject: {subject}\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n{body}")
+    sender = cfg["SMTP_FROM"] or cfg["SMTP_USER"]
+    msg = EmailMessage()
+    msg["From"] = sender
+    msg["To"] = ", ".join(a.strip() for a in cfg["ALERT_TO"].split(",") if a.strip())
+    msg["Subject"] = subject
+    msg["Date"] = formatdate(localtime=True)
+    msg["Message-ID"] = make_msgid(domain=sender.split("@")[-1] if "@" in sender else None)
+    msg.set_content(body)
     port = int(cfg["SMTP_PORT"])
     ctx = ssl.create_default_context()
-    if port == 465:
-        srv = smtplib.SMTP_SSL(cfg["SMTP_HOST"], port, context=ctx, timeout=30)
-    else:
-        srv = smtplib.SMTP(cfg["SMTP_HOST"], port, timeout=30)
-        srv.starttls(context=ctx)
-    with srv:
+    cls = smtplib.SMTP_SSL if port == 465 else smtplib.SMTP
+    kw = {"context": ctx} if port == 465 else {}
+    with cls(cfg["SMTP_HOST"], port, timeout=30, **kw) as srv:
+        if port != 465:
+            srv.starttls(context=ctx)
         if cfg["SMTP_USER"]:
             srv.login(cfg["SMTP_USER"], pw)
-        srv.sendmail(cfg["SMTP_FROM"] or cfg["SMTP_USER"],
-                     [a.strip() for a in cfg["ALERT_TO"].split(",") if a.strip()], msg.encode("utf-8"))
+        srv.send_message(msg)
+
+
+def send_alerts_safe(cfg, log):
+    """Alerts must never change the outcome of a run."""
+    try:
+        send_alerts(cfg, State(data(cfg, "state.db")), log)
+    except Exception as e:  # noqa: BLE001
+        log.error("alert step failed: %s", redact(e))
 
 
 def send_alerts(cfg, state, log):
@@ -1095,11 +1112,12 @@ def send_alerts(cfg, state, log):
         if r["status"] in ("needs_check", "failed", "missed") and state.meta_get(f"alerted:{r['key']}") != r["status"]:
             lines.append(f"{r['status'].upper()}: {r['key']}\n  {r['error'] or ''}")
             marks.append((f"alerted:{r['key']}", r["status"]))
-    for n in NOTES:
+    for n in NOTES:  # repeated every run while the cause lasts; re-sent after 24 h
         h = hashlib.sha256(n.encode()).hexdigest()[:16]
-        if state.meta_get(f"alerted:note:{h}") is None:
+        last = float(state.meta_get(f"alerted:note:{h}", 0) or 0)
+        if time.time() - last > 86400:
             lines.append(n)
-            marks.append((f"alerted:note:{h}", "1"))
+            marks.append((f"alerted:note:{h}", str(time.time())))
     if not lines:
         return
     today = dt.datetime.now(IST).strftime("%Y-%m-%d")
@@ -1115,6 +1133,9 @@ def send_alerts(cfg, state, log):
         log.error("alert email failed: %s", redact(e))
         return
     state.meta_set(f"alerts_sent:{today}", str(sent + 1))
+    cutoff = (dt.datetime.now(IST) - dt.timedelta(days=30)).strftime("%Y-%m-%d")
+    state.db.execute("DELETE FROM meta WHERE k LIKE 'alerts_sent:%' AND k < ?", (f"alerts_sent:{cutoff}",))
+    state.db.commit()
     for k, v in marks:
         state.meta_set(k, v)
     log.info("alert email sent (%d item(s))", len(lines))
@@ -1220,6 +1241,8 @@ def cmd_resolve(cfg, args):
         state.put(args.key, status="skipped", error="resolved by hand: skipped")
     else:  # retry
         state.put(args.key, status="pending", stage=None, error="resolved by hand: retry")
+    state.db.execute("DELETE FROM meta WHERE k=?", (f"alerted:{args.key}",))
+    state.db.commit()
     print(args.key, "->", state.get(args.key)["status"])
     return 0
 

@@ -30,11 +30,11 @@ Approved blog articles follow the same route: `content/blog/YYYY-MM-DD_slug.md` 
 
 Pacing: one call at a time, 3 s apart; at most 2 posts per run, 120 s apart. Instagram quota is read from Meta before any Instagram work.
 
-Route: `IG_HOST=graph.facebook.com` (Instagram API with Facebook Login). One long-lived Page token, stored with `bsi-post set-token facebook`, serves both Instagram and the Page. If `IG_HOST=graph.instagram.com` is ever used instead, Instagram is limited to images and carousels and its token is refreshed at most once a day; two failed days in a row halt.
+Route: `IG_HOST=graph.facebook.com` (Instagram API with Facebook Login). One long-lived Page token, stored with `bsi-post set-token facebook`, serves both Instagram and the Page. Permissions on that token: `instagram_basic`, `instagram_content_publish`, `pages_read_engagement`, `pages_manage_posts`, `pages_show_list`, `publish_video`. A long-lived Page token does not expire but can be revoked (that halts with error 190). If `IG_HOST=graph.instagram.com` is ever used instead, Instagram is limited to images and carousels and its token is refreshed at most once a day; two failed days in a row halt.
 
 Public credit: each post or article names the subject-matter expert. `approved_by` is the internal approval record.
 
-Logs: `journalctl -u bsi-post`. Alerts: one email digest per run for new problems (HALT, failed, needs_check, missed, skipped batch, git failure), capped per day; set `ALERT_TO` and `SMTP_*` in the config, store the password with `bsi-post set-token smtp`, test with `bsi-post test-alert`.
+Logs: `journalctl -u bsi-post`. Alerts: one email digest per run for new problems (HALT, failed, needs_check, missed, skipped batch, git failure), capped per day; set `ALERT_TO` and `SMTP_*` in the config, store the password with `bsi-post set-token smtp`, test with `bsi-post test-alert`. Do not use smtp.office365.com: Microsoft is switching SMTP basic auth off.
 
 Meta app: posts made while the app is in Development mode are visible only to people with a role on the app. Switch it to Live before `LIVE=1` and check the first post from a logged-out browser.
 

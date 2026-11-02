@@ -439,6 +439,8 @@ class T4(Base):
     def setUp(self):
         super().setUp()
         self.mails = []
+        orig = B._send_mail
+        self.addCleanup(setattr, B, "_send_mail", orig)
         B._send_mail = lambda cfg, subj, body: self.mails.append((subj, body))
         self.cfg.update(ALERT_TO="a@example.com", SMTP_HOST="smtp.example.com")
 
@@ -469,11 +471,78 @@ class T4(Base):
         self.run_()
         self.assertEqual(len(self.mails), 1)
 
+    def test_alert_failure_keeps_exit_code(self):
+        def boom(*a):
+            raise UnicodeEncodeError("ascii", "x", 0, 1, "bad")
+        B._send_mail = boom
+        self.batch([self.img(plats=("instagram",))])
+        self.fake.fail["/IG1/media"] = (429, {"error": {"code": 4, "message": "limit"}})
+        self.assertEqual(self.run_(), 2)
+
+    def test_halt_alert_retried_while_halted(self):
+        self.batch([self.img(plats=("instagram",))])
+        self.fake.fail["/IG1/media"] = (429, {"error": {"code": 4, "message": "limit"}})
+        real = B._send_mail
+        B._send_mail = lambda *a: (_ for _ in ()).throw(OSError("down"))
+        self.run_()
+        B._send_mail = real
+        self.assertEqual(self.mails, [])
+        self.run_()
+        self.assertIn("HALT", self.mails[-1][1])
+
+    def test_resolve_then_fail_again_alerts(self):
+        self.batch([self.img(plats=("instagram",))])
+        self.fake.fail["/IG1/media"] = (400, {"error": {"code": 100, "message": "bad"}})
+        self.run_()
+        n = len(self.mails)
+        class R: key = "2026-W46/i1/instagram"; outcome = "retry"; post_id = None
+        B.cmd_resolve(self.cfg, R)
+        self.run_()
+        self.assertEqual(len(self.mails), n + 1)
+
     def test_no_config_no_mail(self):
         self.cfg["ALERT_TO"] = ""
         self.batch([self.img(when=-8 * 60, plats=("instagram",))])
         self.run_()
         self.assertEqual(self.mails, [])
+
+
+class T5(Base):
+    def test_facebook_login_uses_page_token_everywhere(self):
+        self.cfg["IG_HOST"] = "graph.facebook.com"
+        it = {"id": "r1", "format": "reel", "platforms": ["instagram"], "publish_at": iso(-5),
+              "caption": "Reel " + LINK, "link": LINK,
+              "media": [{"type": "video", "file": "2026-W46/r.mp4", "sha256": self.vhash}]}
+        self.batch([it, self.img("i2", plats=("instagram",))])
+        self.run_()
+        meta_calls = [c for c in self.fake.calls if c[0] != "HEAD"]
+        self.assertTrue(meta_calls)
+        for m, url, params, hdr in meta_calls:
+            tok = params.get("access_token") or hdr.get("Authorization", "").replace("OAuth ", "")
+            self.assertEqual(tok, "FBTOKEN", url)
+        self.assertTrue(all("graph.facebook.com" in c[1] or "rupload" in c[1] for c in meta_calls))
+
+    def test_smtp_message_headers(self):
+        sent = {}
+
+        class S:
+            def __init__(self, *a, **k): pass
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def starttls(self, **k): sent["tls"] = True
+            def login(self, u, p): sent["login"] = (u, p)
+            def send_message(self, m): sent["msg"] = m
+        orig = B.smtplib.SMTP
+        self.addCleanup(setattr, B.smtplib, "SMTP", orig)
+        B.smtplib.SMTP = S
+        B.save_tokens(self.cfg, {**B.load_tokens(self.cfg), "smtp": "pw"})
+        self.cfg.update(ALERT_TO="a@example.com", SMTP_HOST="h", SMTP_USER="u@example.com")
+        B._send_mail(self.cfg, "[bsi-post] t", "line1\nline2 \u2713")
+        m = sent["msg"]
+        for h in ("Date", "Message-ID", "From", "To", "Subject"):
+            self.assertTrue(m[h], h)
+        self.assertTrue(sent["tls"])
+        self.assertEqual(sent["login"], ("u@example.com", "pw"))
 
 
 if __name__ == "__main__":
