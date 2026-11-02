@@ -42,7 +42,7 @@ class Fake:
         if method == "HEAD":
             return 200, {"_content_type": "image/jpeg"}
         if method == "GET" and (params or {}).get("fields") == "status":
-            return 200, {"status": {"video_status": "ready"}}
+            return 200, {"status": {"video_status": "ready", "publishing_phase": {"status": "complete"}}}
         if url.endswith("content_publishing_limit"):
             return 200, {"data": [{"quota_usage": self.quota[0], "config": {"quota_total": self.quota[1]}}]}
         if method == "GET" and (params or {}).get("fields", "").startswith("status_code"):
@@ -88,7 +88,7 @@ class Base(unittest.TestCase):
         self.cfg = dict(B.DEFAULTS)
         self.cfg.update(GRAPH_VERSION="v0", APPROVERS="Approver One", DATA_DIR=str(self.dd), LIVE="1",
                         IG_USER_ID="IG1", FB_PAGE_ID="PG1", POST_GAP_SEC="0", CALL_GAP_SEC="0",
-                        POLL_EVERY_SEC="0", MAX_POSTS_PER_RUN="10", _path="test")
+                        POLL_EVERY_SEC="0", POLL_MAX_MIN="0.02", MAX_POSTS_PER_RUN="10", _path="test")
         B.save_tokens(self.cfg, {"instagram": "IGTOKEN", "facebook": "FBTOKEN",
                                  "instagram_set_at": 9e12})
         self.fake = Fake()
@@ -403,6 +403,36 @@ class T2(Base):
         bad = self.img(caption="BERG SCHMIDT and berg-schmidt.co.in " + LINK)
         E, _ = B.validate_batch(self.cfg, "2026-W46", {"batch": "2026-W46", "items": [bad]}, self.repo)
         self.assertEqual(sum("no spaces" in e for e in E), 2)  # caption + facebook_caption, domain allowed
+
+
+class T3(Base):
+    def test_rotated_phone_video_ok_for_facebook(self):
+        src = self.dd / "media/2026-W46/r.mp4"
+        rot = self.dd / "media/2026-W46/rot.mp4"
+        flat = self.dd / "media/2026-W46/flat.mp4"
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=green:s=1280x720:d=5",
+                        "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", "-t", "5", "-c:v", "libx264",
+                        "-pix_fmt", "yuv420p", "-c:a", "aac", str(flat)], check=True)
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-display_rotation", "90", "-i", str(flat),
+                        "-c", "copy", str(rot)], check=True)
+        h = hashlib.sha256(rot.read_bytes()).hexdigest()
+        it = {"id": "r1", "format": "reel", "platforms": ["facebook"], "publish_at": iso(-5),
+              "caption": "Reel " + LINK, "link": LINK, "media": [{"type": "video", "file": "2026-W46/rot.mp4", "sha256": h}]}
+        E, _ = B.validate_batch(self.cfg, "2026-W46", {"batch": "2026-W46", "items": [it]}, self.repo)
+        self.assertFalse(any("9:16" in e or "540x960" in e for e in E), E)
+        del src
+
+    def test_slug_with_brand_in_url_ok(self):
+        link = "https://www.berg-schmidt.co.in/news/berg-schmidt-lecithin?utm_source=instagram&utm_medium=social&utm_campaign=t"
+        it = self.img(caption="Read more " + link, link=link)
+        E, _ = B.validate_batch(self.cfg, "2026-W46", {"batch": "2026-W46", "items": [it]}, self.repo)
+        self.assertEqual(E, [])
+
+    def test_server_error_on_quota_is_transient(self):
+        self.batch([self.img(plats=("instagram",))])
+        self.fake.fail["content_publishing_limit"] = (503, {"error": {"code": 2, "message": "x"}})
+        self.run_()
+        self.assertNotIn(self.st("2026-W46/i1/instagram"), B.FINAL)
 
 
 if __name__ == "__main__":

@@ -323,6 +323,7 @@ def validate_batch(cfg, name: str, doc: dict, repo: Path, deep: bool = True) -> 
             if len(re.findall(r"(?<!\w)@\w+", cap)) > 20:
                 E.append(f"{tag}: more than 20 @mentions")
         for label, text in (("caption", cap), ("facebook_caption", fbcap)):
+            text = re.sub(r"https?://\S+", " ", text)  # a URL slug may contain berg-schmidt
             for rx, msg in BRAND_RULES:
                 if rx.search(text):
                     E.append(f"{tag}: {label}: {msg}")
@@ -427,6 +428,10 @@ def check_media(cfg, batch, fmt, m, repo: Path, deep: bool, plats=()):
                 if not lo <= dur <= hi:
                     E.append(f"{f}: {fmt} video must be {lo}-{hi} s (is {dur:.1f} s)")
                 w, h = int(v["width"]), int(v["height"])
+                rot = (v.get("tags") or {}).get("rotate") or next(
+                    (sd.get("rotation") for sd in v.get("side_data_list") or [] if "rotation" in sd), 0)
+                if abs(int(float(rot or 0))) % 180 == 90:
+                    w, h = h, w  # phone video stored landscape with a rotation flag
                 if fmt in ("reel", "story") and not 0.55 <= w / h <= 0.575:
                     msg = f"{f}: {fmt} should be 9:16 (is {w}x{h})"
                     (E if "facebook" in plats else W).append(msg + ("; Facebook requires it" if "facebook" in plats else ""))
@@ -500,6 +505,8 @@ class Meta:
         if code == 429 or (err and (err.get("code") in HALT_CODES or err.get("error_subcode") in HALT_CODES
                                     or 200 <= int(err.get("code") or 0) < 300 or 80001 <= int(err.get("code") or 0) <= 80014)):
             raise Halt(redact(f"{path.split('?')[0]}: HTTP {code} {json.dumps(err or j)[:400]}"))
+        if code >= 500 and not publishing:
+            raise Transient(redact(f"{path.split('?')[0]}: HTTP {code} (server error, retry next run)"))
         if code >= 400 or err:
             raise ItemError(redact(f"{path.split('?')[0]}: HTTP {code} {json.dumps(err or j)[:400]}"))
         return j
@@ -574,7 +581,7 @@ class Meta:
     def fb(self, method, path, params=None, publishing=False):
         return self.call(method, "graph.facebook.com", path, self.fb_token, params=params, publishing=publishing)
 
-    def fb_wait_video(self, video_id):
+    def fb_wait_video(self, video_id, need_published=False):
         """After 'finish', wait until Meta has processed the video. Any error or
         a timeout raises ItemError; the post is then marked needs_check."""
         every, limit = float(self.cfg["POLL_EVERY_SEC"]), float(self.cfg["POLL_MAX_MIN"]) * 60
@@ -588,7 +595,9 @@ class Meta:
             phases = [st.get(k) or {} for k in ("uploading_phase", "processing_phase", "publishing_phase")]
             if st.get("video_status") == "error" or any(p.get("status") == "error" for p in phases):
                 raise ItemError(f"video {video_id}: Meta reported a processing error {json.dumps(st)[:300]}")
-            if st.get("video_status") in ("ready", "published") or (phases[2].get("status") == "complete"):
+            if phases[2].get("status") == "complete" or st.get("video_status") == "published":
+                return
+            if not need_published and st.get("video_status") == "ready":
                 return
             if time.monotonic() - t0 > limit:
                 raise ItemError(f"video {video_id}: still {st.get('video_status')} after {limit / 60:.0f} min")
@@ -768,7 +777,7 @@ class Poster:
                          {"upload_phase": "finish", "video_id": stage["video_id"], **finish_extra}, publishing=True)
         if j.get("success") is False:
             raise ItemError(f"{edge} finish returned success=false")
-        self.meta.fb_wait_video(stage["video_id"])
+        self.meta.fb_wait_video(stage["video_id"], need_published=(edge == "video_reels"))
         return j.get("post_id") or stage["video_id"], None
 
     def facebook_reel(self, key, it, stage):
@@ -813,7 +822,7 @@ def sync_repo(cfg, log) -> Path:
     repo = data(cfg, "repo")
     git = ["git", "-c", "advice.detachedHead=false"]
     if repo.exists() and subprocess.run(["git", "-C", str(repo), "rev-parse", "--verify", "-q", "HEAD"],
-                                        capture_output=True).returncode != 0:
+                                        capture_output=True, timeout=60).returncode != 0:
         import shutil
         shutil.rmtree(repo)  # a half-finished clone; start again
     if not (repo / ".git").exists():

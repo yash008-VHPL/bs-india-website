@@ -68,6 +68,7 @@ function splitFrontmatter(src, file) {
 
 function checkText(text, file, where) {
   const errs = [];
+  text = text.replace(/\b(?:https?:\/\/|www\.)\S+/gi, ' '); // a URL slug may contain berg-schmidt
   for (const { re, msg } of BRAND_RULES) {
     re.lastIndex = 0;
     if (re.test(text)) errs.push(`${file} (${where}): ${msg}`);
