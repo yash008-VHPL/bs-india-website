@@ -14,6 +14,7 @@ const Products      = lazy(() => import('./pages/Products'));
 const ProductDetail = lazy(() => import('./pages/ProductDetail'));
 const Species       = lazy(() => import('./pages/Species'));
 const News          = lazy(() => import('./pages/News'));
+const NewsArticle   = lazy(() => import('./pages/NewsArticle'));
 const Contact       = lazy(() => import('./pages/Contact'));
 const Webstore      = lazy(() => import('./pages/Webstore'));
 const Legal         = lazy(() => import('./pages/Legal'));
@@ -68,6 +69,7 @@ function Layout() {
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/species"     element={<Species />} />
             <Route path="/news"        element={<News />} />
+            <Route path="/news/:slug"  element={<NewsArticle />} />
             <Route path="/contact"     element={<Contact />} />
             <Route path="/shop"        element={<Webstore />} />
             <Route path="/imprint"     element={<Legal page="imprint" />} />

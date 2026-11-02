@@ -1,0 +1,23 @@
+[Unit]
+Description=bsi-post: publish approved Berg+Schmidt India posts to Instagram and Facebook
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=bsipost
+Group=bsipost
+Environment=BSI_POST_CONFIG=/etc/bsi-post/config.env
+ExecStart=/usr/bin/python3 /opt/bsi-post/bsi_post.py run
+TimeoutStartSec=45min
+# Hardening: the service can write only its own data folder.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ReadWritePaths=/var/lib/bsi-post
+CapabilityBoundingSet=
+RestrictSUIDSGID=yes
+LockPersonality=yes
+UMask=0077

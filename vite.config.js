@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import blog from './blog/vite-plugin-blog.js'
 
 /*
  * BASE_PATH lets the same source build twice:
@@ -12,7 +13,7 @@ const base = process.env.BASE_PATH || '/'
 
 export default defineConfig({
   base,
-  plugins: [react()],
+  plugins: [react(), blog()],
   build: {
     outDir: process.env.OUT_DIR || 'dist',
     sourcemap: false,

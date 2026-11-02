@@ -1,0 +1,46 @@
+{
+  "batch": "2026-W00",
+  "approval": { "approved_by": "", "approved_on": "" },
+  "items": [
+    {
+      "id": "w00-01",
+      "format": "image",
+      "platforms": ["instagram", "facebook"],
+      "publish_at": "2026-01-05T10:00:00+05:30",
+      "caption": "[Instagram caption]",
+      "facebook_caption": "[Optional Facebook caption; defaults to caption. Include the link.]",
+      "link": "https://www.berg-schmidt.co.in/news/[slug]?utm_source=instagram&utm_medium=social&utm_campaign=[campaign]",
+      "media": [ { "type": "image", "src": "public/social/2026-W00/w00-01.jpg" } ]
+    },
+    {
+      "id": "w00-02",
+      "format": "reel",
+      "platforms": ["instagram", "facebook"],
+      "publish_at": "2026-01-06T18:00:00+05:30",
+      "caption": "[Caption]",
+      "link": "https://www.berg-schmidt.co.in/?utm_source=instagram&utm_medium=social&utm_campaign=[campaign]",
+      "share_to_feed": true,
+      "cover": { "type": "image", "src": "public/social/2026-W00/w00-02-cover.jpg" },
+      "media": [ { "type": "video", "file": "2026-W00/w00-02.mp4", "sha256": "[sha256sum of the file]" } ]
+    },
+    {
+      "id": "w00-03",
+      "format": "carousel",
+      "platforms": ["instagram", "facebook"],
+      "publish_at": "2026-01-07T10:00:00+05:30",
+      "caption": "[Caption]",
+      "link": "https://www.berg-schmidt.co.in/?utm_source=instagram&utm_medium=social&utm_campaign=[campaign]",
+      "media": [
+        { "type": "image", "src": "public/social/2026-W00/w00-03-1.jpg" },
+        { "type": "image", "src": "public/social/2026-W00/w00-03-2.jpg" }
+      ]
+    },
+    {
+      "id": "w00-04",
+      "format": "story",
+      "platforms": ["instagram"],
+      "publish_at": "2026-01-07T09:00:00+05:30",
+      "media": [ { "type": "image", "src": "public/social/2026-W00/w00-04.jpg" } ]
+    }
+  ]
+}

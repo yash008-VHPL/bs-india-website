@@ -1,0 +1,12 @@
+[Unit]
+Description=Run bsi-post every 15 minutes
+
+[Timer]
+OnCalendar=*:0/15
+RandomizedDelaySec=60
+# Never catch up on runs missed while the GX-10 was off: late posts are
+# marked missed by the script instead of being sent in a burst.
+Persistent=false
+
+[Install]
+WantedBy=timers.target
