@@ -27,6 +27,7 @@ chmod 755 /usr/local/bin/bsi-post
 install -o root -g root -m 644 "$here/systemd/bsi-post.service" /etc/systemd/system/bsi-post.service
 install -o root -g root -m 644 "$here/systemd/bsi-post.timer" /etc/systemd/system/bsi-post.timer
 systemctl daemon-reload
+command -v git >/dev/null || { echo "git missing: apt install git"; exit 1; }
 python3 -c "import requests" || { echo "python3-requests missing: apt install python3-requests"; exit 1; }
 command -v ffprobe >/dev/null || { echo "ffprobe missing: apt install ffmpeg"; exit 1; }
 echo "installed. Timer NOT enabled. Next: fill /etc/bsi-post/config.env"

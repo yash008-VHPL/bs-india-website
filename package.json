@@ -27,6 +27,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
     "marked": "^15.0.12",
+    "sanitize-html": "^2.17.0",
     "vite": "^8.0.10",
     "yaml": "^2.8.0"
   }

@@ -40,7 +40,9 @@ class Fake:
                 return v
         self.n += 1
         if method == "HEAD":
-            return 200, {}
+            return 200, {"_content_type": "image/jpeg"}
+        if method == "GET" and (params or {}).get("fields") == "status":
+            return 200, {"status": {"video_status": "ready"}}
         if url.endswith("content_publishing_limit"):
             return 200, {"data": [{"quota_usage": self.quota[0], "config": {"quota_total": self.quota[1]}}]}
         if method == "GET" and (params or {}).get("fields", "").startswith("status_code"):
@@ -91,6 +93,7 @@ class Base(unittest.TestCase):
                                  "instagram_set_at": 9e12})
         self.fake = Fake()
         B.Meta._request = lambda s, *a, **k: self.fake(*a, **k)
+        B.sync_repo = lambda cfg, log: self.repo
         self._clear_log()
 
     @staticmethod
@@ -104,9 +107,15 @@ class Base(unittest.TestCase):
         self._clear_log()
         shutil.rmtree(self.tmp)
 
+    def h(self, n):
+        return hashlib.sha256((self.repo / f"public/social/2026-W46/{n}.jpg").read_bytes()).hexdigest()
+
+    def im(self, n="a"):
+        return {"type": "image", "src": f"public/social/2026-W46/{n}.jpg", "sha256": self.h(n)}
+
     def batch(self, items, approved=True):
-        doc = {"batch": "2026-W46", "approval": {"approved_by": "Approver One", "approved_on": "2026-11-13"} if approved else {},
-               "items": items}
+        ap = {"approved_by": "Approver One", "approved_on": "2026-11-13", "items_sha256": B.items_sha256(items)}
+        doc = {"batch": "2026-W46", "approval": ap if approved else {}, "items": items}
         d = self.repo / "content/social/2026-W46"
         d.mkdir(parents=True, exist_ok=True)
         (d / "batch.json").write_text(json.dumps(doc))
@@ -114,12 +123,12 @@ class Base(unittest.TestCase):
     def img(self, iid="i1", when=-5, plats=("instagram", "facebook"), **kw):
         it = {"id": iid, "format": "image", "platforms": list(plats), "publish_at": iso(when),
               "caption": "Heat stress tips from Berg+Schmidt. " + LINK, "link": LINK,
-              "media": [{"type": "image", "src": "public/social/2026-W46/a.jpg"}]}
+              "media": [self.im()]}
         it.update(kw)
         return it
 
     def run_(self):
-        class A: repo = str(self.repo); verbose = False
+        class A: verbose = False
         return B.cmd_run(self.cfg, A)
 
     def st(self, key):
@@ -222,15 +231,14 @@ class T(Base):
         self.batch([self.img(plats=("instagram",))])
         self.fake.quota = (100, 100)
         self.run_()
-        self.assertEqual(self.st("2026-W46/i1/instagram"), "staged")
-        self.assertFalse(any(c[1].endswith("media_publish") for c in self.fake.calls))
+        self.assertIsNone(self.st("2026-W46/i1/instagram"))
+        self.assertEqual(self.fake.posts(), [], "no container created while quota is full")
         self.fake.quota = (5, 100)
-        creates = sum(c[1].endswith("/media") for c in self.fake.posts())
         self.run_()
         self.assertEqual(self.st("2026-W46/i1/instagram"), "done")
-        self.assertEqual(sum(c[1].endswith("/media") for c in self.fake.posts()), creates, "container reused")
 
     def test_reel_both(self):
+        self.cfg["IG_HOST"] = "graph.facebook.com"
         it = {"id": "r1", "format": "reel", "platforms": ["instagram", "facebook"], "publish_at": iso(-5),
               "caption": "Reel " + LINK, "link": LINK,
               "media": [{"type": "video", "file": "2026-W46/r.mp4", "sha256": self.vhash}]}
@@ -245,6 +253,7 @@ class T(Base):
         self.assertEqual((ig["media_type"], ig["upload_type"]), ("REELS", "resumable"))
 
     def test_tampered_video_blocks_batch(self):
+        self.cfg["IG_HOST"] = "graph.facebook.com"
         it = {"id": "r1", "format": "reel", "platforms": ["instagram"], "publish_at": iso(-5),
               "caption": "Reel " + LINK, "link": LINK,
               "media": [{"type": "video", "file": "2026-W46/r.mp4", "sha256": "0" * 64}]}
@@ -255,7 +264,7 @@ class T(Base):
     def test_carousel_both(self):
         it = {"id": "k1", "format": "carousel", "platforms": ["instagram", "facebook"], "publish_at": iso(-5),
               "caption": "Carousel " + LINK, "link": LINK,
-              "media": [{"type": "image", "src": f"public/social/2026-W46/{n}.jpg"} for n in "abc"]}
+              "media": [self.im(n) for n in "abc"]}
         self.batch([it])
         self.run_()
         self.assertEqual(self.st("2026-W46/k1/instagram"), "done")
@@ -267,7 +276,7 @@ class T(Base):
 
     def test_story_image(self):
         it = {"id": "s1", "format": "story", "platforms": ["instagram", "facebook"], "publish_at": iso(-5),
-              "media": [{"type": "image", "src": "public/social/2026-W46/a.jpg"}]}
+              "media": [self.im()]}
         self.batch([it])
         self.run_()
         self.assertEqual(self.st("2026-W46/s1/instagram"), "done")
@@ -281,7 +290,7 @@ class T(Base):
         self.assertIsNone(self.st("2026-W46/i1/instagram"))
 
     def test_validation_rules(self):
-        bad = self.img(caption="Berg + Schmidt — tips", link="https://www.berg-schmidt.co.in/news/x")
+        bad = self.img(caption="Berg + Schmidt \u2014 tips", link="https://www.berg-schmidt.co.in/news/x")
         E, W = B.validate_batch(self.cfg, "2026-W46", {"batch": "2026-W46", "items": [bad, dict(bad)]}, self.repo)
         text = " | ".join(E)
         for s in ("no spaces", "em dash", "utm_source", "duplicate id"):
@@ -295,6 +304,105 @@ class T(Base):
         self.assertFalse(any(c[1].endswith("/media") for c in self.fake.calls))
         self.assertNotIn(self.st("2026-W46/i1/instagram"), B.FINAL)
         del orig
+
+
+class T2(Base):
+    def test_edit_after_approval_blocks(self):
+        self.batch([self.img()])
+        f = self.repo / "content/social/2026-W46/batch.json"
+        d = json.loads(f.read_text())
+        d["items"][0]["caption"] += " edited"
+        f.write_text(json.dumps(d))
+        self.run_()
+        self.assertEqual(self.fake.calls, [])
+
+    def test_image_swapped_after_approval_blocks(self):
+        self.batch([self.img()])
+        (self.repo / "public/social/2026-W46/a.jpg").write_bytes((self.repo / "public/social/2026-W46/b.jpg").read_bytes() + b"x")
+        self.run_()
+        self.assertEqual(self.fake.calls, [])
+
+    def test_ig_video_rejected_with_instagram_login(self):
+        it = {"id": "r1", "format": "reel", "platforms": ["instagram"], "publish_at": iso(-5),
+              "caption": "Reel " + LINK, "link": LINK,
+              "media": [{"type": "video", "file": "2026-W46/r.mp4", "sha256": self.vhash}]}
+        E, _ = B.validate_batch(self.cfg, "2026-W46", {"batch": "2026-W46", "items": [it]}, self.repo)
+        self.assertTrue(any("Facebook Login" in e for e in E))
+
+    def test_html_fallback_is_not_an_image(self):
+        self.batch([self.img(plats=("instagram",))])
+        self.fake.fail["/social/"] = (200, {"_content_type": "text/html"})
+        self.run_()
+        self.assertFalse(any(c[1].endswith("/media") for c in self.fake.calls))
+
+    def test_refresh_once_a_day_then_halt(self):
+        B.save_tokens(self.cfg, {"instagram": "IGTOKEN", "facebook": "FBTOKEN", "instagram_set_at": 1})
+        st = B.State(self.dd / "state.db")
+        st.meta_set("ig_refreshed_at", "1")
+        self.fake.fail["refresh_access_token"] = (400, {"error": {"code": 100, "message": "x"}})
+        self.batch([self.img(when=+600)])
+        self.assertEqual(self.run_(), 0)
+        self.run_()
+        self.assertEqual(sum("refresh_access_token" in c[1] for c in self.fake.calls), 1, "one try per day")
+        st.meta_set("ig_refresh_tried_at", "1")
+        self.assertEqual(self.run_(), 2)
+        self.assertTrue((self.dd / "HALT").exists())
+
+    def test_refresh_success(self):
+        B.save_tokens(self.cfg, {"instagram": "IGTOKEN", "facebook": "FBTOKEN", "instagram_set_at": 1})
+        B.State(self.dd / "state.db").meta_set("ig_refreshed_at", "1")
+        self.fake.fail["refresh_access_token"] = (200, {"access_token": "NEWTOKEN", "expires_in": 5184000})
+        self.batch([self.img(when=+600)])
+        self.run_()
+        self.assertEqual(B.load_tokens(self.cfg)["instagram"], "NEWTOKEN")
+
+    def test_fb_photo_uses_caption(self):
+        self.batch([self.img(plats=("facebook",))])
+        self.run_()
+        c = [c for c in self.fake.posts() if c[1].endswith("/PG1/photos")][0][2]
+        self.assertIn("caption", c)
+        self.assertNotIn("message", c)
+
+    def test_fb_video_processing_error_needs_check(self):
+        it = {"id": "r1", "format": "reel", "platforms": ["facebook"], "publish_at": iso(-5),
+              "caption": "Reel " + LINK, "link": LINK,
+              "media": [{"type": "video", "file": "2026-W46/r.mp4", "sha256": self.vhash}]}
+        self.batch([it])
+        orig = Fake.__call__
+
+        def patched(fself, method, url, **kw):
+            if method == "GET" and (kw.get("params") or {}).get("fields") == "status":
+                fself.calls.append((method, url, {}, {}))
+                return 200, {"status": {"video_status": "error"}}
+            return orig(fself, method, url, **kw)
+        B.Meta._request = lambda s, *a, **k: patched(self.fake, *a, **k)
+        self.run_()
+        self.assertEqual(self.st("2026-W46/r1/facebook"), "needs_check")
+
+    def test_staged_container_reused(self):
+        self.cfg["POLL_MAX_MIN"] = "0"
+        self.batch([self.img(plats=("instagram",))])
+        orig = Fake.__call__
+        state = {"s": "IN_PROGRESS"}
+
+        def patched(fself, method, url, **kw):
+            if method == "GET" and (kw.get("params") or {}).get("fields", "").startswith("status_code"):
+                fself.calls.append((method, url, {}, {}))
+                return 200, {"status_code": state["s"]}
+            return orig(fself, method, url, **kw)
+        B.Meta._request = lambda s, *a, **k: patched(self.fake, *a, **k)
+        self.run_()
+        self.assertEqual(self.st("2026-W46/i1/instagram"), "staged")
+        n = sum(c[1].endswith("/media") for c in self.fake.posts())
+        state["s"] = "FINISHED"
+        self.run_()
+        self.assertEqual(self.st("2026-W46/i1/instagram"), "done")
+        self.assertEqual(sum(c[1].endswith("/media") for c in self.fake.posts()), n, "container reused")
+
+    def test_brand_case_insensitive(self):
+        bad = self.img(caption="BERG SCHMIDT and berg-schmidt.co.in " + LINK)
+        E, _ = B.validate_batch(self.cfg, "2026-W46", {"batch": "2026-W46", "items": [bad]}, self.repo)
+        self.assertEqual(sum("no spaces" in e for e in E), 2)  # caption + facebook_caption, domain allowed
 
 
 if __name__ == "__main__":

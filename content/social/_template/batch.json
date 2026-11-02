@@ -1,6 +1,6 @@
 {
   "batch": "2026-W00",
-  "approval": { "approved_by": "", "approved_on": "" },
+  "approval": { "approved_by": "", "approved_on": "", "items_sha256": "" },
   "items": [
     {
       "id": "w00-01",
@@ -10,7 +10,7 @@
       "caption": "[Instagram caption]",
       "facebook_caption": "[Optional Facebook caption; defaults to caption. Include the link.]",
       "link": "https://www.berg-schmidt.co.in/news/[slug]?utm_source=instagram&utm_medium=social&utm_campaign=[campaign]",
-      "media": [ { "type": "image", "src": "public/social/2026-W00/w00-01.jpg" } ]
+      "media": [ { "type": "image", "src": "public/social/2026-W00/w00-01.jpg", "sha256": "[sha256sum]" } ]
     },
     {
       "id": "w00-02",
@@ -20,7 +20,7 @@
       "caption": "[Caption]",
       "link": "https://www.berg-schmidt.co.in/?utm_source=instagram&utm_medium=social&utm_campaign=[campaign]",
       "share_to_feed": true,
-      "cover": { "type": "image", "src": "public/social/2026-W00/w00-02-cover.jpg" },
+      "cover": { "type": "image", "src": "public/social/2026-W00/w00-02-cover.jpg", "sha256": "[sha256sum]" },
       "media": [ { "type": "video", "file": "2026-W00/w00-02.mp4", "sha256": "[sha256sum of the file]" } ]
     },
     {
@@ -31,8 +31,8 @@
       "caption": "[Caption]",
       "link": "https://www.berg-schmidt.co.in/?utm_source=instagram&utm_medium=social&utm_campaign=[campaign]",
       "media": [
-        { "type": "image", "src": "public/social/2026-W00/w00-03-1.jpg" },
-        { "type": "image", "src": "public/social/2026-W00/w00-03-2.jpg" }
+        { "type": "image", "src": "public/social/2026-W00/w00-03-1.jpg", "sha256": "[sha256sum]" },
+        { "type": "image", "src": "public/social/2026-W00/w00-03-2.jpg", "sha256": "[sha256sum]" }
       ]
     },
     {
@@ -40,7 +40,7 @@
       "format": "story",
       "platforms": ["instagram"],
       "publish_at": "2026-01-07T09:00:00+05:30",
-      "media": [ { "type": "image", "src": "public/social/2026-W00/w00-04.jpg" } ]
+      "media": [ { "type": "image", "src": "public/social/2026-W00/w00-04.jpg", "sha256": "[sha256sum]" } ]
     }
   ]
 }

@@ -47,11 +47,14 @@ FORMATS = {"image", "carousel", "reel", "story"}
 PLATFORMS = ("instagram", "facebook")
 FINAL = {"done", "skipped", "missed", "needs_check", "failed"}
 
-# Meta error codes that mean "stop everything and let a person look".
+# Meta error codes (code or subcode) that mean "stop everything and let a
+# person look":
 #   4, 17, 32, 613, 80001-80014: rate limits     368: temporarily blocked
 #   190: token invalid/expired   10, 200-299: permission    341: app limit
-#   9007 / 2207042: Instagram publishing limit reached
-HALT_CODES = {4, 17, 32, 341, 368, 613, 190, 10, 9007, 2207042}
+#   25 / 2207050: account restricted or checkpointed
+#   2207042 (code 9): Instagram publishing limit reached
+#   2207051 (code 4): action blocked as spam
+HALT_CODES = {4, 17, 25, 32, 341, 368, 613, 190, 10, 2207042, 2207050, 2207051}
 
 
 class Halt(Exception):
@@ -193,9 +196,10 @@ def redact(s: str) -> str:
 # Batch loading and validation (offline)
 # --------------------------------------------------------------------------
 BRAND_RULES = [
-    (re.compile(r"Berg\s*\+\s+Schmidt|Berg\s+\+\s*Schmidt|Berg\s*&\s*Schmidt|Berg\s+Schmidt"),
+    (re.compile(r"Berg\s*\+\s+Schmidt|Berg\s+\+\s*Schmidt|Berg\s*&\s*Schmidt|Berg\s+Schmidt"
+                r"|Berg-Schmidt(?![\w.-]*\.(?:co|com|in)\b)", re.I),
      'write "Berg+Schmidt" with no spaces'),
-    (re.compile("—"), "em dash found; use a normal dash"),
+    (re.compile("\u2014"), "em dash found; use a normal dash"),
 ]
 
 
@@ -251,6 +255,13 @@ def load_batches(repo: Path) -> list[tuple[str, dict | None, str | None]]:
     return out
 
 
+def items_sha256(items) -> str:
+    """Fingerprint of everything that will be posted: captions, times, links,
+    and (through each media entry's sha256) every image and video."""
+    blob = json.dumps(items, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    return hashlib.sha256(blob).hexdigest()
+
+
 def media_url(cfg, src: str) -> str:
     # public/social/2026-W46/a.jpg  ->  https://www.berg-schmidt.co.in/social/2026-W46/a.jpg
     return cfg["SITE_URL"].rstrip("/") + "/" + src[len("public/"):]
@@ -270,6 +281,8 @@ def validate_batch(cfg, name: str, doc: dict, repo: Path, deep: bool = True) -> 
             E.append(f"approval.approved_by {ap.get('approved_by')!r} is not in APPROVERS")
         if not re.match(r"^\d{4}-\d{2}-\d{2}$", str(ap.get("approved_on", ""))):
             E.append("approval.approved_on must be YYYY-MM-DD")
+        if isinstance(doc.get("items"), list) and ap.get("items_sha256") != items_sha256(doc["items"]):
+            E.append("batch changed after approval (approval.items_sha256 does not match the items)")
     items = doc.get("items")
     if not isinstance(items, list) or not items:
         E.append('"items" must be a non-empty list')
@@ -332,8 +345,12 @@ def validate_batch(cfg, name: str, doc: dict, repo: Path, deep: bool = True) -> 
         want = {"image": (1, 1), "reel": (1, 1), "story": (1, 1), "carousel": (2, 10)}[fmt]
         if not (want[0] <= len(media) <= want[1]):
             E.append(f"{tag}: {fmt} needs {want[0]}-{want[1]} media, has {len(media)}")
+        if "instagram" in plats and cfg.get("IG_HOST") == "graph.instagram.com" \
+                and any(m.get("type") == "video" for m in media):
+            E.append(f"{tag}: Instagram video needs IG_HOST=graph.facebook.com (Facebook Login); "
+                     "resumable upload is not available with Instagram Login")
         for m in media:
-            E2, W2 = check_media(cfg, name, fmt, m, repo, deep)
+            E2, W2 = check_media(cfg, name, fmt, m, repo, deep, plats)
             E += [f"{tag}: {x}" for x in E2]
             W += [f"{tag}: {x}" for x in W2]
         if fmt == "carousel" and "facebook" in plats and any(m.get("type") != "image" for m in media):
@@ -348,7 +365,7 @@ def validate_batch(cfg, name: str, doc: dict, repo: Path, deep: bool = True) -> 
     return E, W
 
 
-def check_media(cfg, batch, fmt, m, repo: Path, deep: bool):
+def check_media(cfg, batch, fmt, m, repo: Path, deep: bool, plats=()):
     E, W = [], []
     kind = m.get("type")
     if kind == "image":
@@ -361,6 +378,14 @@ def check_media(cfg, batch, fmt, m, repo: Path, deep: bool):
         p = repo / src
         if not p.exists():
             return E + [f"{src}: file not in the repo"], W
+        if not re.fullmatch(r"[0-9a-f]{64}", str(m.get("sha256", ""))):
+            E.append(f"{src}: sha256 missing")
+        else:
+            try:
+                if sha256(p) != m["sha256"]:
+                    E.append(f"{src}: file differs from its sha256")
+            except OSError as e:
+                return E + [f"{src}: cannot read ({e.strerror})"], W
         if p.stat().st_size > 8 * 1024 * 1024:
             E.append(f"{src}: over 8 MB")
         if deep:
@@ -372,7 +397,7 @@ def check_media(cfg, batch, fmt, m, repo: Path, deep: bool):
                         W.append(f"{src}: stories should be 9:16 (is {s['width']}x{s['height']})")
                 elif not 0.8 <= r <= 1.91:
                     E.append(f"{src}: feed images must be between 4:5 and 1.91:1 (is {s['width']}x{s['height']})")
-            except (ValueError, StopIteration, KeyError, subprocess.TimeoutExpired) as e:
+            except (ValueError, StopIteration, KeyError, OSError, subprocess.TimeoutExpired) as e:
                 E.append(f"{src}: cannot read image ({e})")
     elif kind == "video":
         f = str(m.get("file", ""))
@@ -384,8 +409,11 @@ def check_media(cfg, batch, fmt, m, repo: Path, deep: bool):
         if not p.exists():
             return E + [f"{f}: not found at {p}"], W
         if deep:
-            if m.get("sha256") and sha256(p) != m["sha256"]:
-                E.append(f"{f}: file differs from the approved sha256")
+            try:
+                if m.get("sha256") and sha256(p) != m["sha256"]:
+                    E.append(f"{f}: file differs from the approved sha256")
+            except OSError as e:
+                return E + [f"{f}: cannot read ({e.strerror})"], W
             try:
                 info = ffprobe(p)
                 v = next(x for x in info["streams"] if x.get("codec_type") == "video")
@@ -398,12 +426,15 @@ def check_media(cfg, batch, fmt, m, repo: Path, deep: bool):
                 lo, hi = (3, 60) if fmt == "story" else (3, 90)
                 if not lo <= dur <= hi:
                     E.append(f"{f}: {fmt} video must be {lo}-{hi} s (is {dur:.1f} s)")
-                r = int(v["width"]) / int(v["height"])
-                if fmt in ("reel", "story") and not 0.5 <= r <= 0.6:
-                    W.append(f"{f}: {fmt} should be 9:16 (is {v['width']}x{v['height']})")
+                w, h = int(v["width"]), int(v["height"])
+                if fmt in ("reel", "story") and not 0.55 <= w / h <= 0.575:
+                    msg = f"{f}: {fmt} should be 9:16 (is {w}x{h})"
+                    (E if "facebook" in plats else W).append(msg + ("; Facebook requires it" if "facebook" in plats else ""))
+                if fmt in ("reel", "story") and "facebook" in plats and (w < 540 or h < 960):
+                    E.append(f"{f}: Facebook needs at least 540x960 (is {w}x{h})")
                 if p.stat().st_size > 1024 ** 3:
                     E.append(f"{f}: over 1 GB")
-            except (ValueError, StopIteration, KeyError, subprocess.TimeoutExpired) as e:
+            except (ValueError, StopIteration, KeyError, OSError, subprocess.TimeoutExpired) as e:
                 E.append(f"{f}: cannot read video ({e})")
     else:
         E.append('media "type" must be image or video')
@@ -438,6 +469,8 @@ class Meta:
                                headers=headers, timeout=timeout, allow_redirects=(method == "HEAD"))
         except requests.RequestException as e:
             raise Transient(redact(f"{method} {url.split('?')[0]}: {e}")) from None
+        if method == "HEAD":
+            return r.status_code, {"_content_type": r.headers.get("Content-Type", "")}
         try:
             j = r.json()
         except ValueError:
@@ -474,6 +507,10 @@ class Meta:
     # -- tokens ----------------------------------------------------------
     @property
     def ig_token(self):
+        # With Facebook Login (IG_HOST=graph.facebook.com) Instagram calls use
+        # the same Facebook token as the Page, unless one is set separately.
+        if self.cfg["IG_HOST"] == "graph.facebook.com":
+            return self.tokens.get("instagram") or self.tokens.get("facebook") or ""
         return self.tokens.get("instagram") or ""
 
     @property
@@ -537,6 +574,26 @@ class Meta:
     def fb(self, method, path, params=None, publishing=False):
         return self.call(method, "graph.facebook.com", path, self.fb_token, params=params, publishing=publishing)
 
+    def fb_wait_video(self, video_id):
+        """After 'finish', wait until Meta has processed the video. Any error or
+        a timeout raises ItemError; the post is then marked needs_check."""
+        every, limit = float(self.cfg["POLL_EVERY_SEC"]), float(self.cfg["POLL_MAX_MIN"]) * 60
+        t0 = time.monotonic()
+        while True:
+            try:
+                j = self.call("GET", "graph.facebook.com", video_id, self.fb_token, params={"fields": "status"})
+            except Transient as e:
+                raise ItemError(f"video {video_id}: status check failed ({e})") from None
+            st = j.get("status") or {}
+            phases = [st.get(k) or {} for k in ("uploading_phase", "processing_phase", "publishing_phase")]
+            if st.get("video_status") == "error" or any(p.get("status") == "error" for p in phases):
+                raise ItemError(f"video {video_id}: Meta reported a processing error {json.dumps(st)[:300]}")
+            if st.get("video_status") in ("ready", "published") or (phases[2].get("status") == "complete"):
+                return
+            if time.monotonic() - t0 > limit:
+                raise ItemError(f"video {video_id}: still {st.get('video_status')} after {limit / 60:.0f} min")
+            time.sleep(every)
+
     def fb_upload_video(self, upload_url, path: Path):
         size = path.stat().st_size
         with open(path, "rb") as f:
@@ -554,7 +611,11 @@ class Poster:
 
     def video_path(self, m) -> Path:
         p = data(self.cfg, "media", m["file"])
-        if sha256(p) != m["sha256"]:
+        try:
+            ok = sha256(p) == m["sha256"]
+        except OSError as e:
+            raise ItemError(f"{m['file']}: cannot read ({e.strerror})") from None
+        if not ok:
             raise ItemError(f"{m['file']} changed after approval (sha256 mismatch)")
         return p
 
@@ -562,10 +623,11 @@ class Poster:
         """The image must already be deployed on the site (Meta fetches it from there)."""
         url = media_url(self.cfg, m["src"])
         try:
-            code, _ = self.meta._request("HEAD", url, timeout=30)
+            code, j = self.meta._request("HEAD", url, timeout=30)
         except Transient:
             return False
-        return code == 200
+        # A missing file could come back as the site's index.html with 200.
+        return code == 200 and str(j.get("_content_type", "")).lower().startswith("image/jpeg")
 
     def post(self, batch: str, it: dict, platform: str):
         key = f"{batch}/{it['id']}/{platform}"
@@ -574,9 +636,18 @@ class Poster:
         for m in it["media"] + ([it["cover"]] if it.get("cover") else []):
             if m["type"] == "image" and not self.image_live(m):
                 raise Transient(f"{m['src']} is not live on the site yet (deploy pending?)")
+        if platform == "instagram":
+            used, total = self.meta.ig_quota()
+            if total and used >= total:
+                raise Transient(f"Instagram publishing quota used ({used}/{total}); deferred")
         fn = getattr(self, f"{platform}_{it['format']}")
-        post_id, link = fn(key, it, stage)
-        self.state.put(key, status="done", post_id=post_id, permalink=link, error=None)
+        post_id, _ = fn(key, it, stage)
+        self.state.put(key, status="done", post_id=post_id, error=None)
+        link = None
+        if platform == "instagram":
+            link = self.meta.ig_permalink(post_id)
+            if link:
+                self.state.put(key, permalink=link)
         self.log.info("POSTED %s -> %s %s", key, post_id, link or "")
 
     def _stage(self, key, stage):
@@ -605,12 +676,8 @@ class Poster:
 
     def _ig_finish(self, key, stage, creation_id):
         self.meta.ig_wait(creation_id)
-        used, total = self.meta.ig_quota()
-        if total and used >= total:
-            raise Transient(f"Instagram publishing quota used ({used}/{total}); deferred")
         self._publishing(key, stage)
-        mid = self.meta.ig_publish(creation_id)
-        return mid, self.meta.ig_permalink(mid)
+        return self.meta.ig_publish(creation_id), None
 
     def _fresh(self, stage):
         # Containers expire after 24 h; rebuild if older than 23 h.
@@ -665,7 +732,7 @@ class Poster:
     def facebook_image(self, key, it, stage):
         self._publishing(key, stage)
         j = self.meta.fb("POST", f"{self._page()}/photos",
-                         {"url": media_url(self.cfg, it["media"][0]["src"]), "message": self._fb_caption(it)},
+                         {"url": media_url(self.cfg, it["media"][0]["src"]), "caption": self._fb_caption(it)},
                          publishing=True)
         return j.get("post_id") or j["id"], None
 
@@ -701,6 +768,7 @@ class Poster:
                          {"upload_phase": "finish", "video_id": stage["video_id"], **finish_extra}, publishing=True)
         if j.get("success") is False:
             raise ItemError(f"{edge} finish returned success=false")
+        self.meta.fb_wait_video(stage["video_id"])
         return j.get("post_id") or stage["video_id"], None
 
     def facebook_reel(self, key, it, stage):
@@ -733,13 +801,7 @@ def setup_log(cfg, verbose=False):
     h = logging.StreamHandler(sys.stdout)
     h.setFormatter(fmt)
     log.addHandler(h)
-    try:
-        data(cfg, "log").mkdir(parents=True, exist_ok=True)
-        fh = logging.FileHandler(data(cfg, "log", "bsi-post.log"))
-        fh.setFormatter(fmt)
-        log.addHandler(fh)
-    except OSError:
-        pass
+    # systemd sends stdout to the journal: journalctl -u bsi-post
     return log
 
 
@@ -750,6 +812,10 @@ def repo_dir(cfg, args) -> Path:
 def sync_repo(cfg, log) -> Path:
     repo = data(cfg, "repo")
     git = ["git", "-c", "advice.detachedHead=false"]
+    if repo.exists() and subprocess.run(["git", "-C", str(repo), "rev-parse", "--verify", "-q", "HEAD"],
+                                        capture_output=True).returncode != 0:
+        import shutil
+        shutil.rmtree(repo)  # a half-finished clone; start again
     if not (repo / ".git").exists():
         subprocess.run(git + ["clone", "--quiet", "--depth", "1", "--branch", "main", cfg["REPO_URL"], str(repo)],
                        check=True, timeout=600)
@@ -861,8 +927,8 @@ def _run_locked(cfg, args, log, live, halt):
             log.error("NEEDS CHECK %s: interrupted during publish", r["key"])
 
     try:
-        repo = sync_repo(cfg, log) if not args.repo else Path(args.repo)
-    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+        repo = sync_repo(cfg, log)
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError) as e:
         log.error("git sync failed, nothing posted: %s", e)
         return 1
 
@@ -888,15 +954,22 @@ def _run_locked(cfg, args, log, live, halt):
                 continue
             due.append((when, name, it, p))
     due.sort(key=lambda x: (x[0], x[1], x[2]["id"], x[3]))
+    tokens = load_tokens(cfg)
+    if live:
+        try:
+            maybe_refresh_ig(cfg, state, Meta(cfg, tokens, log), tokens, log, enabled)
+        except Halt as e:
+            halt.write_text(f"{dt.datetime.now(IST):%Y-%m-%d %H:%M} IST  {e}\n")
+            log.error("HALT written, all posting stopped: %s", e)
+            return 2
     if not due:
         log.debug("nothing due")
         return 0
 
-    tokens = load_tokens(cfg)
     if live:
         need(cfg, *(["IG_USER_ID"] if "instagram" in enabled else []), *(["FB_PAGE_ID"] if "facebook" in enabled else []))
         for p in {d[3] for d in due}:
-            if not tokens.get(p):
+            if not (tokens.get(p) or (p == "instagram" and cfg["IG_HOST"] == "graph.facebook.com" and tokens.get("facebook"))):
                 log.error("no %s token; run: bsi-post set-token %s", p, p)
                 return 1
     meta = Meta(cfg, tokens, log)
@@ -905,8 +978,6 @@ def _run_locked(cfg, args, log, live, halt):
     gap = float(cfg["POST_GAP_SEC"])
     posted = 0
     try:
-        if live:
-            maybe_refresh_ig(cfg, state, meta, tokens, log, enabled)
         for when, name, it, p in due:
             if posted >= limit:
                 log.info("run limit of %d posts reached; the rest wait for the next run", limit)
@@ -944,15 +1015,35 @@ def maybe_refresh_ig(cfg, state, meta, tokens, log, enabled):
     last = float(state.meta_get("ig_refreshed_at", tokens.get("instagram_set_at", 0)) or 0)
     if time.time() - last < float(cfg["IG_REFRESH_DAYS"]) * 86400:
         return
+    # At most one attempt a day. A second failed day in a row halts.
+    tried = float(state.meta_get("ig_refresh_tried_at", 0) or 0)
+    if time.time() - tried < 86400:
+        return
+    state.meta_set("ig_refresh_tried_at", str(time.time()))
     try:
         new = meta.ig_refresh()
     except (ItemError, Transient) as e:
-        log.warning("Instagram token refresh failed (will try next run): %s", e)
+        fails = int(state.meta_get("ig_refresh_fails", 0) or 0) + 1
+        state.meta_set("ig_refresh_fails", str(fails))
+        if fails >= 2:
+            raise Halt(f"Instagram token refresh failed {fails} days running: {e}") from None
+        log.warning("Instagram token refresh failed; one more try tomorrow: %s", e)
         return
     tokens["instagram"] = new
     save_tokens(cfg, tokens)
     state.meta_set("ig_refreshed_at", str(time.time()))
+    state.meta_set("ig_refresh_fails", "0")
     log.info("Instagram token refreshed")
+
+
+def cmd_approval_hash(cfg, args):
+    repo = repo_dir(cfg, args)
+    for name, doc, err in load_batches(repo):
+        if name == args.batch and doc:
+            print(items_sha256(doc.get("items", [])))
+            return 0
+    print("batch not found")
+    return 1
 
 
 def cmd_status(cfg, args):
@@ -1043,9 +1134,11 @@ def main(argv=None):
     v.add_argument("--repo", help="check a local checkout instead of the synced one")
     pl = sub.add_parser("plan", help="list approved posts and their state")
     pl.add_argument("--repo")
-    r = sub.add_parser("run", help="post what is due (the timer runs this)")
-    r.add_argument("--repo", help=argparse.SUPPRESS)
+    sub.add_parser("run", help="post what is due (the timer runs this)")
     sub.add_parser("status", help="HALT, tokens, problems")
+    ah = sub.add_parser("approval-hash", help="print approval.items_sha256 for a batch")
+    ah.add_argument("batch")
+    ah.add_argument("--repo")
     sub.add_parser("check-quota", help="one call: Instagram publishing quota")
     st = sub.add_parser("set-token", help="store a token read from stdin")
     st.add_argument("platform", choices=PLATFORMS)
@@ -1058,7 +1151,7 @@ def main(argv=None):
     cfg = load_config(args.config)
     fn = {"validate": cmd_validate, "plan": cmd_plan, "run": cmd_run, "status": cmd_status,
           "check-quota": cmd_check_quota, "set-token": cmd_set_token, "clear-halt": cmd_clear_halt,
-          "resolve": cmd_resolve}[args.cmd]
+          "resolve": cmd_resolve, "approval-hash": cmd_approval_hash}[args.cmd]
     return fn(cfg, args)
 
 

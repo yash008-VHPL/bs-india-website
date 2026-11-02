@@ -14,6 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { Marked } from 'marked';
+import sanitizeHtml from 'sanitize-html';
 
 const VIRTUAL_ID = 'virtual:blog';
 const RESOLVED_ID = '\0' + VIRTUAL_ID;
@@ -32,11 +33,25 @@ const STATUSES = ['draft', 'approved'];
 
 // Brand rules (chairman): Berg+Schmidt with no spaces; no em dashes.
 const BRAND_RULES = [
-  { re: /Berg\s*\+\s+Schmidt|Berg\s+\+\s*Schmidt|Berg\s*&\s*Schmidt|Berg\s+Schmidt|Berg-Schmidt(?![\w.-]*\.(?:co|com|in))/g,
+  { re: /Berg\s*\+\s+Schmidt|Berg\s+\+\s*Schmidt|Berg\s*&\s*Schmidt|Berg\s+Schmidt|Berg-Schmidt(?![\w.-]*\.(?:co|com|in)\b)/gi,
     msg: 'write "Berg+Schmidt" with no spaces' },
-  { re: /—/g, msg: 'em dash found; use a normal dash' },
+  { re: /\u2014/g, msg: 'em dash found; use a normal dash' },
 ];
-const UNSAFE = [/<script/i, /\son\w+\s*=/i, /javascript:/i, /<iframe/i];
+// Allow-list sanitising of the rendered HTML. Links: https, mailto, or
+// site-relative only. No scripts, iframes, styles, forms or meta tags.
+const SANITIZE = {
+  allowedTags: ['h2', 'h3', 'h4', 'p', 'br', 'hr', 'ul', 'ol', 'li', 'strong', 'em', 'b', 'i',
+    'blockquote', 'code', 'pre', 'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'sup', 'sub'],
+  allowedAttributes: { a: ['href', 'title', 'rel', 'target'], img: ['src', 'alt', 'title', 'width', 'height'], th: ['align'], td: ['align'] },
+  allowedSchemes: ['https', 'mailto'],
+  allowedSchemesByTag: { img: ['https'] },
+  allowProtocolRelative: false,
+  transformTags: {
+    a: (tag, attribs) => (/^https:/i.test(attribs.href || '')
+      ? { tagName: 'a', attribs: { ...attribs, rel: 'noopener noreferrer', target: '_blank' } }
+      : { tagName: 'a', attribs }),
+  },
+};
 
 /** Today's date in India as YYYY-MM-DD. */
 export function todayIST(now = new Date()) {
@@ -93,10 +108,14 @@ export function loadPosts(dir, { today = todayIST(), includeAll = false } = {}) 
     if (data.image && !/^\/[\w/.-]+\.(?:jpe?g|png|webp)$/.test(data.image))
       errors.push(`${file}: image must be a site path such as /blog-images/name.jpg`);
     if (data.image && !data.image_alt) errors.push(`${file}: image needs image_alt`);
-    for (const re of UNSAFE) if (re.test(body)) errors.push(`${file}: unsafe HTML (${re})`);
-    for (const k of ['title', 'description', 'author', 'image_alt'])
-      if (data[k]) errors.push(...checkText(String(data[k]), file, k));
-    errors.push(...checkText(body, file, 'body'));
+    // Content rules fail the build for approved articles only. A draft that
+    // breaks them is reported but cannot turn every deploy red.
+    const content = [];
+    for (const k of ['title', 'description', 'author', 'author_role', 'image_alt'])
+      if (data[k]) content.push(...checkText(String(data[k]), file, k));
+    content.push(...checkText(body, file, 'body'));
+    if (data.status === 'approved') errors.push(...content);
+    else for (const w of content) console.warn(`[blog] draft: ${w}`);
 
     const live = data.status === 'approved' && date <= today;
     if (!live && !includeAll) continue;
@@ -114,7 +133,7 @@ export function loadPosts(dir, { today = todayIST(), includeAll = false } = {}) 
       image: data.image || null,
       image_alt: data.image_alt || null,
       minutes: Math.max(1, Math.round(words / 200)),
-      html: marked.parse(body),
+      html: sanitizeHtml(marked.parse(body), SANITIZE),
       status: data.status,
     });
   }
