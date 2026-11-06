@@ -7,6 +7,7 @@
  * PartitionKey = YYYY-MM (UTC), so time-bounded queries skip old partitions.
  */
 const crypto = require('node:crypto');
+const net = require('node:net');
 
 let client = null;
 let ensured = false;
@@ -26,30 +27,44 @@ async function ensureTable(c) {
   ensured = true;
 }
 
-/** Salted hash; '' when no salt is configured (IP throttle then off). */
+/** IPv6 addresses are bucketed by /64 (one household or host usually holds a whole /64). */
+function ipBucket(ip) {
+  if (net.isIP(ip) !== 6) return ip;
+  if (/^::ffff:\d+\.\d+\.\d+\.\d+$/i.test(ip)) return ip.slice(7);
+  const [head, tail = ''] = ip.toLowerCase().split('%')[0].split('::');
+  const h = head ? head.split(':') : [];
+  const t = ip.includes('::') && tail ? tail.split(':') : [];
+  const groups = ip.includes('::') ? [...h, ...Array(8 - h.length - t.length).fill('0'), ...t] : h;
+  return groups.slice(0, 4).map((g) => parseInt(g || '0', 16).toString(16)).join(':') + '::/64';
+}
+
+/** Salted hash; '' when no salt is configured (IP limit then off - logged by the caller). */
 function hashIp(ip) {
   const salt = process.env.IP_HASH_SALT;
   if (!ip || !salt) return '';
-  return crypto.createHash('sha256').update(`${salt}:${ip}`).digest('hex').slice(0, 32);
+  return crypto.createHash('sha256').update(`${salt}:${ipBucket(ip)}`).digest('hex').slice(0, 32);
 }
 
 const month = (d) => d.toISOString().slice(0, 7);
+const TABLE_TIMEOUT_MS = 4000;
+const signal = () => AbortSignal.timeout(TABLE_TIMEOUT_MS);
 
 /**
- * Rows created after `since` that count towards limits (not failed, not
- * suspect), optionally matching column = value. Stops at `cap`.
+ * Rows created after `since`, optionally matching column = value, leaving
+ * out rows whose status is in `exclude`. Stops at `cap`.
  */
-async function countSince({ column, value, since, cap }) {
+async function countSince({ column, value, since, cap, exclude = [] }) {
   const c = getClient();
   if (!c) return 0;
   await ensureTable(c);
   const { odata } = require('@azure/data-tables');
-  let filter = odata`PartitionKey ge ${month(since)} and createdAt ge ${since} and status ne ${'failed'} and status ne ${'suspect'}`;
+  let filter = odata`PartitionKey ge ${month(since)} and createdAt ge ${since}`;
+  for (const st of exclude) filter += ' and ' + odata`status ne ${st}`;
   if (column === 'emailKey') filter += ' and ' + odata`emailKey eq ${value}`;
   else if (column === 'ipHash') filter += ' and ' + odata`ipHash eq ${value}`;
   else if (column) throw new Error(`unknown column ${column}`);
   let n = 0;
-  for await (const _ of c.listEntities({ queryOptions: { filter, select: ['RowKey'] } })) {
+  for await (const _ of c.listEntities({ queryOptions: { filter, select: ['RowKey'] }, abortSignal: signal() })) {
     if (++n >= cap) break;
   }
   return n;
@@ -67,18 +82,18 @@ async function insert(lead) {
     rowKey: `${now.toISOString().replace(/[:.]/g, '-')}_${crypto.randomUUID().slice(0, 8)}`,
     createdAt: now,
   };
-  await c.createEntity(entity);
+  await c.createEntity(entity, { abortSignal: signal() });
   return { partitionKey: entity.partitionKey, rowKey: entity.rowKey };
 }
 
 async function setStatus(key, status, error) {
   const c = getClient();
   if (!c || !key) return;
-  await c.updateEntity({ ...key, status, error: error ? String(error).slice(0, 1000) : '' }, 'Merge');
+  await c.updateEntity({ ...key, status, error: error ? String(error).slice(0, 1000) : '' }, 'Merge', { abortSignal: signal() });
 }
 
 module.exports = {
-  insert, setStatus, countSince, hashIp,
+  insert, setStatus, countSince, hashIp, ipBucket,
   enabled: () => !!process.env.LEADS_TABLE_CONNECTION,
   _reset: () => { client = null; ensured = false; },
 };

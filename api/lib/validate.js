@@ -2,12 +2,19 @@
 const net = require('node:net');
 
 const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[A-Za-z]{2,}$/;
-// Letters (any script), combining marks, spaces and . ' - only: no digits,
-// no URLs, so the name cannot carry a message into the email we send.
-const NAME_RE = /^[\p{L}\p{M}][\p{L}\p{M} .'\-]{1,99}$/u;
+// Letters (any script), combining marks, ZWJ/ZWNJ (needed in several Indic
+// scripts), spaces and . ' - only. No digits, and a dot may not be followed
+// by a letter (initials "S. K." or "S.K" are fine, "evil.com" is not), so the
+// name cannot carry a link or message into the email we send.
+const NAME_RE = /^[\p{L}\p{M}][\p{L}\p{M}\u200c\u200d .'\-]{1,99}$/u;
+const DOT_WORD = /\.\p{L}{2,}/u;
 
 function clean(v, max) {
-  return typeof v === 'string' ? v.replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max) : '';
+  if (typeof v !== 'string') return '';
+  return v.normalize('NFC')
+    .replace(/[\u2018\u2019\u02bc]/g, "'")          // smart apostrophes (iOS default)
+    .replace(/[\u0000-\u001f\u007f]/g, ' ')
+    .replace(/\s+/g, ' ').trim().slice(0, max);
 }
 
 /**
@@ -20,7 +27,7 @@ function validate(body) {
   const phoneRaw = clean(body && body.phone, 30);
   const digits = phoneRaw.replace(/[\s\-().]/g, '').replace(/^\+/, '');
   const fields = [];
-  if (!NAME_RE.test(name)) fields.push('name');
+  if (!NAME_RE.test(name) || DOT_WORD.test(name)) fields.push('name');
   if (!EMAIL_RE.test(email)) fields.push('email');
   if (!/^\d{10,15}$/.test(digits)) fields.push('phone');
   return { ok: fields.length === 0, fields, value: { name, email, phone: phoneRaw } };

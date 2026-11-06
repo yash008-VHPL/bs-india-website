@@ -39,9 +39,12 @@ function cfg() {
   return { tenant: GRAPH_TENANT_ID, clientId: GRAPH_CLIENT_ID, secret: GRAPH_CLIENT_SECRET };
 }
 
-async function timedFetch(url, opts = {}) {
+// Each call gets 8 s, or less if the request's overall deadline is nearer.
+async function timedFetch(url, opts = {}, deadline = Infinity) {
+  const ms = Math.min(TIMEOUT_MS, deadline - Date.now());
+  if (ms <= 0) throw new Error('request time budget exhausted');
   const ctl = new AbortController();
-  const t = setTimeout(() => ctl.abort(), TIMEOUT_MS);
+  const t = setTimeout(() => ctl.abort(), ms);
   try {
     return await fetch(url, { ...opts, signal: ctl.signal });
   } finally {
@@ -49,7 +52,7 @@ async function timedFetch(url, opts = {}) {
   }
 }
 
-async function getToken() {
+async function getToken(deadline) {
   if (cachedToken && cachedToken.exp > Date.now() + 120000) return cachedToken.value;
   const { tenant, clientId, secret } = cfg();
   const r = await timedFetch(`https://login.microsoftonline.com/${encodeURIComponent(tenant)}/oauth2/v2.0/token`, {
@@ -61,7 +64,7 @@ async function getToken() {
       grant_type: 'client_credentials',
       scope: 'https://graph.microsoft.com/.default',
     }),
-  });
+  }, deadline);
   if (!r.ok) throw new Error(`Graph token request failed: ${r.status} ${await safeText(r)}`);
   const j = await r.json();
   cachedToken = { value: j.access_token, exp: Date.now() + (Number(j.expires_in) || 3600) * 1000 };
@@ -72,13 +75,13 @@ async function safeText(r) {
   try { return (await r.text()).slice(0, 500); } catch { return ''; }
 }
 
-async function graph(method, path, body) {
-  const token = await getToken();
+async function graph(method, path, body, deadline) {
+  const token = await getToken(deadline);
   const r = await timedFetch(`${GRAPH}${path}`, {
     method,
     headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
     body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  }, deadline);
   if (!r.ok) throw new Error(`Graph ${method} ${path.split('?')[0]} failed: ${r.status} ${await safeText(r)}`);
   return r;
 }
@@ -92,8 +95,9 @@ async function graph(method, path, body) {
  * @param {string} [p.replyTo]
  * @param {{name:string, contentType:string, bytes:Buffer}} [p.attachment]
  * @param {boolean} [p.saveToSentItems]
+ * @param {number} [p.deadline]  epoch ms by which every call must finish
  */
-async function sendMail({ from, to, subject, html, replyTo, attachment, saveToSentItems = true }) {
+async function sendMail({ from, to, subject, html, replyTo, attachment, saveToSentItems = true, deadline = Infinity }) {
   const user = `/users/${encodeURIComponent(from)}`;
   const message = {
     subject,
@@ -112,18 +116,18 @@ async function sendMail({ from, to, subject, html, replyTo, attachment, saveToSe
         contentBytes: attachment.bytes.toString('base64'),
       }];
     }
-    await graph('POST', `${user}/sendMail`, { message, saveToSentItems });
+    await graph('POST', `${user}/sendMail`, { message, saveToSentItems }, deadline);
     return;
   }
 
   // Large attachment: draft, upload session, send.
-  const draft = await (await graph('POST', `${user}/messages`, message)).json();
+  const draft = await (await graph('POST', `${user}/messages`, message, deadline)).json();
   const msgPath = `${user}/messages/${encodeURIComponent(draft.id)}`;
   try {
     const size = attachment.bytes.length;
     const session = await (await graph('POST', `${msgPath}/attachments/createUploadSession`, {
       AttachmentItem: { attachmentType: 'file', name: attachment.name, size, contentType: attachment.contentType },
-    })).json();
+    }, deadline)).json();
 
     for (let start = 0; start < size; start += CHUNK) {
       const end = Math.min(start + CHUNK, size) - 1;
@@ -137,13 +141,14 @@ async function sendMail({ from, to, subject, html, replyTo, attachment, saveToSe
           'content-range': `bytes ${start}-${end}/${size}`,
         },
         body: chunk,
-      });
+      }, deadline);
       if (!r.ok) throw new Error(`Attachment upload failed at byte ${start}: ${r.status} ${await safeText(r)}`);
     }
-    await graph('POST', `${msgPath}/send`);
+    await graph('POST', `${msgPath}/send`, undefined, deadline);
   } catch (err) {
     // Do not leave a half-built draft in the sender's mailbox.
-    try { await graph('DELETE', msgPath); } catch { /* best effort */ }
+    // Cleanup gets its own short window even if the budget is spent.
+    try { await graph('DELETE', msgPath, undefined, Date.now() + 5000); } catch { /* best effort */ }
     throw err;
   }
 }

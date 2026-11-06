@@ -8,12 +8,14 @@ import './Catalogue.css';
 const ENDPOINT = '/api/catalogue-request';
 
 const FIELD_ERRORS = {
-  name: 'Enter your name (letters only).',
+  name: 'Enter your name in letters, with a space after any initials.',
   email: 'Enter a valid email address.',
   phone: 'Enter a phone number with 10 to 15 digits.',
 };
 const MESSAGES = {
   too_many: 'We have already received several requests from you. Please check your inbox, or try again tomorrow.',
+  busy: 'We are receiving a lot of requests right now. Please try again tomorrow.',
+  invalid: 'Please check your details and try again.',
   received: 'Thank you - we have your details. Our team will email the catalogue to you.',
   retry: 'Something went wrong on our side. Please try again in a few minutes.',
   network: 'Could not reach our server. Please check your connection and try again.',
@@ -30,6 +32,10 @@ export default function Catalogue() {
   useEffect(() => {
     if ((state.status === 'sent' || state.status === 'received') && resultRef.current) resultRef.current.focus();
   }, [state.status]);
+  // Move focus to the first field the server rejected, so screen readers announce it.
+  useEffect(() => {
+    if (state.fields.length) document.getElementById(`cat-${state.fields[0]}`)?.focus();
+  }, [state.fields]);
 
   const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -48,7 +54,10 @@ export default function Catalogue() {
       // Only an explicit 'received' means the details were kept. Anything
       // else - including a non-JSON error page - keeps the form open to retry.
       if (j.code === 'received') return setState({ status: 'received', error: MESSAGES.received, fields: [] });
-      if (j.code === 'invalid') return setState({ status: 'error', error: '', fields: j.fields || [] });
+      if (j.code === 'invalid') {
+        const fields = j.fields || [];
+        return setState({ status: 'error', error: fields.length ? '' : MESSAGES.invalid, fields });
+      }
       setState({ status: 'error', error: MESSAGES[j.code] || MESSAGES.retry, fields: [] });
     } catch {
       setState({ status: 'error', error: MESSAGES.network, fields: [] });

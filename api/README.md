@@ -42,15 +42,17 @@ The object ID is the one on the Enterprise applications page, not App registrati
 
 ## Limits and abuse
 
-- 3 requests per mailbox per 24 h (`+tags` and Gmail dots folded), 10 per IP per hour, site-wide daily cap.
-- Failed sends do not count towards the per-mailbox limit.
+- 3 requests per mailbox per 24 h (`+tags` and Gmail dots folded), 10 per IP per hour (IPv6 per /64), site-wide daily cap.
+- Failed sends count towards the per-IP and daily limits (so a broken send cannot flood the leads inbox) but not the per-mailbox one.
 - If the limits cannot be checked, nothing is sent (fails closed).
-- Honeypot field and minimum fill time: such requests are stored with status `suspect`, nothing is sent.
-- The name accepts letters, spaces and `.'-` only, so no links can be carried into the email.
+- Honeypot filled: stored as `suspect` (bounded), nothing sent, visitor sees success.
+- Submitted in under 1.5 s or without timing: stored as `flagged`, leads inbox notified, catalogue NOT sent automatically - send it by hand if genuine.
+- The name accepts letters, spaces and `.'-`; no digits, and no dot followed by a word, so no links can be carried into the email.
+- Whole request is budgeted to 35 s (SWA stops API requests at 45 s).
 
 ## Data
 
-Rows: name, email, phone, salted IP hash, user agent, status (`received`, `sent`, `failed`, `suspect`), error. No retention purge yet.
+Rows: name, email, phone, salted IP hash, user agent, status (`received`, `sent`, `failed`, `flagged`, `suspect`), error. No retention purge yet.
 
 ## Tests
 

@@ -16,6 +16,8 @@ const store = require('../lib/store');
 const catalogueLib = require('../lib/catalogue');
 const { validate, emailKey, parseIp } = require('../lib/validate');
 
+const real = { countSince: store.countSince, insert: store.insert };
+
 // ---- in-memory store -------------------------------------------------------
 let rows = [];
 let storeFail = { insert: false, count: false };
@@ -29,9 +31,9 @@ store.setStatus = async (key, status, error) => {
   const r = rows.find((x) => x.key.rowKey === key?.rowKey);
   if (r) Object.assign(r, { status, error });
 };
-store.countSince = async ({ column, value, since, cap }) => {
+store.countSince = async ({ column, value, since, cap, exclude = [] }) => {
   if (storeFail.count) throw new Error('table down');
-  return Math.min(cap, rows.filter((r) => r.createdAt >= since && !['failed', 'suspect'].includes(r.status)
+  return Math.min(cap, rows.filter((r) => r.createdAt >= since && !exclude.includes(r.status)
     && (!column || r[column] === value)).length);
 };
 
@@ -80,14 +82,38 @@ test('validates fields, including names that carry links or digits', async () =>
   assert.equal(calls.length, 0);
 });
 
-test('honeypot, missing timing and too-fast are stored as suspect, nothing sent', async () => {
-  for (const b of [{ ...good, bsi_hp: 'x' }, { ...good, t: 500 }, { name: good.name, email: good.email, phone: good.phone }]) {
-    const c = ctx(); await handler(c, req(b));
+test('honeypot: stored as suspect (bounded per IP), nothing sent, fake success', async () => {
+  for (let i = 0; i < 15; i++) {
+    const c = ctx(); await handler(c, req({ ...good, bsi_hp: 'x' }));
     assert.equal(c.res.status, 200);
   }
   assert.equal(calls.length, 0);
-  assert.equal(rows.length, 3);
+  assert.equal(rows.length, 10);
   assert.ok(rows.every((r) => r.status === 'suspect'));
+  // suspect rows do not use up a real visitor's limits
+  const c = ctx(); await handler(c, req(good));
+  assert.equal(c.res.status, 200);
+});
+
+test('too fast or no timing: flagged, stored, info@ notified, catalogue not sent, 202', async () => {
+  for (const b of [{ ...good, t: 500 }, { name: good.name, email: good.email, phone: good.phone }]) {
+    mockFetch();
+    const c = ctx(); await handler(c, req(b));
+    assert.equal(c.res.status, 202);
+    assert.equal(JSON.parse(c.res.body).code, 'received');
+    assert.equal(sends().length, 1);
+    const msg = JSON.parse(sends()[0].body).message;
+    assert.equal(msg.toRecipients[0].emailAddress.address, 'leads@example.com');
+    assert.match(msg.body.content, /flagged/);
+  }
+  assert.ok(rows.every((r) => r.status === 'flagged'));
+});
+
+test('failed sends still count towards the per-IP limit (no inbox flood)', async () => {
+  catalogueLib._set(null);
+  const st = [];
+  for (let i = 0; i < 11; i++) { const c = ctx(); await handler(c, req({ ...good, email: `f${i}@example.com` })); st.push(c.res.status); }
+  assert.deepEqual(st, [...Array(10).fill(202), 429]);
 });
 
 test('sent inline, then notification; row marked sent', async () => {
@@ -151,9 +177,13 @@ test('per-IP and daily caps', async () => {
   let c = ctx(); await handler(c, req({ ...good, email: 'u99@example.com' }));
   assert.equal(c.res.status, 429);
   process.env.CATALOGUE_DAILY_CAP = '10';
-  c = ctx(); await handler(c, req({ ...good, email: 'other@example.com' }, { 'x-azure-clientip': '198.51.100.1' }));
-  assert.equal(c.res.status, 429);
-  delete process.env.CATALOGUE_DAILY_CAP;
+  try {
+    c = ctx(); await handler(c, req({ ...good, email: 'other@example.com' }, { 'x-azure-clientip': '198.51.100.1' }));
+    assert.equal(c.res.status, 503);
+    assert.equal(JSON.parse(c.res.body).code, 'busy');
+  } finally {
+    delete process.env.CATALOGUE_DAILY_CAP;
+  }
 });
 
 test('large catalogue: upload session in chunks, no auth header on chunks', async () => {
@@ -206,4 +236,76 @@ test('helpers: emailKey and parseIp', () => {
   assert.equal(parseIp('[2001:db8::1]:443'), '2001:db8::1');
   assert.equal(parseIp('garbage, 198.51.100.2'), '198.51.100.2');
   assert.equal(parseIp(''), '');
+});
+
+test('validate: real names pass, link-carrying names fail', () => {
+  const ok = (n) => validate({ name: n, email: 'a@b.co', phone: '9876543210' }).ok;
+  for (const n of ['S. K. Patil', 'S.K. Patil', 'D’Souza', 'श्री. र. कुलकर्णी', 'र्‍या पाटील', 'ശ്രീ']) assert.ok(ok(n), n);
+  for (const n of ['Claim prize at evil.com', 'Get cash at bit.ly', 'A', 'x 100']) assert.ok(!ok(n), n);
+});
+
+test('store.countSince builds a partition-bounded, escaped filter', async () => {
+  const { TableClient } = require('@azure/data-tables');
+  const orig = { list: TableClient.prototype.listEntities, create: TableClient.prototype.createTable };
+  let seen;
+  TableClient.prototype.createTable = async () => {};
+  TableClient.prototype.listEntities = function (opts) { seen = opts; return (async function* () { yield {}; yield {}; })(); };
+  try {
+    store._reset();
+    const n = await real.countSince({ column: 'emailKey', value: "o'x@y.com", since: new Date('2026-11-05T00:00:00Z'), cap: 5, exclude: ['failed'] });
+    assert.equal(n, 2);
+    assert.equal(seen.queryOptions.filter,
+      "PartitionKey ge '2026-11' and createdAt ge datetime'2026-11-05T00:00:00.000Z' and status ne 'failed' and emailKey eq 'o''x@y.com'");
+    await assert.rejects(real.countSince({ column: 'name', value: 'x', since: new Date(), cap: 1 }));
+  } finally {
+    TableClient.prototype.listEntities = orig.list;
+    TableClient.prototype.createTable = orig.create;
+    store._reset();
+  }
+});
+
+test('store.hashIp: needs a salt; IPv6 bucketed by /64', () => {
+  const h = store.hashIp;
+  assert.equal(h('2001:db8:1:2::9'), h('2001:db8:1:2:aaaa::1'));
+  assert.notEqual(h('2001:db8:1:2::9'), h('2001:db8:1:3::9'));
+  const salt = process.env.IP_HASH_SALT;
+  delete process.env.IP_HASH_SALT;
+  try { assert.equal(h('203.0.113.9'), ''); } finally { process.env.IP_HASH_SALT = salt; }
+});
+
+test('catalogue loader: 404 and empty are missing, non-PDF and gap sizes throw', async () => {
+  const blobLib = require('@azure/storage-blob');
+  const orig = blobLib.BlobServiceClient.fromConnectionString;
+  let next;
+  blobLib.BlobServiceClient.fromConnectionString = () => ({
+    getContainerClient: () => ({ getBlobClient: () => ({ downloadToBuffer: async () => next() }) }),
+  });
+  const load = async () => { catalogueLib._set(undefined); return catalogueLib.loadCatalogue(); };
+  try {
+    next = () => { const e = new Error('nf'); e.statusCode = 404; throw e; };
+    assert.equal(await load(), null);
+    next = () => Buffer.alloc(0);
+    assert.equal(await load(), null);
+    next = () => Buffer.from('<html>');
+    await assert.rejects(load(), /not a PDF/);
+    next = () => Buffer.concat([Buffer.from('%PDF-'), Buffer.alloc(graph.INLINE_MAX)]);
+    await assert.rejects(load(), /resize/);
+    next = () => Buffer.concat([Buffer.from('%PDF-1.7'), Buffer.alloc(100)]);
+    const c = await load();
+    assert.equal(c.bytes.length, 108);
+    // errors are cached briefly: a second call does not download again
+    let downloads = 0;
+    next = () => { downloads++; throw new Error('boom'); };
+    catalogueLib._set(undefined);
+    await assert.rejects(catalogueLib.loadCatalogue());
+    await assert.rejects(catalogueLib.loadCatalogue());
+    assert.equal(downloads, 1);
+  } finally {
+    blobLib.BlobServiceClient.fromConnectionString = orig;
+    catalogueLib._set(undefined);
+  }
+});
+
+test('deadline: a spent budget aborts Graph calls instead of overrunning', async () => {
+  await assert.rejects(graph.sendMail({ from: 'a@b.co', to: 'c@d.co', subject: 's', html: 'h', deadline: Date.now() - 1 }), /budget/);
 });
