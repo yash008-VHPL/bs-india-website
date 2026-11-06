@@ -18,11 +18,12 @@
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": [
-      "/assets/*", "/fonts/*", "/product-logos/*", "/icons/*",
+      "/api/*", "/assets/*", "/fonts/*", "/product-logos/*", "/icons/*",
       "/*.{css,js,ico,png,jpg,webp,svg,woff2,json,txt,xml}",
       "/beta/*", "/beta/assets/*", "/beta/fonts/*", "/beta/icons/*", "/beta/product-logos/*"
     ]
   },
+  "platform": { "apiRuntime": "node:22" },
   "globalHeaders": {
     "Cache-Control": "no-cache",
     "X-Frame-Options": "SAMEORIGIN",
