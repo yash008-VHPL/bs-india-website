@@ -1,0 +1,3 @@
+# Put the catalogue PDF here as catalogue.pdf (or set CATALOGUE_FILE).
+# Kept inside api/ on purpose: files in public/ are downloadable by anyone,
+# which would bypass the form.

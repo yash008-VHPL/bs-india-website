@@ -17,6 +17,7 @@ const News          = lazy(() => import('./pages/News'));
 const Contact       = lazy(() => import('./pages/Contact'));
 const Webstore      = lazy(() => import('./pages/Webstore'));
 const Legal         = lazy(() => import('./pages/Legal'));
+const Catalogue     = lazy(() => import('./pages/Catalogue'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -69,6 +70,7 @@ function Layout() {
             <Route path="/species"     element={<Species />} />
             <Route path="/news"        element={<News />} />
             <Route path="/contact"     element={<Contact />} />
+            <Route path="/catalogue"   element={<Catalogue />} />
             <Route path="/shop"        element={<Webstore />} />
             <Route path="/imprint"     element={<Legal page="imprint" />} />
             <Route path="/privacy"     element={<Legal page="privacy" />} />

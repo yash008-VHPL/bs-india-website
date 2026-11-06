@@ -34,6 +34,11 @@ jobs:
         with: { node-version: '22', cache: 'npm' }
       - run: npm ci
 
+      # Unit tests for the catalogue form API. Mocked network, no secrets.
+      - name: Test the API
+        working-directory: api
+        run: npm ci --no-audit --no-fund && npm test && rm -rf node_modules
+
       - name: Build the production site
         # VITE_ROBOTS fills the %VITE_ROBOTS% placeholder in index.html. Without
         # it Vite leaves the literal token in the shipped HTML and crawlers see
@@ -90,10 +95,12 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
           app_location: dist
-          api_location: ""
+          api_location: api
           output_location: ""
           skip_app_build: true
-          skip_api_build: true
+          # The API (api/) IS built by the action (Oryx runs npm install
+          # there). Only the app build is skipped, for the reason above.
+          skip_api_build: false
 
   close_pull_request:
     if: >-
