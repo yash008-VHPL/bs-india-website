@@ -7,9 +7,10 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@azure/data-tables": "^13.3.0"
+    "@azure/data-tables": "^13.3.0",
+    "@azure/storage-blob": "^12.34.0"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   }
 }

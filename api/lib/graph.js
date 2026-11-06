@@ -7,17 +7,27 @@
  * ("Application Mail.Send" role on a management scope that contains only
  * that mailbox). See api/README.md.
  *
- * Attachments:
- *   < 3 MB  -> single sendMail call with the file inline (base64)
- *   >= 3 MB -> draft + attachment upload session + send (Graph's large-file
- *              route; up to 150 MB, but keep the catalogue small - many
- *              receiving servers reject mail over ~10-20 MB)
+ * Attachments (raw PDF size):
+ *   < 2.8 MiB  -> single sendMail call, file inline (base64 adds a third;
+ *                 Graph caps a request at about 4 MB)
+ *   >= 3 MiB   -> draft + attachment upload session + send. Needs the
+ *                 "Application Mail.ReadWrite" role as well (api/README.md)
+ *   in between -> refused: too big to inline, too small for an upload session
+ * Keep the catalogue under ~10 MB - many receiving servers reject more.
  */
 
 const GRAPH = 'https://graph.microsoft.com/v1.0';
-const INLINE_LIMIT = 3 * 1024 * 1024;   // Graph's large-attachment threshold
-const CHUNK = 320 * 1024 * 9;          // 2.8 MiB, under the 4 MB per-request cap
-const TIMEOUT_MS = 20000;
+const INLINE_MAX = Math.floor(2.8 * 1024 * 1024);  // raw bytes, base64 stays < 4 MB
+const SESSION_MIN = 3 * 1024 * 1024;              // Graph upload-session minimum
+const CHUNK = 320 * 1024 * 9;                     // 2.8 MiB, under the 4 MB per-request cap
+const TIMEOUT_MS = 8000;                          // SWA kills an API request at 45 s
+
+/** Throws if a file of this size cannot be sent by either route. */
+function checkAttachmentSize(bytes) {
+  if (bytes >= INLINE_MAX && bytes < SESSION_MIN) {
+    throw new Error(`Catalogue is ${bytes} bytes: resize it below 2.8 MiB or above 3 MiB`);
+  }
+}
 
 let cachedToken = null;
 
@@ -92,7 +102,8 @@ async function sendMail({ from, to, subject, html, replyTo, attachment, saveToSe
   };
   if (replyTo) message.replyTo = [{ emailAddress: { address: replyTo } }];
 
-  if (!attachment || attachment.bytes.length < INLINE_LIMIT) {
+  if (attachment) checkAttachmentSize(attachment.bytes.length);
+  if (!attachment || attachment.bytes.length < INLINE_MAX) {
     if (attachment) {
       message.attachments = [{
         '@odata.type': '#microsoft.graph.fileAttachment',
@@ -137,4 +148,4 @@ async function sendMail({ from, to, subject, html, replyTo, attachment, saveToSe
   }
 }
 
-module.exports = { sendMail, _reset: () => { cachedToken = null; }, INLINE_LIMIT, CHUNK };
+module.exports = { sendMail, checkAttachmentSize, _reset: () => { cachedToken = null; }, INLINE_MAX, SESSION_MIN, CHUNK };

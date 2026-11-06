@@ -1,43 +1,36 @@
 'use strict';
 /*
- * POST /api/catalogue-request  { name, email, phone, website (honeypot), t (ms on page) }
+ * POST /api/catalogue-request  { name, email, phone, bsi_hp (honeypot), t (ms on page) }
  *
- * 1. validate + bot checks + throttle
+ * 1. bot checks, validation, limits (fail closed)
  * 2. store the request (Azure Table)
  * 3. email the catalogue to the requester (Graph, from MAIL_SENDER)
  * 4. notify NOTIFY_TO with the lead details
  *
+ * Responses:
+ *   200 {ok:true}                  catalogue sent
+ *   202 {code:'received'}          not sent, but the lead was stored or notified
+ *   400 {code:'invalid', fields}   fix the fields
+ *   415 {code:'unsupported'}
+ *   429 {code:'too_many'}
+ *   500/503 {code:'retry'}         nothing kept - the visitor should try again
+ *
  * App settings: see api/README.md
  */
-const fs = require('node:fs');
-const path = require('node:path');
-const { validate } = require('../lib/validate');
+const { validate, emailKey, parseIp } = require('../lib/validate');
 const store = require('../lib/store');
 const { sendMail } = require('../lib/graph');
+const catalogueLib = require('../lib/catalogue');
 const copy = require('./copy');
 
 const EMAIL_PER_DAY = 3;
 const IP_PER_HOUR = 10;
-const MIN_FILL_MS = 2500;
-
-let catalogueCache = null;
-function loadCatalogue() {
-  if (catalogueCache) return catalogueCache;
-  const file = process.env.CATALOGUE_FILE || 'catalogue.pdf';
-  const full = path.join(__dirname, '..', 'catalogue', path.basename(file));
-  if (!fs.existsSync(full)) return null;
-  catalogueCache = {
-    name: process.env.CATALOGUE_NAME || 'Berg+Schmidt-India-Catalogue.pdf',
-    contentType: 'application/pdf',
-    bytes: fs.readFileSync(full),
-  };
-  return catalogueCache;
-}
+const MIN_FILL_MS = 1500;
+const dailyCap = () => Number(process.env.CATALOGUE_DAILY_CAP) || 200;
 
 function clientIp(req) {
   const h = req.headers || {};
-  const raw = h['x-azure-clientip'] || h['x-client-ip'] || (h['x-forwarded-for'] || '').split(',')[0];
-  return String(raw || '').trim().replace(/:\d+$/, '');
+  return parseIp(h['x-azure-clientip']) || parseIp(h['x-forwarded-for']);
 }
 
 function reply(context, status, body) {
@@ -50,60 +43,81 @@ function reply(context, status, body) {
 
 module.exports = async function (context, req) {
   const log = context.log;
-  const ctype = String((req.headers || {})['content-type'] || '');
-  if (!ctype.includes('application/json')) return reply(context, 415, { error: 'unsupported' });
+  const headers = req.headers || {};
+  if (!String(headers['content-type'] || '').includes('application/json')) {
+    return reply(context, 415, { code: 'unsupported' });
+  }
 
   let body = req.body;
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = null; } }
-  if (!body || typeof body !== 'object') return reply(context, 400, { error: 'invalid', fields: [] });
+  if (!body || typeof body !== 'object') return reply(context, 400, { code: 'invalid', fields: [] });
 
-  // Bots: filled the hidden field, or submitted faster than a person can type.
-  // Answer as if it worked so they learn nothing.
-  if (body.website || (Number(body.t) > 0 && Number(body.t) < MIN_FILL_MS)) {
+  const v = validate(body);
+  const ipHash = store.hashIp(clientIp(req));
+  const userAgent = String(headers['user-agent'] || '').slice(0, 300);
+
+  // Bots: filled the hidden field, sent no timing, or were faster than a
+  // person. Keep a 'suspect' row for review, send nothing, and answer as if
+  // it worked so they learn nothing.
+  const t = Number(body.t);
+  if (body.bsi_hp || !(t >= MIN_FILL_MS)) {
+    try {
+      await store.insert({ ...v.value, emailKey: v.value.email ? emailKey(v.value.email) : '', ipHash, userAgent, status: 'suspect' });
+    } catch (err) {
+      log.error('suspect insert failed', err && err.message);
+    }
     return reply(context, 200, { ok: true });
   }
 
-  const v = validate(body);
-  if (!v.ok) return reply(context, 400, { error: 'invalid', fields: v.fields });
+  if (!v.ok) return reply(context, 400, { code: 'invalid', fields: v.fields });
   const { name, email, phone } = v.value;
-  const emailLower = email.toLowerCase();
-  const ipHash = store.hashIp(clientIp(req));
+  const key = emailKey(email);
 
-  if (store.enabled()) {
-    try {
-      const dayAgo = new Date(Date.now() - 24 * 3600 * 1000);
-      const hourAgo = new Date(Date.now() - 3600 * 1000);
-      if (await store.countSince('emailLower', emailLower, dayAgo, EMAIL_PER_DAY) >= EMAIL_PER_DAY
-        || await store.countSince('ipHash', ipHash, hourAgo, IP_PER_HOUR) >= IP_PER_HOUR) {
-        return reply(context, 429, { error: 'too_many' });
-      }
-    } catch (err) {
-      log.error('throttle check failed', err && err.message);
-    }
-  } else {
-    log.warn('LEADS_TABLE_CONNECTION not set: requests are not stored or throttled');
+  if (!store.enabled()) {
+    log.error('LEADS_TABLE_CONNECTION not set');
+    return reply(context, 503, { code: 'retry' });
   }
 
-  let key = null;
+  // Limits. Fail closed: if they cannot be checked, nothing is sent.
   try {
-    key = await store.insert({
-      name, email, emailLower, phone, ipHash,
-      userAgent: String((req.headers || {})['user-agent'] || '').slice(0, 300),
-    });
+    const now = Date.now();
+    const day = new Date(now - 24 * 3600 * 1000);
+    if (await store.countSince({ since: day, cap: dailyCap() }) >= dailyCap()) {
+      log.error('daily cap reached');
+      return reply(context, 429, { code: 'too_many' });
+    }
+    if (await store.countSince({ column: 'emailKey', value: key, since: day, cap: EMAIL_PER_DAY }) >= EMAIL_PER_DAY) {
+      return reply(context, 429, { code: 'too_many' });
+    }
+    if (ipHash && await store.countSince({ column: 'ipHash', value: ipHash, since: new Date(now - 3600 * 1000), cap: IP_PER_HOUR }) >= IP_PER_HOUR) {
+      return reply(context, 429, { code: 'too_many' });
+    }
+  } catch (err) {
+    log.error('limit check failed', err && err.message);
+    return reply(context, 503, { code: 'retry' });
+  }
+
+  let row = null;
+  try {
+    row = await store.insert({ name, email, emailKey: key, phone, ipHash, userAgent });
   } catch (err) {
     log.error('lead insert failed', err && err.message);
   }
 
   const sender = process.env.MAIL_SENDER;
-  const catalogue = loadCatalogue();
   let sent = false;
   let error = '';
+  let catalogue = null;
+  try {
+    catalogue = await catalogueLib.loadCatalogue();
+    if (!catalogue) error = 'catalogue file not uploaded yet';
+  } catch (err) {
+    error = 'catalogue could not be loaded';
+    log.error('catalogue load failed', err && err.message);
+  }
 
-  if (!catalogue) {
-    error = 'catalogue file not uploaded yet';
-  } else if (!sender) {
-    error = 'MAIL_SENDER not set';
-  } else {
+  if (catalogue && !sender) error = 'MAIL_SENDER not set';
+  if (catalogue && sender) {
     try {
       const m = copy.customer({ name });
       await sendMail({ from: sender, to: email, subject: m.subject, html: m.html, attachment: catalogue, saveToSentItems: true });
@@ -114,24 +128,17 @@ module.exports = async function (context, req) {
     }
   }
 
-  if (sender && process.env.NOTIFY_TO) {
-    try {
-      const n = copy.notify({ name, email, phone, sent, error });
-      await sendMail({ from: sender, to: process.env.NOTIFY_TO, subject: n.subject, html: n.html, replyTo: email, saveToSentItems: false });
-    } catch (err) {
-      log.error('notification failed', err && err.message);
-    }
-  }
-
-  try {
-    await store.setStatus(key, sent ? 'sent' : 'failed', error);
-  } catch (err) {
-    log.error('status update failed', err && err.message);
-  }
+  const notifyTask = (async () => {
+    if (!sender || !process.env.NOTIFY_TO) return false;
+    const n = copy.notify({ name, email, phone, sent, error });
+    await sendMail({ from: sender, to: process.env.NOTIFY_TO, subject: n.subject, html: n.html, replyTo: email, saveToSentItems: false });
+    return true;
+  })().catch((err) => { log.error('notification failed', err && err.message); return false; });
+  const statusTask = store.setStatus(row, sent ? 'sent' : 'failed', error)
+    .catch((err) => log.error('status update failed', err && err.message));
+  const [notified] = await Promise.all([notifyTask, statusTask]);
 
   if (sent) return reply(context, 200, { ok: true });
-  if (!catalogue) return reply(context, 503, { error: 'unavailable' });
-  return reply(context, 502, { error: 'send_failed' });
+  if (row || notified) return reply(context, 202, { code: 'received' });
+  return reply(context, 500, { code: 'retry' });
 };
-
-module.exports._reset = () => { catalogueCache = null; };

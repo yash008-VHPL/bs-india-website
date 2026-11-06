@@ -1,8 +1,10 @@
 'use strict';
 /*
  * Catalogue requests in Azure Table Storage.
- * Setting: LEADS_TABLE_CONNECTION (storage account connection string)
- *          LEADS_TABLE_NAME       (optional, default CatalogueRequests)
+ * Settings: LEADS_TABLE_CONNECTION (storage account connection string)
+ *           LEADS_TABLE_NAME       (optional, default CatalogueRequests)
+ *           IP_HASH_SALT           (random secret; without it no IP throttle)
+ * PartitionKey = YYYY-MM (UTC), so time-bounded queries skip old partitions.
  */
 const crypto = require('node:crypto');
 
@@ -24,21 +26,28 @@ async function ensureTable(c) {
   ensured = true;
 }
 
+/** Salted hash; '' when no salt is configured (IP throttle then off). */
 function hashIp(ip) {
-  if (!ip) return '';
-  const salt = process.env.IP_HASH_SALT || process.env.GRAPH_CLIENT_ID || 'bsi';
+  const salt = process.env.IP_HASH_SALT;
+  if (!ip || !salt) return '';
   return crypto.createHash('sha256').update(`${salt}:${ip}`).digest('hex').slice(0, 32);
 }
 
-/** Count rows matching a column value created after `since`. Stops at `cap`. */
-async function countSince(column, value, since, cap) {
+const month = (d) => d.toISOString().slice(0, 7);
+
+/**
+ * Rows created after `since` that count towards limits (not failed, not
+ * suspect), optionally matching column = value. Stops at `cap`.
+ */
+async function countSince({ column, value, since, cap }) {
   const c = getClient();
-  if (!c || !value) return 0;
+  if (!c) return 0;
   await ensureTable(c);
   const { odata } = require('@azure/data-tables');
-  const filter = column === 'emailLower'
-    ? odata`emailLower eq ${value} and createdAt ge ${since}`
-    : odata`ipHash eq ${value} and createdAt ge ${since}`;
+  let filter = odata`PartitionKey ge ${month(since)} and createdAt ge ${since} and status ne ${'failed'} and status ne ${'suspect'}`;
+  if (column === 'emailKey') filter += ' and ' + odata`emailKey eq ${value}`;
+  else if (column === 'ipHash') filter += ' and ' + odata`ipHash eq ${value}`;
+  else if (column) throw new Error(`unknown column ${column}`);
   let n = 0;
   for await (const _ of c.listEntities({ queryOptions: { filter, select: ['RowKey'] } })) {
     if (++n >= cap) break;
@@ -52,11 +61,11 @@ async function insert(lead) {
   await ensureTable(c);
   const now = new Date();
   const entity = {
-    partitionKey: now.toISOString().slice(0, 7),                    // YYYY-MM
-    rowKey: `${now.toISOString().replace(/[:.]/g, '-')}_${crypto.randomUUID().slice(0, 8)}`,
-    createdAt: now,
     status: 'received',
     ...lead,
+    partitionKey: month(now),
+    rowKey: `${now.toISOString().replace(/[:.]/g, '-')}_${crypto.randomUUID().slice(0, 8)}`,
+    createdAt: now,
   };
   await c.createEntity(entity);
   return { partitionKey: entity.partitionKey, rowKey: entity.rowKey };
@@ -68,4 +77,8 @@ async function setStatus(key, status, error) {
   await c.updateEntity({ ...key, status, error: error ? String(error).slice(0, 1000) : '' }, 'Merge');
 }
 
-module.exports = { insert, setStatus, countSince, hashIp, enabled: () => !!process.env.LEADS_TABLE_CONNECTION, _reset: () => { client = null; ensured = false; } };
+module.exports = {
+  insert, setStatus, countSince, hashIp,
+  enabled: () => !!process.env.LEADS_TABLE_CONNECTION,
+  _reset: () => { client = null; ensured = false; },
+};

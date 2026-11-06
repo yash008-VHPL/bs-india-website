@@ -1,7 +1,11 @@
-.cat-inner{max-width:608px;margin:0 auto;padding:48px 24px}
+/* Same outer box as .ct-inner, so the form's left edge lines up with the hero heading. */
+.cat-inner{max-width:1248px;margin:0 auto;padding:48px 24px}
+.cat-inner .ct-form-wrap{max-width:560px}
 .catalogue-page .ct-form .btn-submit{width:100%}
 .catalogue-page .btn-submit:disabled{opacity:.6;cursor:wait}
 .catalogue-page .fg input.is-bad{border-color:var(--accent-red)}
+.cat-field-err{color:var(--accent-red-dark);font-size:var(--fs-label);font-weight:600}
 .cat-error{color:var(--accent-red-dark);font-size:var(--fs-body);margin:0 0 12px}
 .cat-hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.ct-success h2:focus{outline:none}
 @media(max-width:600px){.cat-inner{padding:28px 16px}}
