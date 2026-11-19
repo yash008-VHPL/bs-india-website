@@ -6,3 +6,4 @@
 .cat-error a{color:var(--accent-red-dark);text-decoration:underline}
 .cat-hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
 .ct-success h2:focus{outline:none}
+.contact-page .fg input.is-bad:focus,.contact-page .fg textarea.is-bad:focus{outline:3px solid var(--accent-red);outline-offset:0}

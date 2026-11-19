@@ -39,9 +39,9 @@ const FIELD_ERRORS = {
   message: 'Tell us a little more about what you need.',
 };
 const MESSAGES = {
-  invalid: 'Please check your details and try again.',
-  retry: 'Something went wrong on our side. Please try again in a few minutes, or email us directly.',
-  network: 'Could not reach our server. Please check your connection and try again.',
+  activate: 'Our enquiry form is being switched on. Please email us directly for now:',
+  retry: 'Something went wrong on our side. Please try again in a few minutes, or email us at',
+  network: 'Could not reach our server. Please check your connection and try again, or email us at',
 };
 
 function buildPrefillMessage({ segment, city, detail }) {
@@ -85,7 +85,12 @@ export default function Contact() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [segment, city, detail]);
 
-  const handleChange=e=>setForm(f=>({...f,[e.target.name]:e.target.value}));
+  const handleChange=e=>{
+    const n=e.target.name;
+    setForm(f=>({...f,[n]:e.target.value}));
+    // Clear a field's error as soon as the visitor edits it.
+    setState(st=>st.fields.includes(n)?{...st,fields:st.fields.filter(x=>x!==n)}:st);
+  };
   const handleSubmit=async e=>{
     e.preventDefault();
     if(state.status==='sending') return;
@@ -106,6 +111,8 @@ export default function Contact() {
         })});
       const j=await r.json().catch(()=>({}));
       if(r.ok&&(j.success===true||j.success==='true')) return setState({status:'sent',error:'',fields:[]});
+      // Before info@ is activated FormSubmit answers 200 with success "false".
+      if(/activat/i.test(j.message||'')) return setState({status:'error',error:MESSAGES.activate,fields:[]});
       setState({status:'error',error:MESSAGES.retry,fields:[]});
     }catch{
       setState({status:'error',error:MESSAGES.network,fields:[]});
@@ -145,7 +152,7 @@ export default function Contact() {
               <p>Your message has reached our team. We will reply to <strong>{form.email}</strong> within 1 business day.</p>
             </div>
           ):(
-            <form id="contact-form" className="ct-form" onSubmit={handleSubmit}>
+            <form id="contact-form" className="ct-form" onSubmit={handleSubmit} noValidate>
               <h2>Send us a message</h2>
               <div className="form-row">
                 <div className="fg"><label htmlFor="ct-name">Full Name *</label><input name="name" type="text" autoComplete="name" required minLength={2} maxLength={100} value={form.name} onChange={handleChange} placeholder="Your name" {...fp('name')}/>{ferr('name')}</div>
@@ -188,7 +195,7 @@ export default function Contact() {
                 <input id="ct-hp" name="bsi_hp" type="text" tabIndex={-1} autoComplete="off" value={form.bsi_hp} onChange={handleChange}/>
               </div>
               <div aria-live="polite">
-                {state.status==='error'&&state.error&&<p className="cat-error" role="alert">{state.error} {state.error!==MESSAGES.invalid&&<a href="mailto:info@berg-schmidt.co.in">info@berg-schmidt.co.in</a>}</p>}
+                {state.status==='error'&&state.error&&<p className="cat-error" role="alert">{state.error} <a href="mailto:info@berg-schmidt.co.in">info@berg-schmidt.co.in</a></p>}
               </div>
               <button type="submit" className="btn-submit" disabled={state.status==='sending'}>{state.status==='sending'?'Sending…':'Send Message'}</button>
             </form>
