@@ -9,3 +9,7 @@
 .cat-hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
 .ct-success h2:focus{outline:none}
 @media(max-width:600px){.cat-inner{padding:28px 16px}}
+/* Shared with the contact form */
+.contact-page .fg input.is-bad,.contact-page .fg textarea.is-bad{border-color:var(--accent-red)}
+.contact-page .btn-submit:disabled{opacity:.6;cursor:wait}
+.cat-error a{color:var(--accent-red-dark);text-decoration:underline}

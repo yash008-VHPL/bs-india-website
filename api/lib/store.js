@@ -9,6 +9,7 @@
 const crypto = require('node:crypto');
 const net = require('node:net');
 
+function make(tableName) {
 let client = null;
 let ensured = false;
 
@@ -17,7 +18,7 @@ function getClient() {
   const conn = process.env.LEADS_TABLE_CONNECTION;
   if (!conn) return null;
   const { TableClient } = require('@azure/data-tables');
-  client = TableClient.fromConnectionString(conn, process.env.LEADS_TABLE_NAME || 'CatalogueRequests');
+  client = TableClient.fromConnectionString(conn, tableName());
   return client;
 }
 
@@ -92,8 +93,15 @@ async function setStatus(key, status, error) {
   await c.updateEntity({ ...key, status, error: error ? String(error).slice(0, 1000) : '' }, 'Merge', { abortSignal: signal() });
 }
 
-module.exports = {
+return {
   insert, setStatus, countSince, hashIp, ipBucket,
   enabled: () => !!process.env.LEADS_TABLE_CONNECTION,
   _reset: () => { client = null; ensured = false; },
 };
+}
+
+// Default instance: catalogue requests. forTable() gives another form its own
+// table in the same storage account (same connection string).
+const store = make(() => process.env.LEADS_TABLE_NAME || 'CatalogueRequests');
+store.forTable = (name) => make(() => name);
+module.exports = store;

@@ -1,14 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
 import CapIcon from '../components/CapIcon';
 import './Contact.css';
+import './Catalogue.css';
 import usePageMeta from '../usePageMeta';
 
+// Visible text: never the internal business-division names.
 const SEGMENT_LABEL = {
-  dairy: 'dairy feed supplements',
-  poultry: 'poultry feed supplements',
-  commodity: 'commodity feed fats and oils',
+  dairy: 'dairy nutrition products',
+  poultry: 'poultry nutrition products',
+  commodity: 'feed fats and oils',
+};
+
+// Absolute on purpose: the API lives at the site root, also under /beta.
+const ENDPOINT = '/api/contact-request';
+const FIELD_ERRORS = {
+  name: 'Enter your name in letters, with a space after any initials.',
+  email: 'Enter a valid email address.',
+  phone: 'Enter a phone number with 10 to 15 digits, or leave it empty.',
+  message: 'Tell us a little more (at least 10 characters).',
+};
+const MESSAGES = {
+  too_many: 'We have already received several messages from you today. Our team will reply shortly.',
+  busy: 'We are receiving a lot of messages right now. Please email us directly.',
+  invalid: 'Please check your details and try again.',
+  retry: 'Something went wrong on our side. Please try again in a few minutes, or email us directly.',
+  network: 'Could not reach our server. Please check your connection and try again.',
 };
 
 function buildPrefillMessage({ segment, city, detail }) {
@@ -31,8 +49,13 @@ export default function Contact() {
   const city = params.get('city') || '';
   const detail = params.get('detail') || '';
 
-  const [form,setForm]=useState({name:'',company:'',email:'',phone:'',product:'',message:'',type:'enquiry'});
-  const [submitted,setSubmitted]=useState(false);
+  const [form,setForm]=useState({name:'',company:'',email:'',phone:'',product:'',message:'',type:'enquiry',bsi_hp:''});
+  const [state,setState]=useState({status:'idle',error:'',fields:[]});
+  const opened=useRef(0);
+  const resultRef=useRef(null);
+  useEffect(()=>{opened.current=Date.now();},[]);
+  useEffect(()=>{ if(state.status==='sent'&&resultRef.current) resultRef.current.focus(); },[state.status]);
+  useEffect(()=>{ if(state.fields.length) document.getElementById(`ct-${state.fields[0]}`)?.focus(); },[state.fields]);
 
   // Pre-fill from query params (segment-level enquiry). Runs once per param change.
   useEffect(() => {
@@ -48,13 +71,26 @@ export default function Contact() {
   }, [segment, city, detail]);
 
   const handleChange=e=>setForm(f=>({...f,[e.target.name]:e.target.value}));
-  const handleSubmit=e=>{
+  const handleSubmit=async e=>{
     e.preventDefault();
-    const sub=encodeURIComponent(`Enquiry - ${form.type} - ${form.name}`);
-    const body=encodeURIComponent(`Name: ${form.name}\nCompany: ${form.company}\nEmail: ${form.email}\nPhone: ${form.phone}\nProduct of Interest: ${form.product}\nEnquiry Type: ${form.type}\n\nMessage:\n${form.message}`);
-    window.location.href=`mailto:info@berg-schmidt.co.in?subject=${sub}&body=${body}`;
-    setSubmitted(true);
+    if(state.status==='sending') return;
+    setState({status:'sending',error:'',fields:[]});
+    try{
+      const r=await fetch(ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({...form,t:Date.now()-opened.current})});
+      const j=await r.json().catch(()=>({}));
+      // 'received' = stored on our side even though the email to the team
+      // failed; the team sees it in the enquiries table, so it is not lost.
+      if((r.ok&&j.ok)||j.code==='received') return setState({status:'sent',error:'',fields:[]});
+      if(j.code==='invalid'){const fields=j.fields||[];return setState({status:'error',error:fields.length?'':MESSAGES.invalid,fields});}
+      setState({status:'error',error:MESSAGES[j.code]||MESSAGES.retry,fields:[]});
+    }catch{
+      setState({status:'error',error:MESSAGES.network,fields:[]});
+    }
   };
+  const bad=f=>state.fields.includes(f);
+  const fp=f=>({id:`ct-${f}`,'aria-invalid':bad(f),'aria-describedby':bad(f)?`ct-${f}-err`:undefined,className:bad(f)?'is-bad':''});
+  const ferr=f=>bad(f)&&<span id={`ct-${f}-err`} className="cat-field-err">{FIELD_ERRORS[f]}</span>;
   return (
     <main className="contact-page">
       <div className="pg-hero"><div className="pg-hero-inner">
@@ -79,26 +115,26 @@ export default function Contact() {
           </div>
         </div>
         <div className="ct-form-wrap">
-          {submitted?(
+          {state.status==='sent'?(
             <div className="ct-success">
               <div className="ct-success-icon"><CapIcon name="check" size={26}/></div>
-              <h2>Thank you for reaching out!</h2>
-              <p>Your email client should have opened with your message pre-filled. We will be in touch shortly.</p>
+              <h2 ref={resultRef} tabIndex={-1}>Thank you for reaching out</h2>
+              <p>Your message has reached our team. We will reply to <strong>{form.email}</strong> within 1 business day.</p>
             </div>
           ):(
             <form id="contact-form" className="ct-form" onSubmit={handleSubmit}>
               <h2>Send us a message</h2>
               <div className="form-row">
-                <div className="fg"><label>Full Name *</label><input name="name" type="text" required value={form.name} onChange={handleChange} placeholder="Your name"/></div>
-                <div className="fg"><label>Company / Farm</label><input name="company" type="text" value={form.company} onChange={handleChange} placeholder="Organisation name"/></div>
+                <div className="fg"><label htmlFor="ct-name">Full Name *</label><input name="name" type="text" autoComplete="name" required minLength={2} maxLength={100} value={form.name} onChange={handleChange} placeholder="Your name" {...fp('name')}/>{ferr('name')}</div>
+                <div className="fg"><label htmlFor="ct-company">Company / Farm</label><input id="ct-company" name="company" type="text" autoComplete="organization" maxLength={120} value={form.company} onChange={handleChange} placeholder="Organisation name"/></div>
               </div>
               <div className="form-row">
-                <div className="fg"><label>Email Address *</label><input name="email" type="email" required value={form.email} onChange={handleChange} placeholder="you@company.com"/></div>
-                <div className="fg"><label>Phone / WhatsApp</label><input name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 XXXXX XXXXX"/></div>
+                <div className="fg"><label htmlFor="ct-email">Email Address *</label><input name="email" type="email" autoComplete="email" required maxLength={254} value={form.email} onChange={handleChange} placeholder="you@company.com" {...fp('email')}/>{ferr('email')}</div>
+                <div className="fg"><label htmlFor="ct-phone">Phone / WhatsApp</label><input name="phone" type="tel" autoComplete="tel" inputMode="tel" maxLength={30} value={form.phone} onChange={handleChange} placeholder="+91 XXXXX XXXXX" {...fp('phone')}/>{ferr('phone')}</div>
               </div>
               <div className="form-row">
-                <div className="fg"><label>Product of Interest</label>
-                  <select name="product" value={form.product} onChange={handleChange}>
+                <div className="fg"><label htmlFor="ct-product">Product of Interest</label>
+                  <select id="ct-product" name="product" value={form.product} onChange={handleChange}>
                     <option value=""> - Select a product - </option>
                     <optgroup label="Poultry">
                       {PRODUCTS.filter(p=>p.species.includes('poultry')).map(p=><option key={p.id} value={p.name}>{p.name}</option>)}
@@ -109,8 +145,8 @@ export default function Contact() {
                     <option value="General">General / Not sure yet</option>
                   </select>
                 </div>
-                <div className="fg"><label>Enquiry Type</label>
-                  <select name="type" value={form.type} onChange={handleChange}>
+                <div className="fg"><label htmlFor="ct-type">Enquiry Type</label>
+                  <select id="ct-type" name="type" value={form.type} onChange={handleChange}>
                     <option value="enquiry">Product Enquiry</option>
                     <option value="tds">Request Technical Data Sheet</option>
                     <option value="pricing">Pricing / Availability</option>
@@ -120,10 +156,18 @@ export default function Contact() {
                   </select>
                 </div>
               </div>
-              <div className="fg"><label>Message *</label>
-                <textarea name="message" rows={5} required value={form.message} onChange={handleChange} placeholder="Tell us about your operation, species, flock/herd size, and what you are looking to achieve..."/>
+              <div className="fg"><label htmlFor="ct-message">Message *</label>
+                <textarea name="message" rows={5} required minLength={10} maxLength={3000} value={form.message} onChange={handleChange} placeholder="Tell us about your operation, species, flock/herd size, and what you are looking to achieve..." {...fp('message')}/>{ferr('message')}
               </div>
-              <button type="submit" className="btn-submit">Send Message</button>
+              {/* Honeypot: hidden from people, filled by bots. */}
+              <div className="cat-hp" aria-hidden="true">
+                <label htmlFor="ct-hp">Leave empty</label>
+                <input id="ct-hp" name="bsi_hp" type="text" tabIndex={-1} autoComplete="off" value={form.bsi_hp} onChange={handleChange}/>
+              </div>
+              <div aria-live="polite">
+                {state.status==='error'&&state.error&&<p className="cat-error" role="alert">{state.error} {state.error!==MESSAGES.invalid&&<a href="mailto:info@berg-schmidt.co.in">info@berg-schmidt.co.in</a>}</p>}
+              </div>
+              <button type="submit" className="btn-submit" disabled={state.status==='sending'}>{state.status==='sending'?'Sending…':'Send Message'}</button>
             </form>
           )}
         </div>

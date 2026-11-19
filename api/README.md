@@ -1,3 +1,12 @@
+# Website form APIs
+
+Two managed functions share the Graph mailer, the storage account and the limits code:
+
+- `POST /api/catalogue-request` - `/catalogue` (below)
+- `POST /api/contact-request` - `/contact`. Stores the enquiry in table `ContactEnquiries` and emails it to `CONTACT_NOTIFY_TO` (or `NOTIFY_TO` if unset) from `MAIL_SENDER`, Reply-To the visitor. Nothing is sent to the visitor. Limits: 5 per mailbox per 24 h, 10 per IP per hour, 100 per day site-wide (`CONTACT_DAILY_CAP`). Submissions under 3 s are still delivered, marked `[CHECK]`.
+
+Extra optional settings for the contact form: `CONTACT_NOTIFY_TO`, `CONTACT_TABLE_NAME` (default `ContactEnquiries`), `CONTACT_DAILY_CAP`.
+
 # Catalogue request API
 
 `POST /api/catalogue-request` - used by `/catalogue`. Stores the request in Azure Table Storage, emails the catalogue from a BSI Microsoft 365 mailbox via Microsoft Graph, and notifies the leads inbox. Node 22, Azure Functions v3 model, run as Static Web Apps managed functions.
