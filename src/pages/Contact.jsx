@@ -19,7 +19,7 @@ const FIELD_ERRORS = {
   name: 'Enter your name in letters, with a space after any initials.',
   email: 'Enter a valid email address.',
   phone: 'Enter a phone number with 10 to 15 digits, or leave it empty.',
-  message: 'Tell us a little more (at least 10 characters).',
+  message: 'Tell us a little more about what you need.',
 };
 const MESSAGES = {
   too_many: 'We have already received several messages from you today. Our team will reply shortly.',
@@ -54,8 +54,10 @@ export default function Contact() {
   const opened=useRef(0);
   const resultRef=useRef(null);
   useEffect(()=>{opened.current=Date.now();},[]);
-  useEffect(()=>{ if(state.status==='sent'&&resultRef.current) resultRef.current.focus(); },[state.status]);
-  useEffect(()=>{ if(state.fields.length) document.getElementById(`ct-${state.fields[0]}`)?.focus(); },[state.fields]);
+  // Focus without letting the browser park the element under the sticky header.
+  const focusCentre=el=>{ if(!el) return; el.focus({preventScroll:true}); el.scrollIntoView({block:'center',behavior:'smooth'}); };
+  useEffect(()=>{ if(state.status==='sent') focusCentre(resultRef.current); },[state.status]);
+  useEffect(()=>{ if(state.fields.length) focusCentre(document.getElementById(`ct-${state.fields[0]}`)); },[state.fields]);
 
   // Pre-fill from query params (segment-level enquiry). Runs once per param change.
   useEffect(() => {
@@ -81,7 +83,9 @@ export default function Contact() {
       const j=await r.json().catch(()=>({}));
       // 'received' = stored on our side even though the email to the team
       // failed; the team sees it in the enquiries table, so it is not lost.
-      if((r.ok&&j.ok)||j.code==='received') return setState({status:'sent',error:'',fields:[]});
+      if(r.ok&&j.ok) return setState({status:'sent',error:'',fields:[]});
+      // Stored on our side but the email to the team failed.
+      if(j.code==='received') return setState({status:'sent',error:'received',fields:[]});
       if(j.code==='invalid'){const fields=j.fields||[];return setState({status:'error',error:fields.length?'':MESSAGES.invalid,fields});}
       setState({status:'error',error:MESSAGES[j.code]||MESSAGES.retry,fields:[]});
     }catch{
@@ -119,7 +123,9 @@ export default function Contact() {
             <div className="ct-success">
               <div className="ct-success-icon"><CapIcon name="check" size={26}/></div>
               <h2 ref={resultRef} tabIndex={-1}>Thank you for reaching out</h2>
-              <p>Your message has reached our team. We will reply to <strong>{form.email}</strong> within 1 business day.</p>
+              {state.error==='received'
+                ?<p>We have your message. If you do not hear from us within 1 business day, please email <a href="mailto:info@berg-schmidt.co.in">info@berg-schmidt.co.in</a>.</p>
+                :<p>Your message has reached our team. We will reply to <strong>{form.email}</strong> within 1 business day.</p>}
             </div>
           ):(
             <form id="contact-form" className="ct-form" onSubmit={handleSubmit}>
@@ -157,7 +163,7 @@ export default function Contact() {
                 </div>
               </div>
               <div className="fg"><label htmlFor="ct-message">Message *</label>
-                <textarea name="message" rows={5} required minLength={10} maxLength={3000} value={form.message} onChange={handleChange} placeholder="Tell us about your operation, species, flock/herd size, and what you are looking to achieve..." {...fp('message')}/>{ferr('message')}
+                <textarea name="message" rows={5} required maxLength={3000} value={form.message} onChange={handleChange} placeholder="Tell us about your operation, species, flock/herd size, and what you are looking to achieve..." {...fp('message')}/>{ferr('message')}
               </div>
               {/* Honeypot: hidden from people, filled by bots. */}
               <div className="cat-hp" aria-hidden="true">

@@ -59,7 +59,7 @@ test('good enquiry is stored and emailed to the team with reply-to the visitor',
   const m = JSON.parse(sends()[0].body).message;
   assert.strictEqual(m.toRecipients[0].emailAddress.address, 'leads@example.com');
   assert.strictEqual(m.replyTo[0].emailAddress.address, 'farmer@example.com');
-  assert.match(m.subject, /Pricing \/ availability - Anil Patil/);
+  assert.match(m.subject, /Pricing \/ availability - Patil Poultry/);
   assert.match(m.body.content, /20,000 broilers\.<br>Pune district\./);
   assert.strictEqual(rows[0].status, 'sent');
 });
@@ -133,9 +133,20 @@ test('send fails but stored: 202 received', async () => {
   assert.strictEqual(rows[0].status, 'failed');
 });
 
-test('send and store both fail: 500 retry', async () => {
-  sendStatus = 500; fail.insert = true;
-  assert.strictEqual((await run(good)).status, 500);
+test('store fails: nothing sent, 503 retry', async () => {
+  fail.insert = true;
+  assert.strictEqual((await run(good)).status, 503);
+  assert.strictEqual(sends().length, 0);
+});
+
+test('mail not configured: 503 retry, not a fake success', async () => {
+  delete process.env.MAIL_SENDER;
+  try { assert.strictEqual((await run(good)).status, 503); }
+  finally { process.env.MAIL_SENDER = 'sender@example.com'; }
+});
+
+test('message length ignores padding spaces', () => {
+  assert.deepStrictEqual(handler.validate({ ...good, message: 'a            b' }).fields, ['message']);
 });
 
 test('wrong content type', async () => {

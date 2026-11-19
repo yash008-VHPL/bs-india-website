@@ -53,7 +53,7 @@ function validate(body) {
   const product = clean(b.product, 80);
   const type = TYPE_LABEL[b.type] ? b.type : 'enquiry';
   const message = clean(b.message, 3000, true);
-  if (message.length < 10) fields.push('message');
+  if (message.replace(/\s+/g, '').length < 10) fields.push('message');
   return {
     ok: fields.length === 0,
     fields,
@@ -110,8 +110,11 @@ module.exports = async function (context, req) {
   const lead = v.value;
   const key = emailKey(lead.email);
 
-  if (!store.enabled()) {
-    log.error('LEADS_TABLE_CONNECTION not set');
+  const sender = process.env.MAIL_SENDER;
+  const to = process.env.CONTACT_NOTIFY_TO || process.env.NOTIFY_TO;
+  // Misconfiguration must never look like success to the visitor.
+  if (!store.enabled() || !sender || !to) {
+    log.error('contact form not configured (LEADS_TABLE_CONNECTION / MAIL_SENDER / CONTACT_NOTIFY_TO)');
     return reply(context, 503, { code: 'retry' });
   }
 
@@ -140,15 +143,12 @@ module.exports = async function (context, req) {
   } catch (err) {
     log.error('enquiry insert failed', err && err.message);
   }
+  // Unstored enquiries are not counted by the limits, so do not send them.
+  if (!row) return reply(context, 503, { code: 'retry' });
 
-  const sender = process.env.MAIL_SENDER;
-  const to = process.env.CONTACT_NOTIFY_TO || process.env.NOTIFY_TO;
   let sent = false;
   let error = '';
-  if (!sender || !to) {
-    error = 'MAIL_SENDER or CONTACT_NOTIFY_TO not set';
-    log.error(error);
-  } else {
+  {
     try {
       const m = notify({ ...lead, flagged });
       await sendMail({ from: sender, to, subject: m.subject, html: m.html, replyTo: lead.email, saveToSentItems: false, deadline });
@@ -159,14 +159,13 @@ module.exports = async function (context, req) {
     }
   }
   try {
-    if (row) await store.setStatus(row, sent ? (flagged ? 'flagged-sent' : 'sent') : 'failed', error);
+    await store.setStatus(row, sent ? (flagged ? 'flagged-sent' : 'sent') : 'failed', error);
   } catch (err) {
     log.error('status update failed', err && err.message);
   }
 
   if (sent) return reply(context, 200, { ok: true });
-  if (row) return reply(context, 202, { code: 'received' });
-  return reply(context, 500, { code: 'retry' });
+  return reply(context, 202, { code: 'received' });
 };
 
 module.exports.validate = validate;

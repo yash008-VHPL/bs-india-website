@@ -18,8 +18,9 @@ const TYPE_LABEL = {
 const row = (k, v) => `<tr><td valign="top"><b>${k}</b></td><td>${v}</td></tr>`;
 
 const notify = ({ name, company, email, phone, product, type, message, flagged }) => ({
-  subject: `${flagged ? '[CHECK] ' : ''}Website enquiry - ${TYPE_LABEL[type] || 'Enquiry'} - ${name}`,
+  subject: `${flagged ? '[CHECK] ' : ''}Website enquiry - ${TYPE_LABEL[type] || 'Enquiry'}${company ? ` - ${company}` : ''}`,
   html: `<p>New enquiry from www.berg-schmidt.co.in/contact. Reply to this email to answer the sender directly.</p>
+<p style="color:#777">The sender's email address is not verified. Do not open links in the message unless you recognise the sender.</p>
 ${flagged ? '<p style="color:#B71C42"><b>Submitted faster than a person usually types. Check it is genuine before replying.</b></p>' : ''}
 <table cellpadding="4" style="border-collapse:collapse">
 ${row('Name', escapeHtml(name))}
