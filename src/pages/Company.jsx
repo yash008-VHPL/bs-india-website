@@ -13,6 +13,38 @@ const CAPS = [
   {icon:'growth',title:'Market Development Depth',text:"Seasoned commercial professionals with on-the-ground experience across India's diverse poultry and dairy geographies - from large integrated operations to smallholder dairy clusters."},
 ];
 
+/*
+ * Our Panel. Senior management rule (2026-11): the in-house experts stay
+ * anonymous in public - no names, photos, employers, institutions, years,
+ * associations or anything else that identifies them. Qualifications and
+ * focus only. Source: each expert's own questionnaire (2026-11).
+ */
+const PANEL = [
+  {
+    species: ['Poultry'],
+    title: 'Poultry Nutrition',
+    quals: ['B.V.Sc. & A.H.', 'M.V.Sc. (Poultry Production)', 'Master Diploma in Business Administration'],
+    exp: '26 years in animal health and nutrition, across technical services, product development, marketing and regulatory work, including ISO, FAMI-QS and HACCP systems. Author of technical articles in Indian and international magazines and a speaker at technical conferences.',
+    focus: ['Enzymes', 'Pre- and probiotics', 'Vitamin premixes', 'Phospholipids'],
+  },
+  {
+    species: ['Poultry', 'Dairy'],
+    title: 'Lipid and Mineral Nutrition',
+    quals: ['B.V.Sc. & A.H.', 'M.V.Sc. (Animal Nutrition)'],
+    exp: '30 years in broiler and dairy nutrition, including broiler field trials on vitamin and mineral premixes, acidifiers, enzymes and emulsifiers.',
+    focus: ['Lipid metabolism and functionality', 'Organic trace minerals', 'Acidifiers'],
+    regions: 'North India, Maharashtra',
+  },
+  {
+    species: ['Dairy'],
+    title: 'Dairy Nutrition and Herd Health',
+    quals: ['B.V.Sc. & A.H.', 'MBA (Agribusiness)'],
+    exp: '20+ years in dairy nutrition and animal health in India, including dairy nutrition product management.',
+    focus: ['Clean milk production', 'Mastitis control', 'Hormones and trace minerals in fertility', 'Ruminant digestion'],
+    regions: 'Punjab, Haryana, Rajasthan, Gujarat, Maharashtra, Madhya Pradesh',
+  },
+];
+
 export default function Company() {
   usePageMeta('About Us', "Berg+Schmidt India Pvt. Ltd., Pune - a subsidiary of Berg+Schmidt Animal Nutrition, part of the Stern-Wywiol Gruppe. Operating in India since 2002.");
   return (
@@ -107,6 +139,26 @@ export default function Company() {
               <h3>{c.title}</h3>
               <p>{c.text}</p>
             </div>)}
+          </div>
+        </div>
+      </section>
+
+      <section className="co-sec co-panel" aria-labelledby="our-panel">
+        <div className="co-sec-inner">
+          <h2 id="our-panel" className="bs-mark">Our Panel</h2>
+          <p className="co-panel-intro">The nutritionists behind our technical advice and articles.</p>
+          <div className="panel-grid">
+            {PANEL.map(m=>(
+              <article className="panel-card" key={m.title}>
+                <div className="panel-tags">{m.species.map(t=><span key={t} className="stag">{t}</span>)}</div>
+                <h3>{m.title}</h3>
+                <ul className="panel-quals">{m.quals.map(q=><li key={q}>{q}</li>)}</ul>
+                <p>{m.exp}</p>
+                <p className="panel-label">Focus</p>
+                <ul className="panel-focus">{m.focus.map(f=><li key={f}>{f}</li>)}</ul>
+                {m.regions&&<><p className="panel-label">Field coverage</p><p>{m.regions}</p></>}
+              </article>
+            ))}
           </div>
         </div>
       </section>
