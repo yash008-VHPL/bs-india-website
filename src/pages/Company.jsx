@@ -13,6 +13,28 @@ const CAPS = [
   {icon:'growth',title:'Market Development Depth',text:"Seasoned commercial professionals with on-the-ground experience across India's diverse poultry and dairy geographies - from large integrated operations to smallholder dairy clusters."},
 ];
 
+/*
+ * Our Panel - one consolidated profile of the in-house nutritionists.
+ * Senior management rule (2026-11): the experts stay anonymous in public.
+ * No names, photos, employers, institutions, years of study, associations,
+ * or per-person details. Source: the three experts' questionnaires (2026-11).
+ */
+const PANEL = {
+  stats: [
+    { n: '3', l: 'Veterinarians' },
+    { n: '75+', l: 'Years of combined experience' },
+    { n: '2', l: 'Species: poultry and dairy' },
+  ],
+  quals: ['B.V.Sc. & A.H. (all three)', 'M.V.Sc. (Animal Nutrition)', 'M.V.Sc. (Poultry Production)', 'Postgraduate management qualifications'],
+  groups: [
+    { t: 'Poultry', items: ['Enzymes', 'Pre- and probiotics', 'Vitamin premixes', 'Phospholipids'] },
+    { t: 'Dairy', items: ['Clean milk production', 'Mastitis control', 'Hormones and trace minerals in fertility', 'Ruminant digestion'] },
+    { t: 'Poultry and dairy', items: ['Lipid metabolism and functionality', 'Organic trace minerals', 'Acidifiers'] },
+  ],
+  work: ['Broiler feed additive trials', 'Product development and management', 'Regulatory and quality systems', 'Technical articles in Indian and international magazines', 'Technical conference talks'],
+  regions: 'All India, with a focus on North India and Maharashtra',
+};
+
 export default function Company() {
   usePageMeta('About Us', "Berg+Schmidt India Pvt. Ltd., Pune - a subsidiary of Berg+Schmidt Animal Nutrition, part of the Stern-Wywiol Gruppe. Operating in India since 2002.");
   return (
@@ -107,6 +129,35 @@ export default function Company() {
               <h3>{c.title}</h3>
               <p>{c.text}</p>
             </div>)}
+          </div>
+        </div>
+      </section>
+
+      <section className="co-sec co-panel" aria-labelledby="our-panel">
+        <div className="co-sec-inner">
+          <h2 id="our-panel" className="bs-mark">Our Panel</h2>
+          <p className="co-panel-intro">Veterinary and animal nutrition specialists on the Berg+Schmidt India team.</p>
+          <div className="panel-stats">
+            {PANEL.stats.map(x=><div className="panel-stat" key={x.l}><span>{x.n}</span><p>{x.l}</p></div>)}
+          </div>
+          <div className="panel-box">
+            <div className="panel-col">
+              <p className="panel-label">Qualifications</p>
+              <ul className="panel-quals">{PANEL.quals.map(q=><li key={q}>{q}</li>)}</ul>
+              <p className="panel-label">Field and technical work</p>
+              <ul className="panel-quals">{PANEL.work.map(q=><li key={q}>{q}</li>)}</ul>
+            </div>
+            <div className="panel-col">
+              <p className="panel-label">Expertise</p>
+              {PANEL.groups.map(g=>(
+                <div className="panel-group" key={g.t}>
+                  <span className="stag">{g.t}</span>
+                  <ul className="panel-focus">{g.items.map(f=><li key={f}>{f}</li>)}</ul>
+                </div>
+              ))}
+              <p className="panel-label">Field coverage</p>
+              <p>{PANEL.regions}</p>
+            </div>
           </div>
         </div>
       </section>
