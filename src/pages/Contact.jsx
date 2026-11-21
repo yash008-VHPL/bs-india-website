@@ -1,14 +1,47 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
 import CapIcon from '../components/CapIcon';
 import './Contact.css';
+import './ContactForm.css';
 import usePageMeta from '../usePageMeta';
 
+// Visible text: never the internal business-division names.
 const SEGMENT_LABEL = {
-  dairy: 'dairy feed supplements',
-  poultry: 'poultry feed supplements',
-  commodity: 'commodity feed fats and oils',
+  dairy: 'dairy nutrition products',
+  poultry: 'poultry nutrition products',
+  commodity: 'feed fats and oils',
+};
+
+// FormSubmit (formsubmit.co), as on the GIIAVA sites: it emails each enquiry
+// to info@berg-schmidt.co.in. Nothing is sent to the visitor.
+const ENDPOINT = 'https://formsubmit.co/ajax/info@berg-schmidt.co.in';
+const TYPE_LABEL = {
+  enquiry: 'Product enquiry', tds: 'Technical data sheet', pricing: 'Pricing / availability',
+  technical: 'Technical support', partnership: 'Distribution / partnership', other: 'Other',
+};
+const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[A-Za-z]{2,}$/;
+
+// Checked here because FormSubmit does not validate fields.
+function check(f) {
+  const bad = [];
+  if (f.name.trim().length < 2) bad.push('name');
+  if (!EMAIL_RE.test(f.email.trim())) bad.push('email');
+  const digits = f.phone.replace(/[\s\-().]/g, '').replace(/^\+/, '');
+  if (f.phone.trim() && !/^\d{10,15}$/.test(digits)) bad.push('phone');
+  if (f.message.replace(/\s+/g, '').length < 10) bad.push('message');
+  return bad;
+}
+const FIELD_ERRORS = {
+  name: 'Enter your name.',
+  email: 'Enter a valid email address.',
+  phone: 'Enter a phone number with 10 to 15 digits, or leave it empty.',
+  message: 'Tell us a little more about what you need.',
+};
+const MESSAGES = {
+  activate: 'Our enquiry form is being switched on. Please email us directly for now:',
+  retry: 'Something went wrong on our side. Please try again in a few minutes, or email us at',
+  network: 'Could not reach our server. Please check your connection and try again, or email us at',
 };
 
 function buildPrefillMessage({ segment, city, detail }) {
@@ -31,8 +64,13 @@ export default function Contact() {
   const city = params.get('city') || '';
   const detail = params.get('detail') || '';
 
-  const [form,setForm]=useState({name:'',company:'',email:'',phone:'',product:'',message:'',type:'enquiry'});
-  const [submitted,setSubmitted]=useState(false);
+  const [form,setForm]=useState({name:'',company:'',email:'',phone:'',product:'',message:'',type:'enquiry',bsi_hp:''});
+  const [state,setState]=useState({status:'idle',error:'',fields:[]});
+  const resultRef=useRef(null);
+  // Focus without letting the browser park the element under the sticky header.
+  const focusCentre=el=>{ if(!el) return; el.focus({preventScroll:true}); el.scrollIntoView({block:'center',behavior:'smooth'}); };
+  useEffect(()=>{ if(state.status==='sent') focusCentre(resultRef.current); },[state.status]);
+  useEffect(()=>{ if(state.fields.length) focusCentre(document.getElementById(`ct-${state.fields[0]}`)); },[state.fields]);
 
   // Pre-fill from query params (segment-level enquiry). Runs once per param change.
   useEffect(() => {
@@ -47,14 +85,42 @@ export default function Contact() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [segment, city, detail]);
 
-  const handleChange=e=>setForm(f=>({...f,[e.target.name]:e.target.value}));
-  const handleSubmit=e=>{
-    e.preventDefault();
-    const sub=encodeURIComponent(`Enquiry - ${form.type} - ${form.name}`);
-    const body=encodeURIComponent(`Name: ${form.name}\nCompany: ${form.company}\nEmail: ${form.email}\nPhone: ${form.phone}\nProduct of Interest: ${form.product}\nEnquiry Type: ${form.type}\n\nMessage:\n${form.message}`);
-    window.location.href=`mailto:info@berg-schmidt.co.in?subject=${sub}&body=${body}`;
-    setSubmitted(true);
+  const handleChange=e=>{
+    const n=e.target.name;
+    setForm(f=>({...f,[n]:e.target.value}));
+    // Clear a field's error as soon as the visitor edits it.
+    setState(st=>st.fields.includes(n)?{...st,fields:st.fields.filter(x=>x!==n)}:st);
   };
+  const handleSubmit=async e=>{
+    e.preventDefault();
+    if(state.status==='sending') return;
+    // Honeypot filled: a bot. Show success, send nothing.
+    if(form.bsi_hp) return setState({status:'sent',error:'',fields:[]});
+    const fields=check(form);
+    if(fields.length) return setState({status:'error',error:'',fields});
+    setState({status:'sending',error:'',fields:[]});
+    const type=TYPE_LABEL[form.type]||'Enquiry';
+    try{
+      const r=await fetch(ENDPOINT,{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},
+        body:JSON.stringify({
+          _subject:`Website enquiry - ${type}${form.company.trim()?` - ${form.company.trim()}`:''}`,
+          _template:'table', _captcha:'false', _replyto:form.email.trim(),
+          'Name':form.name.trim(), 'Company / Farm':form.company.trim()||'-', 'Email':form.email.trim(),
+          'Phone / WhatsApp':form.phone.trim()||'-', 'Product':form.product||'-', 'Enquiry type':type,
+          'Message':form.message.trim(), 'Page':'www.berg-schmidt.co.in/contact',
+        })});
+      const j=await r.json().catch(()=>({}));
+      if(r.ok&&(j.success===true||j.success==='true')) return setState({status:'sent',error:'',fields:[]});
+      // Before info@ is activated FormSubmit answers 200 with success "false".
+      if(/activat/i.test(j.message||'')) return setState({status:'error',error:MESSAGES.activate,fields:[]});
+      setState({status:'error',error:MESSAGES.retry,fields:[]});
+    }catch{
+      setState({status:'error',error:MESSAGES.network,fields:[]});
+    }
+  };
+  const bad=f=>state.fields.includes(f);
+  const fp=f=>({id:`ct-${f}`,'aria-invalid':bad(f),'aria-describedby':bad(f)?`ct-${f}-err`:undefined,className:bad(f)?'is-bad':''});
+  const ferr=f=>bad(f)&&<span id={`ct-${f}-err`} className="cat-field-err">{FIELD_ERRORS[f]}</span>;
   return (
     <main className="contact-page">
       <div className="pg-hero"><div className="pg-hero-inner">
@@ -79,26 +145,26 @@ export default function Contact() {
           </div>
         </div>
         <div className="ct-form-wrap">
-          {submitted?(
+          {state.status==='sent'?(
             <div className="ct-success">
               <div className="ct-success-icon"><CapIcon name="check" size={26}/></div>
-              <h2>Thank you for reaching out!</h2>
-              <p>Your email client should have opened with your message pre-filled. We will be in touch shortly.</p>
+              <h2 ref={resultRef} tabIndex={-1}>Thank you for reaching out</h2>
+              <p>Your message has reached our team. We will reply to <strong>{form.email}</strong> within 1 business day.</p>
             </div>
           ):(
-            <form id="contact-form" className="ct-form" onSubmit={handleSubmit}>
+            <form id="contact-form" className="ct-form" onSubmit={handleSubmit} noValidate>
               <h2>Send us a message</h2>
               <div className="form-row">
-                <div className="fg"><label>Full Name *</label><input name="name" type="text" required value={form.name} onChange={handleChange} placeholder="Your name"/></div>
-                <div className="fg"><label>Company / Farm</label><input name="company" type="text" value={form.company} onChange={handleChange} placeholder="Organisation name"/></div>
+                <div className="fg"><label htmlFor="ct-name">Full Name *</label><input name="name" type="text" autoComplete="name" required minLength={2} maxLength={100} value={form.name} onChange={handleChange} placeholder="Your name" {...fp('name')}/>{ferr('name')}</div>
+                <div className="fg"><label htmlFor="ct-company">Company / Farm</label><input id="ct-company" name="company" type="text" autoComplete="organization" maxLength={120} value={form.company} onChange={handleChange} placeholder="Organisation name"/></div>
               </div>
               <div className="form-row">
-                <div className="fg"><label>Email Address *</label><input name="email" type="email" required value={form.email} onChange={handleChange} placeholder="you@company.com"/></div>
-                <div className="fg"><label>Phone / WhatsApp</label><input name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 XXXXX XXXXX"/></div>
+                <div className="fg"><label htmlFor="ct-email">Email Address *</label><input name="email" type="email" autoComplete="email" required maxLength={254} value={form.email} onChange={handleChange} placeholder="you@company.com" {...fp('email')}/>{ferr('email')}</div>
+                <div className="fg"><label htmlFor="ct-phone">Phone / WhatsApp</label><input name="phone" type="tel" autoComplete="tel" inputMode="tel" maxLength={30} value={form.phone} onChange={handleChange} placeholder="+91 XXXXX XXXXX" {...fp('phone')}/>{ferr('phone')}</div>
               </div>
               <div className="form-row">
-                <div className="fg"><label>Product of Interest</label>
-                  <select name="product" value={form.product} onChange={handleChange}>
+                <div className="fg"><label htmlFor="ct-product">Product of Interest</label>
+                  <select id="ct-product" name="product" value={form.product} onChange={handleChange}>
                     <option value=""> - Select a product - </option>
                     <optgroup label="Poultry">
                       {PRODUCTS.filter(p=>p.species.includes('poultry')).map(p=><option key={p.id} value={p.name}>{p.name}</option>)}
@@ -109,8 +175,8 @@ export default function Contact() {
                     <option value="General">General / Not sure yet</option>
                   </select>
                 </div>
-                <div className="fg"><label>Enquiry Type</label>
-                  <select name="type" value={form.type} onChange={handleChange}>
+                <div className="fg"><label htmlFor="ct-type">Enquiry Type</label>
+                  <select id="ct-type" name="type" value={form.type} onChange={handleChange}>
                     <option value="enquiry">Product Enquiry</option>
                     <option value="tds">Request Technical Data Sheet</option>
                     <option value="pricing">Pricing / Availability</option>
@@ -120,10 +186,18 @@ export default function Contact() {
                   </select>
                 </div>
               </div>
-              <div className="fg"><label>Message *</label>
-                <textarea name="message" rows={5} required value={form.message} onChange={handleChange} placeholder="Tell us about your operation, species, flock/herd size, and what you are looking to achieve..."/>
+              <div className="fg"><label htmlFor="ct-message">Message *</label>
+                <textarea name="message" rows={5} required maxLength={3000} value={form.message} onChange={handleChange} placeholder="Tell us about your operation, species, flock/herd size, and what you are looking to achieve..." {...fp('message')}/>{ferr('message')}
               </div>
-              <button type="submit" className="btn-submit">Send Message</button>
+              {/* Honeypot: hidden from people, filled by bots. */}
+              <div className="cat-hp" aria-hidden="true">
+                <label htmlFor="ct-hp">Leave empty</label>
+                <input id="ct-hp" name="bsi_hp" type="text" tabIndex={-1} autoComplete="off" value={form.bsi_hp} onChange={handleChange}/>
+              </div>
+              <div aria-live="polite">
+                {state.status==='error'&&state.error&&<p className="cat-error" role="alert">{state.error} <a href="mailto:info@berg-schmidt.co.in">info@berg-schmidt.co.in</a></p>}
+              </div>
+              <button type="submit" className="btn-submit" disabled={state.status==='sending'}>{state.status==='sending'?'Sending…':'Send Message'}</button>
             </form>
           )}
         </div>
