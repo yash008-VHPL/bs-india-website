@@ -25,14 +25,14 @@ const PANEL = {
     { n: '75+', l: 'Years of combined experience' },
     { n: '2', l: 'Species focus: poultry and dairy' },
   ],
-  quals: ['B.V.Sc. & A.H.', 'M.V.Sc. (Animal Nutrition)', 'M.V.Sc. (Poultry Production)', 'MBA (Agribusiness)', 'Master Diploma in Business Administration'],
+  quals: ['B.V.Sc. & A.H. (all three)', 'M.V.Sc. (Animal Nutrition)', 'M.V.Sc. (Poultry Production)', 'Postgraduate management qualifications'],
   groups: [
-    { t: 'Poultry', items: ['Enzymes', 'Pre- and probiotics', 'Vitamin and mineral premixes', 'Phospholipids', 'Acidifiers', 'Emulsifiers'] },
+    { t: 'Poultry', items: ['Enzymes', 'Pre- and probiotics', 'Vitamin premixes', 'Phospholipids'] },
     { t: 'Dairy', items: ['Clean milk production', 'Mastitis control', 'Hormones and trace minerals in fertility', 'Ruminant digestion'] },
-    { t: 'Across species', items: ['Lipid metabolism and functionality', 'Organic trace minerals'] },
+    { t: 'Poultry and dairy', items: ['Lipid metabolism and functionality', 'Organic trace minerals', 'Acidifiers'] },
   ],
-  work: ['Broiler field trials', 'Product development and management', 'Regulatory and quality systems (ISO, FAMI-QS, HACCP)', 'Technical articles in Indian and international magazines', 'Technical conference talks'],
-  regions: 'North India, Punjab, Haryana, Rajasthan, Gujarat, Maharashtra, Madhya Pradesh',
+  work: ['Broiler feed additive trials', 'Product development and management', 'Regulatory and quality systems', 'Technical articles in Indian and international magazines', 'Technical conference talks'],
+  regions: 'All India, with a focus on North India and Maharashtra',
 };
 
 export default function Company() {
@@ -136,7 +136,7 @@ export default function Company() {
       <section className="co-sec co-panel" aria-labelledby="our-panel">
         <div className="co-sec-inner">
           <h2 id="our-panel" className="bs-mark">Our Panel</h2>
-          <p className="co-panel-intro">The in-house nutritionists behind our technical advice.</p>
+          <p className="co-panel-intro">Veterinary and animal nutrition specialists on the Berg+Schmidt India team.</p>
           <div className="panel-stats">
             {PANEL.stats.map(x=><div className="panel-stat" key={x.l}><span>{x.n}</span><p>{x.l}</p></div>)}
           </div>

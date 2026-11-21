@@ -90,7 +90,7 @@
 .panel-label:first-child { margin-top: 0; }
 .panel-quals { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .panel-quals li { color: var(--text-dark); padding-left: 16px; position: relative; }
-.panel-quals li::before { content: ''; position: absolute; left: 0; top: .6em; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-red); }
+.panel-quals li::before { content: ''; position: absolute; left: 0; top: .6em; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
 .panel-group { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 .panel-group + .panel-group { margin-top: 6px; }
 .panel-group .stag { font-size: var(--fs-label); font-weight: 600; padding: 2px 9px; border: 1.5px solid var(--green); border-radius: 20px; color: var(--green); }
