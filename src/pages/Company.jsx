@@ -23,7 +23,7 @@ const PANEL = {
   stats: [
     { n: '3', l: 'Veterinarians' },
     { n: '75+', l: 'Years of combined experience' },
-    { n: '2', l: 'Species focus: poultry and dairy' },
+    { n: '2', l: 'Species: poultry and dairy' },
   ],
   quals: ['B.V.Sc. & A.H. (all three)', 'M.V.Sc. (Animal Nutrition)', 'M.V.Sc. (Poultry Production)', 'Postgraduate management qualifications'],
   groups: [
