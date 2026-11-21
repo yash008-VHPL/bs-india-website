@@ -14,36 +14,26 @@ const CAPS = [
 ];
 
 /*
- * Our Panel. Senior management rule (2026-11): the in-house experts stay
- * anonymous in public - no names, photos, employers, institutions, years,
- * associations or anything else that identifies them. Qualifications and
- * focus only. Source: each expert's own questionnaire (2026-11).
+ * Our Panel - one consolidated profile of the in-house nutritionists.
+ * Senior management rule (2026-11): the experts stay anonymous in public.
+ * No names, photos, employers, institutions, years of study, associations,
+ * or per-person details. Source: the three experts' questionnaires (2026-11).
  */
-const PANEL = [
-  {
-    species: ['Poultry'],
-    title: 'Poultry Nutrition',
-    quals: ['B.V.Sc. & A.H.', 'M.V.Sc. (Poultry Production)', 'Master Diploma in Business Administration'],
-    exp: '26 years in animal health and nutrition, across technical services, product development, marketing and regulatory work, including ISO, FAMI-QS and HACCP systems. Author of technical articles in Indian and international magazines and a speaker at technical conferences.',
-    focus: ['Enzymes', 'Pre- and probiotics', 'Vitamin premixes', 'Phospholipids'],
-  },
-  {
-    species: ['Poultry', 'Dairy'],
-    title: 'Lipid and Mineral Nutrition',
-    quals: ['B.V.Sc. & A.H.', 'M.V.Sc. (Animal Nutrition)'],
-    exp: '30 years in broiler and dairy nutrition, including broiler field trials on vitamin and mineral premixes, acidifiers, enzymes and emulsifiers.',
-    focus: ['Lipid metabolism and functionality', 'Organic trace minerals', 'Acidifiers'],
-    regions: 'North India, Maharashtra',
-  },
-  {
-    species: ['Dairy'],
-    title: 'Dairy Nutrition and Herd Health',
-    quals: ['B.V.Sc. & A.H.', 'MBA (Agribusiness)'],
-    exp: '20+ years in dairy nutrition and animal health in India, including dairy nutrition product management.',
-    focus: ['Clean milk production', 'Mastitis control', 'Hormones and trace minerals in fertility', 'Ruminant digestion'],
-    regions: 'Punjab, Haryana, Rajasthan, Gujarat, Maharashtra, Madhya Pradesh',
-  },
-];
+const PANEL = {
+  stats: [
+    { n: '3', l: 'Veterinarians' },
+    { n: '75+', l: 'Years of combined experience' },
+    { n: '2', l: 'Species focus: poultry and dairy' },
+  ],
+  quals: ['B.V.Sc. & A.H.', 'M.V.Sc. (Animal Nutrition)', 'M.V.Sc. (Poultry Production)', 'MBA (Agribusiness)', 'Master Diploma in Business Administration'],
+  groups: [
+    { t: 'Poultry', items: ['Enzymes', 'Pre- and probiotics', 'Vitamin and mineral premixes', 'Phospholipids', 'Acidifiers', 'Emulsifiers'] },
+    { t: 'Dairy', items: ['Clean milk production', 'Mastitis control', 'Hormones and trace minerals in fertility', 'Ruminant digestion'] },
+    { t: 'Across species', items: ['Lipid metabolism and functionality', 'Organic trace minerals'] },
+  ],
+  work: ['Broiler field trials', 'Product development and management', 'Regulatory and quality systems (ISO, FAMI-QS, HACCP)', 'Technical articles in Indian and international magazines', 'Technical conference talks'],
+  regions: 'North India, Punjab, Haryana, Rajasthan, Gujarat, Maharashtra, Madhya Pradesh',
+};
 
 export default function Company() {
   usePageMeta('About Us', "Berg+Schmidt India Pvt. Ltd., Pune - a subsidiary of Berg+Schmidt Animal Nutrition, part of the Stern-Wywiol Gruppe. Operating in India since 2002.");
@@ -146,19 +136,28 @@ export default function Company() {
       <section className="co-sec co-panel" aria-labelledby="our-panel">
         <div className="co-sec-inner">
           <h2 id="our-panel" className="bs-mark">Our Panel</h2>
-          <p className="co-panel-intro">The nutritionists behind our technical advice and articles.</p>
-          <div className="panel-grid">
-            {PANEL.map(m=>(
-              <article className="panel-card" key={m.title}>
-                <div className="panel-tags">{m.species.map(t=><span key={t} className="stag">{t}</span>)}</div>
-                <h3>{m.title}</h3>
-                <ul className="panel-quals">{m.quals.map(q=><li key={q}>{q}</li>)}</ul>
-                <p>{m.exp}</p>
-                <p className="panel-label">Focus</p>
-                <ul className="panel-focus">{m.focus.map(f=><li key={f}>{f}</li>)}</ul>
-                {m.regions&&<><p className="panel-label">Field coverage</p><p>{m.regions}</p></>}
-              </article>
-            ))}
+          <p className="co-panel-intro">The in-house nutritionists behind our technical advice.</p>
+          <div className="panel-stats">
+            {PANEL.stats.map(x=><div className="panel-stat" key={x.l}><span>{x.n}</span><p>{x.l}</p></div>)}
+          </div>
+          <div className="panel-box">
+            <div className="panel-col">
+              <p className="panel-label">Qualifications</p>
+              <ul className="panel-quals">{PANEL.quals.map(q=><li key={q}>{q}</li>)}</ul>
+              <p className="panel-label">Field and technical work</p>
+              <ul className="panel-quals">{PANEL.work.map(q=><li key={q}>{q}</li>)}</ul>
+            </div>
+            <div className="panel-col">
+              <p className="panel-label">Expertise</p>
+              {PANEL.groups.map(g=>(
+                <div className="panel-group" key={g.t}>
+                  <span className="stag">{g.t}</span>
+                  <ul className="panel-focus">{g.items.map(f=><li key={f}>{f}</li>)}</ul>
+                </div>
+              ))}
+              <p className="panel-label">Field coverage</p>
+              <p>{PANEL.regions}</p>
+            </div>
           </div>
         </div>
       </section>
