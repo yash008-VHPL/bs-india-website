@@ -25,10 +25,10 @@ const PANEL = {
     { n: '75+', l: 'Years of combined experience' },
     { n: '2', l: 'Species: poultry and dairy' },
   ],
-  quals: ['B.V.Sc. & A.H. (all three)', 'M.V.Sc. (Animal Nutrition)', 'M.V.Sc. (Poultry Production)', 'Postgraduate management qualifications'],
+  quals: ['B.V.Sc. & A.H. (all three)', "Master's degrees in veterinary science", 'Postgraduate management qualifications'],
   groups: [
     { t: 'Poultry', items: ['Enzymes', 'Pre- and probiotics', 'Vitamin premixes', 'Phospholipids'] },
-    { t: 'Dairy', items: ['Clean milk production', 'Mastitis control', 'Hormones and trace minerals in fertility', 'Ruminant digestion'] },
+    { t: 'Dairy', items: ['Mastitis control', 'Hormones and trace minerals in fertility', 'Ruminant digestion'] },
     { t: 'Poultry and dairy', items: ['Lipid metabolism and functionality', 'Organic trace minerals', 'Acidifiers'] },
   ],
   work: ['Broiler feed additive trials', 'Product development and management', 'Regulatory and quality systems', 'Technical articles in Indian and international magazines', 'Technical conference talks'],
